@@ -1,1 +1,1 @@
-# Arazim-Projects-2024---spyware
+# Arazim Projects 2024 - spyware
