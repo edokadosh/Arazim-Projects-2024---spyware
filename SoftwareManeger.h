@@ -17,7 +17,10 @@ class SoftwareManeger {
 
 public:
 
-    SoftwareManeger(const std::string& folderName);
+    SoftwareManeger();
+
+    ~SoftwareManeger();
+
     
     Error writeFile(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE]);
 

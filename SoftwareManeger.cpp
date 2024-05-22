@@ -9,10 +9,12 @@
 
 #define SOFTWARE_DIR_PATH ("./")
 
+SoftwareManeger::SoftwareManeger(void) {};
+
+SoftwareManeger::~SoftwareManeger(void) {};
 
 
-
-Error SoftwareManeger::writeFile(const std::string& fileName, bool isAppend=true, const char fileContent[CHUNK_SIZE])
+Error SoftwareManeger::writeFile(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE])
 {
     std::string filePath = SOFTWARE_DIR_PATH  + fileName;
     std::ofstream outFile;
@@ -55,4 +57,3 @@ int SoftwareManeger::getMetadata()
 {
     return 0;
 }
-
