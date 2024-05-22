@@ -1,36 +1,79 @@
 import socket
+import Message_pb2
 
 # Define host and port
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+BUFFER_SIZE = 4096
 
-# Create a TCP/IP socket
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
-    # Bind the socket to the address and port
-    server_socket.bind((HOST, PORT))
-    
-    # Listen for incoming connections
-    server_socket.listen()
+class Server:
+    def sendFile(self, path: str) -> None:
+        with open(path, 'rb') as file:
+            data = file.read(BUFFER_SIZE)
+            while data:
+                self.client_socket.send(data)
+                data = file.read(BUFFER_SIZE)
 
-    print(f"Server is listening on {HOST}:{PORT}")
 
-    # Accept connections indefinitely
-    while True:
-        # Accept a connection
-        client_socket, client_address = server_socket.accept()
-        print(f"Connection from {client_address}")
+    def recvFile(self, path: str) -> None:
+        with open(path, 'wb') as file:
+            while True:
+                data = self.client_socket.recv(BUFFER_SIZE)
+                if not data:
+                    break
+                file.write(data)
 
+
+    def handleConnection(self) -> None:
         # Send a response back to the client
         response = input("msg: ")
-        client_socket.sendall(response.encode())
+        # self.client_socket.sendall(response.encode())
+        self.sendCommand(5, "WHAT", "THE", "FUCK")
 
         # Receive data from the client
-        data = client_socket.recv(1024)
+        data = self.client_socket.recv(BUFFER_SIZE)
         if not data:
-            break  # If no data received, break the loop
+            return
 
         # Print received data
         print(f"Received data: {data.decode()}")
 
-    # Close the connection
-    client_socket.close()
+        print("Trying to receive a matbuja:")
+        self.recvFile("matbuj.jpg")
+        print("Done (Hopefully)")
+
+
+    def beServer(self):
+        # Create a TCP/IP socket
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+            server_socket.bind((HOST, PORT))        
+            server_socket.listen()
+            print(f"Server is listening on {HOST}:{PORT}")
+            
+            # Accept connections indefinitely
+            while True:
+                # Accept a connection
+                self.client_socket, self.client_address = server_socket.accept()
+                print(f"Connection from {self.client_address}")
+                self.handleConnection()
+
+
+    def sendCommand(self, code: int, param1: str, param2="", param3="") -> None:
+        msgObj = Message_pb2.Message()
+        msgObj.fnccode = code
+        msgObj.param1 = param1
+        if (param2):
+            msgObj.param2 = param2
+        if (param3):
+            msgObj.param3 = param3
+
+        self.client_socket.sendall(msgObj.SerializeToString())
+
+
+def main() -> None:
+    serv = Server()
+    serv.beServer()
+
+
+if __name__ == "__main__":
+    main()

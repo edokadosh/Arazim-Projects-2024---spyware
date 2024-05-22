@@ -1,72 +1,116 @@
-#include <iostream>
-#include <string>
-// #include <WS2tcpip.h> // For Windows
-#include <arpa/inet.h> // For Linux
-
-#pragma comment (lib, "ws2_32.lib") // For Windows
+#include "client.h"
 
 int main() {
-    // Initialize Winsock for Windows
-    WSADATA wsData;
-    WORD ver = MAKEWORD(2, 2);
-    int wsOk = WSAStartup(ver, &wsData);
-    if (wsOk != 0) {
-        std::cerr << "Can't initialize Winsock! Quitting" << std::endl;
-        return -1;
-    }
+    Client client;
+    client.createSocket();
 
-    // Create a socket
-    SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientSocket == INVALID_SOCKET) {
-        std::cerr << "Can't create socket! Quitting" << std::endl;
-        return -1;
-    }
+    client.connectServer();
 
-    // Hint structure for the server we're connecting to
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET; // AF_INET = IPv4 addresses
-    serverAddress.sin_port = htons(65432); // Little to big endian conversion
+    char buffer[BUFFER_SIZE] = {0};
+    client.recvData(buffer);
+    std::cout << "Server response: " << buffer << std::endl;
+    
+    client.sendData("CYBER");
 
-    // Convert IP address from text to binary form
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+    std::cout << "Trying to send file\n";
+    client.sendFile();
+    std::cout << "Try me\n";
 
-    // Connect to the server
-    int connectionResult = connect(clientSocket, (sockaddr*)&serverAddress, sizeof(serverAddress));
-    if (connectionResult == SOCKET_ERROR) {
-        std::cerr << "Can't connect to server! Quitting" << std::endl;
-        closesocket(clientSocket);
-        WSACleanup();
-        return -1;
-    }
-
-    // Send and receive data
-    char buffer[4096];
-    std::string userInput;
-
-    do {
-        std::cout << "> ";
-        std::getline(std::cin, userInput);
-
-        if (userInput.size() > 0) {
-            // Send the text
-            int sendResult = send(clientSocket, userInput.c_str(), userInput.size() + 1, 0);
-            if (sendResult != SOCKET_ERROR) {
-                // Wait for response
-                ZeroMemory(buffer, 4096);
-                int bytesReceived = recv(clientSocket, buffer, 4096, 0);
-                if (bytesReceived > 0) {
-                    std::cout << "SERVER> " << std::string(buffer, 0, bytesReceived) << std::endl;
-                }
-            }
-        }
-
-    } while (userInput.size() > 0);
-
-    // Close the socket
-    closesocket(clientSocket);
-
-    // Cleanup
-    WSACleanup();
+    client.closeSock();
 
     return 0;
+}
+
+void Client::createSocket()
+{
+    // Create a socket
+    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (clientSocket == -1) {
+        std::cerr << "Error: Could not create socket" << std::endl;
+        exit(1);
+    }
+}
+
+void Client::connectServer()
+{
+    // Server address
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(PORT); // Port number
+    serverAddr.sin_addr.s_addr = inet_addr(HOST); // IP address of the server
+
+    // Connect to the server
+    if (connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
+        std::cerr << "Error: Connection failed" << std::endl;
+        close(clientSocket);
+        exit(1);
+    }
+}
+
+void Client::recvData(char buffer[])
+{
+    // Receive data from the server
+    if (recv(clientSocket, buffer, BUFFER_SIZE, 0) == -1) {
+        std::cerr << "Error: Receive failed" << std::endl;
+        close(clientSocket);
+        exit(1);
+    }
+}
+
+void Client::sendData(const char* msg)
+{
+    // Send data to the server
+    if (send(clientSocket, msg, strlen(msg), 0) == -1) {
+        std::cerr << "Error: Send failed" << std::endl;
+        close(clientSocket);
+        return exit(1);
+    }
+}
+
+void Client::closeSock()
+{
+    close(clientSocket);
+}
+
+
+void Client::recvFile()
+{
+     // Open the file for writing
+    std::ofstream file("Matbuja.jpg", std::ios::binary);
+    if (!file) {
+        std::cerr << "Error: Unable to create file" << std::endl;
+        close(clientSocket);
+        exit(1);
+    }
+
+    // Receive the file
+    char buffer[BUFFER_SIZE];
+    int bytesReceived;
+    while ((bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0)) > 0) {
+        std::cout << bytesReceived << "\n";
+        file.write(buffer, bytesReceived);
+        if (bytesReceived != BUFFER_SIZE)
+            break;
+    }
+
+    file.close();
+}
+
+void Client::sendFile()
+{
+    // Open the file for reading
+    std::ifstream file("Matbuja.jpg", std::ios::binary);
+    if (!file) {
+        std::cerr << "Error: Unable to open file" << std::endl;
+        close(clientSocket);
+        exit(1);
+    }
+
+    // Send the file
+    char buffer[BUFFER_SIZE];
+    while (!file.eof()) {
+        file.read(buffer, sizeof(buffer));
+        send(clientSocket, buffer, file.gcount(), 0);
+    }
+
+    file.close();
 }
