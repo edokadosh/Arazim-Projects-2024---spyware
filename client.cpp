@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include <WS2tcpip.h> // For Windows
-//#include <arpa/inet.h> // For Linux
+// #include <WS2tcpip.h> // For Windows
+#include <arpa/inet.h> // For Linux
 
 #pragma comment (lib, "ws2_32.lib") // For Windows
 
