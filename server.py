@@ -1,4 +1,5 @@
 import socket
+import Message_pb2
 
 # Define host and port
 HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
@@ -26,7 +27,8 @@ class Server:
     def handleConnection(self) -> None:
         # Send a response back to the client
         response = input("msg: ")
-        self.client_socket.sendall(response.encode())
+        # self.client_socket.sendall(response.encode())
+        self.sendCommand(5, "WHAT", "THE", "FUCK")
 
         # Receive data from the client
         data = self.client_socket.recv(BUFFER_SIZE)
@@ -54,6 +56,18 @@ class Server:
                 self.client_socket, self.client_address = server_socket.accept()
                 print(f"Connection from {self.client_address}")
                 self.handleConnection()
+
+
+    def sendCommand(self, code: int, param1: str, param2="", param3="") -> None:
+        msgObj = Message_pb2.Message()
+        msgObj.fnccode = code
+        msgObj.param1 = param1
+        if (param2):
+            msgObj.param2 = param2
+        if (param3):
+            msgObj.param3 = param3
+
+        self.client_socket.sendall(msgObj.SerializeToString())
 
 
 def main() -> None:
