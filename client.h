@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
+#include "Message.pb.h"
 
 #define BUFFER_SIZE 1024
 #define PORT 65432
@@ -23,4 +24,6 @@ class Client
         void closeSock();
         void recvFile();
         void sendFile();
+        void recvCommand(Message& msg);
+        void sendCommand(Message& msg);
 };

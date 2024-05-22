@@ -7,10 +7,15 @@ int main() {
     client.connectServer();
 
     char buffer[BUFFER_SIZE] = {0};
-    client.recvData(buffer);
-    std::cout << "Server response: " << buffer << std::endl;
+    //client.recvData(buffer);
     
-    client.sendData("CYBER");
+    Message msg;
+    client.recvCommand(msg);
+
+    std::cout << "Server response: " << msg.fnccode() 
+        << " " << msg.param1() << " " << msg.param2() << " " << msg.param3() << std::endl;
+    
+    client.sendCommand(msg);
 
     std::cout << "Trying to send file\n";
     client.sendFile();
@@ -113,4 +118,29 @@ void Client::sendFile()
     }
 
     file.close();
+}
+
+void Client::recvCommand(Message& msg)
+{
+    char buffer[BUFFER_SIZE];
+    recvData(buffer);
+    
+    if (!msg.ParseFromArray(buffer, strlen(buffer))) {
+        std::cerr << "Failed to parse received data" << std::endl;
+        closeSock();
+        exit(1);
+    }
+    std::cout << "Maybe??\n";
+}
+
+void Client::sendCommand(Message& msg)
+{
+    // Serialize the message
+    std::string serialized_message;
+    if (!msg.SerializeToString(&serialized_message)) {
+        std::cerr << "Failed to serialize message" << std::endl;
+        closeSock();
+        exit(1);
+    }
+    sendData(serialized_message.c_str());
 }
