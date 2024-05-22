@@ -49,11 +49,6 @@ Error SoftwareManeger::deleteFile(const std::string& fileName)
     return SUCCSESS;
 }
 
-int SoftwareManeger::runFile() {
-    return 0;
-}
-
-int SoftwareManeger::getMetadata()
-{
-    return 0;
+Error SoftwareManeger::runFile() {
+    return NOT_IMPLEMENTED;
 }

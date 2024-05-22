@@ -28,8 +28,5 @@ public:
 
     Error deleteFile(const std::string& fileName);
     
-    int runFile();
-
-    int getMetadata();
-
+    Error runFile();
 };
