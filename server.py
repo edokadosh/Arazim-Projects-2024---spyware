@@ -23,20 +23,24 @@ class Server:
                     break
                 file.write(data)
 
+    def recvData(self) -> str:
+        # Receive data from the client
+        data = self.client_socket.recv(BUFFER_SIZE)
+        if not data:
+            return
+        return data
+
 
     def handleConnection(self) -> None:
         # Send a response back to the client
         response = input("msg: ")
         # self.client_socket.sendall(response.encode())
-        self.sendCommand(5, "WHAT", "THE", "FUCK")
+        self.sendCommand(5, "HA", "ZI", "LU")
 
-        # Receive data from the client
-        data = self.client_socket.recv(BUFFER_SIZE)
-        if not data:
-            return
+        msg = self.recvCommand()
 
         # Print received data
-        print(f"Received data: {data.decode()}")
+        print(f"Received data: {msg.fnccode},{msg.param1},{msg.param2},{msg.param3}")
 
         print("Trying to receive a matbuja:")
         self.recvFile("matbuj.jpg")
@@ -68,6 +72,11 @@ class Server:
             msgObj.param3 = param3
 
         self.client_socket.sendall(msgObj.SerializeToString())
+    
+    def recvCommand(self) -> Message_pb2.Message:
+        msg = Message_pb2.Message()
+        msg.ParseFromString(self.recvData())
+        return msg
 
 
 def main() -> None:
