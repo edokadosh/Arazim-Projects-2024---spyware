@@ -120,6 +120,9 @@ target/
 # Images
 *.jpg
 
+# out files
+*.out
+
 # IPython
 profile_default/
 ipython_config.py
