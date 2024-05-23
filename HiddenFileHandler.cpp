@@ -1,4 +1,4 @@
-#include "HiddenHiddenFileHandler.h"
+#include "HiddenFileHandler.h"
 
 HiddenFileHandler::HiddenFileHandler(std::string dirName) : name(dirName) {}
 
