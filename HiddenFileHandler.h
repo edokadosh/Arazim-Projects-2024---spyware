@@ -14,7 +14,7 @@ namespace fs = std::filesystem;
 class HiddenFileHandler
 {
 private:
-	const std::string name="./some thing";
+	const std::string name="./some_thing";
 public:
 
 	void listFiles();

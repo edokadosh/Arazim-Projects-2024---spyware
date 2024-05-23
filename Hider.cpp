@@ -35,7 +35,7 @@ Error Hider::manage_files(int argc, char* argv[])
 		handel.runFile(stringParam);
 		break;
 
-	case HIDDEN_LIST:
+	case HIDDEN_LIST: // maybe will be removed
 		handel.listFiles();
 		break;
 
