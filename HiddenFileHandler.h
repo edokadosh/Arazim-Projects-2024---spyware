@@ -14,14 +14,14 @@ namespace fs = std::filesystem;
 class HiddenFileHandler
 {
 private:
-	const std::string name="./some_thing";
+	const std::string folderName = "./some_thing";
 public:
 
 	void listFiles();
 
-	Status removeFile(const std::string& filename);
-
 	Status runFile(const std::string& filename);
+
+	Status removeFile(const std::string& filename);
 
 	Status putBytesInFile(const std::string& filename, const std::string& content);
 };
