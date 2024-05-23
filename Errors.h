@@ -14,8 +14,7 @@ typedef enum Error {
     HIDDEN_FILE_DELETION_ERROR,
     
     HIDER_PIPE_ERROR,
-    HIDER_PIPE_ERROR = 8,
-    HIDER_FORK_ERROR = 9,
+    HIDER_FORK_ERROR,
 
 } Error;
 
