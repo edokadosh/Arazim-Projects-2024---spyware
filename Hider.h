@@ -1,17 +1,14 @@
 #include "HiddenFileHandler.h"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <filesystem>
+
+#ifndef HIDER_H
+#define HIDER_H
+
 class Hider
 {
 private:
 	HiddenFileHandler handel;
 public:
 	Hider();
-	int manage_files(int prosses, std::string nameFlie);
+	Error manage_files(int argc, char* argv[]);
 };
-
+#endif
