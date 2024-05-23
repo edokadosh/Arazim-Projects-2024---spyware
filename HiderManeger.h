@@ -9,9 +9,9 @@ class HiderManeger
 private:
     std::string hiderPath;
     int mthpipe[2]; // pipe from manager -> hider
-    bool redirectMtH;
+    bool MtHredirect;
     int htmpipe[2]; // pipe from hider -> manager
-    bool redirectHtM;
+    bool HtMredirect;
 
     Error activateHider(FunCode fncode, std::string param);
     Error openPipes(int p[]);

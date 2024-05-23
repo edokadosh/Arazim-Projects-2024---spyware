@@ -3,8 +3,8 @@
 HiderManeger::HiderManeger(std::string path)
 {
     hiderPath = path;
-    redirectRead = false;
-    redirectWrite = false;
+    HtMredirect = false;
+    MtHredirect = false;
 }
 
 Error HiderManeger::activateHider(FunCode fncode, std::string param)
@@ -26,10 +26,10 @@ Error HiderManeger::openPipes(int p[])
 Error HiderManeger::hiddenUpload(std::string param)
 {
     openPipes(mthpipe);
-    redirectMtH = true;
+    MtHredirect = true;
     activateHider(FunCode::HIDDEN_UPLOAD, param);
     close(mthpipe[0]);
-    redirectMtH = false;
+    MtHredirect = false;
     // TODO
     // loop for send and -> pipe file
     close(mthpipe[1]);
@@ -48,18 +48,18 @@ Error HiderManeger::hiddenRun(std::string param)
 Error HiderManeger::hiddenList()
 {
     openPipes(htmpipe);
-    redirectHtM = true;
+    HtMredirect = true;
     Error er = activateHider(FUNCODES_ENUM_H::HIDDEN_RUN, "");
     if (er) {
         return er;
     }
-    redirectHtM = false;
+    HtMredirect = false;
     close(htmpipe[1]);
     // TODO
     // loop for receiving file pipe -> server
     
     bool cont = true;
-    
+
     
     close(htmpipe[0]);
 }
