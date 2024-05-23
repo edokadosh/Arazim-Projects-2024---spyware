@@ -11,7 +11,7 @@ class Hider
 private:
 	HiddenFileHandler handel;
 public:
-	Hider(std::string nameDirectory);
-	int manage_files();
+	Hider();
+	int manage_files(int prosses, std::string nameFlie);
 };
 

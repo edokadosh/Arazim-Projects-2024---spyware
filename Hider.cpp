@@ -1,15 +1,10 @@
 #include "Hider.h"
-Hider::Hider(std::string nameDirectory) : handel(HiddenFileHandler(nameDirectory)) {}
-int Hider::manage_files() {
-	int prosses=-1;
-	std::string nameFlie;
+Hider::Hider() : handel(HiddenFileHandler()) {}
+int Hider::manage_files(int prosses, std::string nameFlie) {
 	std::string line;
-	std::cin >> prosses;
 	switch (prosses)
 	{
 	case 0:
-		std::cin >> nameFlie;
-		
 		while (std::getline(std::cin, line))
 		{
 			std::cout << line << std::endl;
@@ -17,11 +12,9 @@ int Hider::manage_files() {
 		}
 		break;
 	case 1:
-		std::cin >> nameFlie;
 		handel.removeFile(nameFlie);
 		break;
 	case 2:
-		std::cin >> nameFlie;
 		handel.runFile(nameFlie);
 		break;
 	case 3:
@@ -34,9 +27,9 @@ int Hider::manage_files() {
 	return 0;
 }
 int main(int argc, char** argv) {
-	Hider hider = Hider(std::string(argv[0]));
+	Hider hider = Hider();
 	while (true) {
-		hider.manage_files();
+		hider.manage_files((int)argv[0],(std::string)argv[1]);
 	}
-
+	return 0;
 }
