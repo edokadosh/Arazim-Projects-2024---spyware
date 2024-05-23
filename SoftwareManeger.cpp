@@ -14,7 +14,7 @@ SoftwareManeger::SoftwareManeger(void) {};
 SoftwareManeger::~SoftwareManeger(void) {};
 
 
-Error SoftwareManeger::writeFile(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE])
+Error SoftwareManeger::chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE])
 {
     std::string filePath = SOFTWARE_DIR_PATH  + fileName;
     std::ofstream outFile;
@@ -47,8 +47,4 @@ Error SoftwareManeger::deleteFile(const std::string& fileName)
         return FILE_DELETION_ERROR;
     }
     return SUCCSESS;
-}
-
-Error SoftwareManeger::runFile() {
-    return NOT_IMPLEMENTED;
 }

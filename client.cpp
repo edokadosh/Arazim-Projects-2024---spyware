@@ -51,14 +51,16 @@ void Client::connectServer()
     }
 }
 
-void Client::recvData(char buffer[])
+int Client::recvData(char buffer[])
 {
     // Receive data from the server
-    if (recv(clientSocket, buffer, BUFFER_SIZE, 0) == -1) {
+    int bytes_received = 0;
+    if (bytes_received = recv(clientSocket, buffer, BUFFER_SIZE, 0) == -1) {
         std::cerr << "Error: Receive failed" << std::endl;
         close(clientSocket);
         exit(1);
     }
+    return bytes_received;
 }
 
 void Client::sendData(const char* msg)

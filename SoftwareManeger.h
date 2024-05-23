@@ -22,11 +22,9 @@ public:
     ~SoftwareManeger();
 
     
-    Error writeFile(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE]);
+    Error chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE]);
 
 
 
     Error deleteFile(const std::string& fileName);
-    
-    Error runFile();
 };
