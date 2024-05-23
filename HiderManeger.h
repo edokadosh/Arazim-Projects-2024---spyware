@@ -12,6 +12,7 @@ private:
     int htmpipe[2]; // pipe from hider -> manager
 
     Error activateHider(FunCode fncode, std::string param);
+    void HiderManeger::activateHiderChild(FunCode fncode, std::string param) _GLIBCXX_NORETURN;
     Error openPipes(int p[]);
 
 public:
