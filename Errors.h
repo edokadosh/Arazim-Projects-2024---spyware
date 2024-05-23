@@ -10,6 +10,7 @@ typedef enum Error {
     FILE_DELETION_ERROR = 7,
 
     HIDER_PIPE_ERROR = 8,
+    HIDER_FORK_ERROR = 9,
 
 } Error;
 
