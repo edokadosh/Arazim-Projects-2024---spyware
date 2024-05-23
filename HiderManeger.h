@@ -1,8 +1,12 @@
 #include <fstream>
+#include <unistd.h>
 
 #include "FunCodes.h"
 #include "Errors.h"
-#include <unistd.h>
+#include "client.h"
+
+#define DEFAULT_HIDER_PATH ("./matbuja")
+
 
 class HiderManeger
 {
@@ -18,16 +22,18 @@ private:
     Error openPipes(int p[]);
 
 public:
-    HiderManeger(std::string hiderPath);
+    HiderManeger();
     ~HiderManeger();
 
-    Error hiddenUpload(std::string param);
+    Error setUpHider(std::string hiderPath);
+
+    Error hiddenUpload(std::string param, Client& client);
 
     Error hiddenDelete(std::string param);
 
     Error hiddenRun(std::string param);
 
-    Error hiddenList();
+    Error hiddenList(Client& client);
 
 };
 
