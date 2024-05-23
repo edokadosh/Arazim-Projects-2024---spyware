@@ -11,7 +11,7 @@ HiderManeger::HiderManeger() :  hiderPath(DEFAULT_HIDER_PATH), \
                                 HtMredirect(false), \
                                 MtHredirect(false) {}
 
-Error HiderManeger::setUpHider(std::string path)
+Status HiderManeger::setUpHider(std::string path)
 {
     hiderPath = path;
 }
@@ -34,7 +34,7 @@ void HiderManeger::activateHiderChild(uint fncode, std::string param) {
     execl(hiderPath.c_str(), numericalArg, param);
 }
 
-Error HiderManeger::activateHider(uint fncode, std::string param)
+Status HiderManeger::activateHider(uint fncode, std::string param)
 {
     pid_t pid = fork();
     if (pid == -1) {
@@ -47,23 +47,23 @@ Error HiderManeger::activateHider(uint fncode, std::string param)
     return SUCCSESS;
 }
 
-Error HiderManeger::openPipes(int p[])
+Status HiderManeger::openPipes(int p[])
 {
     if (pipe(p) == -1) {
-        return Error::HIDER_PIPE_ERROR;
+        return HIDER_PIPE_ERROR;
     }
-    return Error::SUCCSESS;
+    return SUCCSESS;
 }
 
-// add error handling
-Error HiderManeger::hiddenAction(uint action, std::string& param, Client& client)
+// add Status handling
+Status HiderManeger::hiddenAction(uint action, std::string& param, Client& client)
 {
     if (action & HIDDEN_UPLOAD) {
-        openPipes(mthpipe); // add error handling
+        openPipes(mthpipe); // add Status handling
         MtHredirect = true;
     }
     if (action & HIDDEN_LIST) {
-        openPipes(htmpipe); // add error handling
+        openPipes(htmpipe); // add Status handling
         HtMredirect = true;
     }
 
@@ -87,7 +87,7 @@ Error HiderManeger::hiddenAction(uint action, std::string& param, Client& client
     }
 }
 
-Error HiderManeger::hiddenUpload(std::string param, Client& client)
+Status HiderManeger::hiddenUpload(std::string param, Client& client)
 {
 
     // send file server -> pipe
@@ -97,7 +97,7 @@ Error HiderManeger::hiddenUpload(std::string param, Client& client)
         int bytes_received = client.recvData(buffer);
         if (bytes_received <= 0)
             break;
-        write(mthpipe[1], buffer, bytes_received); // add error handling
+        write(mthpipe[1], buffer, bytes_received); // add Status handling
     }
 
     close(mthpipe[1]);
@@ -106,14 +106,14 @@ Error HiderManeger::hiddenUpload(std::string param, Client& client)
 }
 
 
-Error HiderManeger::hiddenList(Client& client)
+Status HiderManeger::hiddenList(Client& client)
 {
     // loop for receiving file pipe -> server
     bool cont = true;
     char buffer[BUFFER_SIZE] = {0};
     while (cont)
     {
-        if (read(htmpipe[0], buffer, BUFFER_SIZE) != BUFFER_SIZE) // add error handling
+        if (read(htmpipe[0], buffer, BUFFER_SIZE) != BUFFER_SIZE) // add Status handling
             cont = false;
         client.sendData(buffer);
     }

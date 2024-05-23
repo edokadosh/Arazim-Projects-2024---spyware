@@ -1,49 +1,47 @@
 #include "Hider.h"
 
 #include "Errors.h"
-#include "FunCodes.h"
+#include "HiderCodes.h"
 
 Hider::Hider() : handel(HiddenFileHandler()) {}
 
-Error Hider::manage_files(int argc, char* argv[])
+uint Hider::manage_files(int argc, char* argv[])
 {
 	std::string line;
 	if (argc < 2) {
 		return HIDER_NO_ARGUMENTS_ERROR;
 	}
-	FunCode fncode = (FunCode)atoi(argv[1]);
+	uint fncode = atoi(argv[1]);
 	std::string stringParam = nullptr;
 
 	if (argc >= 3) {
 		std::string stringParam(argv[2]);
 	}
-	
-	switch (fncode)
+	// TODO better Status handling
+	Status res_upload = SUCCSESS;
+	Status res_run = SUCCSESS;
+	Status res_delete = SUCCSESS;
+
+	if (fncode & HIDDEN_UPLOAD)
 	{
-	case HIDDEN_UPLOAD:
-		while (std::getline(std::cin, line)) // TODO change from getting one line at a time to one chunk at a time
+		while (std::getline(std::cin, line) && res_upload == SUCCSESS) // TODO change from getting one line at a time to one chunk at a time
 		{
-			handel.putBytesInFile(stringParam, line);
+			res_upload = handel.putBytesInFile(stringParam, line);
 		}
-		break;
-
-	case HIDDEN_DELETE:
-		handel.removeFile(stringParam);
-		break;
-
-	case HIDDEN_RUN:
-		handel.runFile(stringParam);
-		break;
-
-	case HIDDEN_LIST:
-		handel.listFiles();
-		break;
-
-	default:
-		return INVALID_FUNCODE_ERROR;
-		break;
 	}
-	return SUCCSESS;
+	if ((fncode & HIDDEN_RUN) && res_upload == SUCCSESS) {
+		res_run = handel.runFile(stringParam);
+	}
+
+	if ((fncode & HIDDEN_DELETE) && res_upload == SUCCSESS) {
+		res_delete = handel.runFile(stringParam);
+	}
+
+	if (fncode & HIDDEN_LIST) {
+		handel.listFiles();
+	}
+
+	return res_upload + (res_run << STATUS_SHIFT_AMOUT) + (res_delete << (2 * STATUS_SHIFT_AMOUT));
 }
 
 int main(int argc, char** argv) {

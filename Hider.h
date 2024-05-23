@@ -9,6 +9,6 @@ private:
 	HiddenFileHandler handel;
 public:
 	Hider();
-	Error manage_files(int argc, char* argv[]);
+	uint manage_files(int argc, char* argv[]);
 };
 #endif

@@ -31,7 +31,7 @@ void Client::createSocket()
     // Create a socket
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == -1) {
-        std::cerr << "Error: Could not create socket" << std::endl;
+        std::cerr << "Error: Could not create socket" << std::endl; // TODO remove this
         exit(1);
     }
 }
@@ -45,7 +45,7 @@ void Client::connectServer()
 
     // Connect to the server
     if (connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
-        std::cerr << "Error: Connection failed" << std::endl;
+        std::cerr << "Error: Connection failed" << std::endl; // TODO remove this
         close(clientSocket);
         exit(1);
     }
@@ -56,7 +56,7 @@ int Client::recvData(char buffer[])
     // Receive data from the server
     int bytes_received = 0;
     if (bytes_received = recv(clientSocket, buffer, BUFFER_SIZE, 0) == -1) {
-        std::cerr << "Error: Receive failed" << std::endl;
+        std::cerr << "Error: Receive failed" << std::endl; // TODO remove this
         close(clientSocket);
         exit(1);
     }
@@ -67,7 +67,7 @@ void Client::sendData(const char* msg)
 {
     // Send data to the server
     if (send(clientSocket, msg, strlen(msg), 0) == -1) {
-        std::cerr << "Error: Send failed" << std::endl;
+        std::cerr << "Error: Send failed" << std::endl; // TODO remove this
         close(clientSocket);
         return exit(1);
     }
@@ -84,7 +84,7 @@ void Client::recvFile()
      // Open the file for writing
     std::ofstream file("Matbuja.jpg", std::ios::binary);
     if (!file) {
-        std::cerr << "Error: Unable to create file" << std::endl;
+        std::cerr << "Error: Unable to create file" << std::endl; // TODO remove this
         close(clientSocket);
         exit(1);
     }

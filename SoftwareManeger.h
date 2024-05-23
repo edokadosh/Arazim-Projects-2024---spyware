@@ -25,11 +25,11 @@ public:
     ~SoftwareManeger();
 
     
-    Error chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE]);
+    Status chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE]);
 
 
 
-    Error deleteFile(const std::string& fileName);
+    Status deleteFile(const std::string& fileName);
 };
 
 #endif

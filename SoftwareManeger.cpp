@@ -14,7 +14,7 @@ SoftwareManeger::SoftwareManeger(void) {};
 SoftwareManeger::~SoftwareManeger(void) {};
 
 
-Error SoftwareManeger::chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE])
+Status SoftwareManeger::chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE])
 {
     std::string filePath = SOFTWARE_DIR_PATH  + fileName;
     std::ofstream outFile;
@@ -40,7 +40,7 @@ Error SoftwareManeger::chunkWrite(const std::string& fileName, bool isAppend, co
 }
 
 
-Error SoftwareManeger::deleteFile(const std::string& fileName)
+Status SoftwareManeger::deleteFile(const std::string& fileName)
 {
     std::string filePath = SOFTWARE_DIR_PATH  + fileName;
     if (std::remove(filePath.c_str()) != 0) {
