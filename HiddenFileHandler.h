@@ -19,11 +19,11 @@ public:
 
 	void listFiles();
 
-	int removeFile(std::string filename);
+	int removeFile(const std::string& filename);
 
-	int runFile(std::string filenam);
+	int runFile(const std::string& filename);
 
-	int putBytesInFile(std::string filename, const std::string& content);
+	int putBytesInFile(const std::string& filename, const std::string& content);
 };
 
 #endif
