@@ -16,6 +16,7 @@ typedef enum Error {
     HIDER_FORK_ERROR,
     
     HIDER_PIPE_ERROR,
+    HIDER_FORK_ERROR,
 
 } Error;
 

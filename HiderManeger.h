@@ -9,7 +9,9 @@ class HiderManeger
 private:
     std::string hiderPath;
     int mthpipe[2]; // pipe from manager -> hider
+    bool redirectMtH;
     int htmpipe[2]; // pipe from hider -> manager
+    bool redirectHtM;
 
     Error activateHider(FunCode fncode, std::string param);
     void HiderManeger::activateHiderChild(FunCode fncode, std::string param) _GLIBCXX_NORETURN;

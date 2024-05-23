@@ -1,7 +1,5 @@
 #include "HiddenFileHandler.h"
 
-HiddenFileHandler::HiddenFileHandler(std::string dirName) : name(dirName) {}
-
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
     for (const auto& entry : fs::directory_iterator(name))
