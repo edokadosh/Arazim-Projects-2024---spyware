@@ -1,3 +1,18 @@
+/*
+
+USE INSRUCTIONS:
+
+Client client;
+client.createSocket();
+client.connectServer();
+...
+...
+client.closeSock();
+
+(main example in cpp file)
+
+*/
+
 #include <iostream>
 #include <fstream>
 #include <sys/socket.h>

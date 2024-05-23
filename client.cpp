@@ -1,30 +1,30 @@
 #include "client.h"
 
-int main() {
-    Client client;
-    client.createSocket();
+// int main() {
+//     Client client;
+//     client.createSocket();
 
-    client.connectServer();
+//     client.connectServer();
 
-    char buffer[BUFFER_SIZE] = {0};
-    //client.recvData(buffer);
+//     char buffer[BUFFER_SIZE] = {0};
+//     //client.recvData(buffer);
     
-    Message msg;
-    client.recvCommand(msg);
+//     Message msg;
+//     client.recvCommand(msg);
 
-    std::cout << "Server response: " << msg.fnccode() 
-        << " " << msg.param1() << " " << msg.param2() << " " << msg.param3() << std::endl;
+//     std::cout << "Server response: " << msg.fnccode() 
+//         << " " << msg.param1() << " " << msg.param2() << " " << msg.param3() << std::endl;
     
-    client.sendCommand(msg);
+//     client.sendCommand(msg);
 
-    std::cout << "Trying to send file\n";
-    client.sendFile();
-    std::cout << "Try me\n";
+//     std::cout << "Trying to send file\n";
+//     client.sendFile();
+//     std::cout << "Try me\n";
 
-    client.closeSock();
+//     client.closeSock();
 
-    return 0;
-}
+//     return 0;
+// }
 
 void Client::createSocket()
 {
