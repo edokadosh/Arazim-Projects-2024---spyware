@@ -1,6 +1,4 @@
-#include "HiddenHiddenFileHandler.h"
-
-HiddenFileHandler::HiddenFileHandler(std::string dirName) : name(dirName) {}
+#include "HiddenFileHandler.h"
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
