@@ -3,6 +3,9 @@
 #include "Errors.h"
 
 
+#ifndef SOFTWARE_MANEGER_H
+#define SOFTWARE_MANEGER_H
+
 #define CHUNK_SIZE (1024)
 
 #define FILES_CAPCITY (50)
@@ -28,3 +31,5 @@ public:
 
     Error deleteFile(const std::string& fileName);
 };
+
+#endif

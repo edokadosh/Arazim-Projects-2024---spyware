@@ -5,6 +5,9 @@
 #include "Errors.h"
 #include "client.h"
 
+#ifndef HIDER_MANEGER_H
+#define HIDER_MANEGER_H
+
 #define DEFAULT_HIDER_PATH ("./matbuja")
 
 
@@ -37,3 +40,4 @@ public:
 
 };
 
+#endif

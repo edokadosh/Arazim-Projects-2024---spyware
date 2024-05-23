@@ -5,7 +5,11 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
+
 #include "Message.pb.h"
+
+#ifndef MANEGER_CLIENT_H
+#define MANEGER_CLIENT_H
 
 #define BUFFER_SIZE 1024
 #define PORT 65432
@@ -27,3 +31,4 @@ class Client
         void recvCommand(Message& msg);
         void sendCommand(Message& msg);
 };
+#endif

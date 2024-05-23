@@ -1,3 +1,4 @@
+
 #ifndef ERRORS_ENUM_H
 #define ERRORS_ENUM_H
 
