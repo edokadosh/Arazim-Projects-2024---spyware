@@ -1,3 +1,17 @@
+/*
+
+HIDER USE INSTRUCTIONS:
+
+HiderManeger hiderManager = HiderManeger();
+WRITE_FILE
+HIDER_SETUP
+HIDER_UPLOAD
+...
+...
+
+*/
+
+
 #include <fstream>
 #include <unistd.h>
 
