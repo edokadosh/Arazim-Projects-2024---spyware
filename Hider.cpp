@@ -1,35 +1,52 @@
 #include "Hider.h"
+
+#include "Errors.h"
+#include "FunCodes.h"
+
 Hider::Hider() : handel(HiddenFileHandler()) {}
-int Hider::manage_files(int prosses, std::string nameFlie) {
+
+Error Hider::manage_files(int argc, char* argv[])
+{
 	std::string line;
-	switch (prosses)
+	if (argc < 2) {
+		return HIDER_NO_ARGUMENTS_ERROR;
+	}
+	FunCode fncode = (FunCode)atoi(argv[1]);
+	std::string stringParam = nullptr;
+
+	if (argc >= 3) {
+		std::string stringParam(argv[2]);
+	}
+	
+	switch (fncode)
 	{
-	case 0:
-		while (std::getline(std::cin, line))
+	case HIDDEN_UPLOAD:
+		while (std::getline(std::cin, line)) // TODO change from getting one line at a time to one chunk at a time
 		{
-			std::cout << line << std::endl;
-			handel.putBytesInFile(nameFlie, line);
+			handel.putBytesInFile(stringParam, line);
 		}
 		break;
-	case 1:
-		handel.removeFile(nameFlie);
+
+	case HIDDEN_DELETE:
+		handel.removeFile(stringParam);
 		break;
-	case 2:
-		handel.runFile(nameFlie);
+
+	case HIDDEN_RUN:
+		handel.runFile(stringParam);
 		break;
-	case 3:
+
+	case HIDDEN_LIST:
 		handel.listFiles();
 		break;
+
 	default:
-		return 1;
+		return INVALID_FUNCODE_ERROR;
 		break;
 	}
-	return 0;
+	return SUCCSESS;
 }
+
 int main(int argc, char** argv) {
-	Hider hider = Hider();
-	while (true) {
-		hider.manage_files((int)argv[0],(std::string)argv[1]);
-	}
-	return 0;
+	Hider hider = Hider();	
+	return hider.manage_files(argc, argv);
 }

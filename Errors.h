@@ -2,6 +2,7 @@
 #define ERRORS_ENUM_H
 
 typedef enum Error {
+    INVALID_FUNCODE_ERROR = -1,
     SUCCSESS = 0,
 
 
@@ -13,10 +14,10 @@ typedef enum Error {
     HIDDEN_FILE_NOT_OPEN_ERROR,
     HIDDEN_FILE_DELETION_ERROR,
 
-    HIDER_FORK_ERROR,
-    
+    HIDER_FORK_ERROR,    
     HIDER_PIPE_ERROR,
     HIDER_FORK_ERROR,
+    HIDER_NO_ARGUMENTS_ERROR,
 
 } Error;
 
