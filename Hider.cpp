@@ -1,5 +1,5 @@
 #include "Hider.h"
-Hider::Hider(std::string nameDirectory) : handel(FileHandler(nameDirectory)) {}
+Hider::Hider(std::string nameDirectory) : handel(HiddenFileHandler(nameDirectory)) {}
 int Hider::manage_files() {
 	int prosses=-1;
 	std::string nameFlie;

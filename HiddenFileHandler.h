@@ -8,13 +8,13 @@
 
 namespace fs = std::filesystem;
 
-class FileHandler
+class HiddenFileHandler
 {
 private:
 	std::string name;
 public:
 
-	FileHandler(std::string dirName);
+	HiddenFileHandler(std::string dirName);
 
 	void listFiles();
 

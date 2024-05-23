@@ -1,21 +1,21 @@
-#include "FileHandler.h"
+#include "HiddenHiddenFileHandler.h"
 
-FileHandler::FileHandler(std::string dirName) : name(dirName) {}
+HiddenFileHandler::HiddenFileHandler(std::string dirName) : name(dirName) {}
 
 // Method to list the files in the directory
-void FileHandler::listFiles() {
+void HiddenFileHandler::listFiles() {
     for (const auto& entry : fs::directory_iterator(name))
         std::cout << entry.path() << std::endl;
 }
 
-int FileHandler::runFile(std::string filename) {
+int HiddenFileHandler::runFile(std::string filename) {
     std::string filePath = name + "/" + filename;
     int exit_code = std::system(filePath.c_str());
     return 0;
 }
 
 // Method to remove a file from the directory
-int FileHandler::removeFile(std::string filename) {
+int HiddenFileHandler::removeFile(std::string filename) {
     std::string filePath = name + "/" + filename;
     if (std::remove(filePath.c_str()) != 0) {
         std::cerr << "Error deleting file: " << filename << std::endl;
@@ -27,7 +27,7 @@ int FileHandler::removeFile(std::string filename) {
     }
 }
 
-int FileHandler::putBytesInFile(std::string filename, const std::string& content) {
+int HiddenFileHandler::putBytesInFile(std::string filename, const std::string& content) {
     std::string filePath = name + "/" + filename;
     std::ofstream outFile;
     if (std::filesystem::exists(filePath)) {

@@ -1,4 +1,4 @@
-#include "FileHandler.h"
+#include "HiddenFileHandler.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,7 +9,7 @@
 class Hider
 {
 private:
-	FileHandler handel;
+	HiddenFileHandler handel;
 public:
 	Hider(std::string nameDirectory);
 	int manage_files();
