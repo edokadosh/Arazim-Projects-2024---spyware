@@ -7,14 +7,14 @@ void HiddenFileHandler::listFiles() {
         std::cout << entry.path() << std::endl;
 }
 
-Status HiddenFileHandler::runFile(std::string filename) {
+Status HiddenFileHandler::runFile(const std::string& filename) {
     std::string filePath = name + "/" + filename;
     int exit_code = std::system(filePath.c_str());
     return SUCCSESS;
 }
 
 // Method to remove a file from the directory
-Status HiddenFileHandler::removeFile(std::string filename) {
+Status HiddenFileHandler::removeFile(const std::string& filename) {
     std::string filePath = name + "/" + filename;
     if (std::remove(filePath.c_str()) != 0) {
         return FILE_DELETION_ERROR;
@@ -22,7 +22,7 @@ Status HiddenFileHandler::removeFile(std::string filename) {
     return SUCCSESS;
 }
 
-Status HiddenFileHandler::putBytesInFile(std::string filename, const std::string& content) {
+Status HiddenFileHandler::putBytesInFile(const std::string& filename, const std::string& content) {
     std::string filePath = name + "/" + filename;
     std::ofstream outFile;
     if (std::filesystem::exists(filePath)) {
