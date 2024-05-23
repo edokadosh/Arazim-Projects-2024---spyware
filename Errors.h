@@ -9,6 +9,7 @@ typedef enum Error {
     FILE_NOT_OPEN_ERROR = 6,
     FILE_DELETION_ERROR = 7,
 
+    HIDER_PIPE_ERROR = 8,
 
 } Error;
 
