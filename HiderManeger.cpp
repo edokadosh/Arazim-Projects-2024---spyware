@@ -1,3 +1,7 @@
+#include <iostream>
+#include <unistd.h>
+#include <sys/wait.h>
+
 #include "HiderManeger.h"
 
 HiderManeger::HiderManeger(std::string path)
@@ -7,8 +11,24 @@ HiderManeger::HiderManeger(std::string path)
     MtHredirect = false;
 }
 
+void HiderManeger::activateHiderChild(FunCode fncode, std::string param) {
+    char numericalArg[3];
+    sprintf(numericalArg, "%d", fncode);
+    execl(hiderPath.c_str(), numericalArg, param);
+}
+
 Error HiderManeger::activateHider(FunCode fncode, std::string param)
 {
+    pid_t pid = fork();
+    if (pid == -1) {
+        return HIDER_FORK_ERROR;
+    }
+    if (pid == 0) { // child work
+        activateHiderChild(fncode, param);
+    }
+    
+    // parent work
+
     // execl hider as child
     // if pipes are open use dup
     // command line argument - funcode
