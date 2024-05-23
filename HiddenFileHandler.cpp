@@ -1,4 +1,4 @@
-#include "HiddenHiddenFileHandler.h"
+#include "HiddenFileHandler.h"
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
