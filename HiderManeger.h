@@ -34,9 +34,15 @@ private:
     int htmpipe[2]; // pipe from hider -> manager
     bool HtMredirect;
 
-    Error activateHider(FunCode fncode, std::string param);
-    void HiderManeger::activateHiderChild(FunCode fncode, std::string param) _GLIBCXX_NORETURN;
+    Error activateHider(uint fncode, std::string param);
+
+    void HiderManeger::activateHiderChild(uint fncode, std::string param) _GLIBCXX_NORETURN;
+    
     Error openPipes(int p[]);
+
+    Error hiddenUpload(std::string param, Client& client);
+
+    Error hiddenList(Client& client);
 
 public:
     HiderManeger();
@@ -44,13 +50,9 @@ public:
 
     Error setUpHider(std::string hiderPath);
 
-    Error hiddenUpload(std::string param, Client& client);
+    Error hiddenAction(uint action, std::string& param, Client& client);
 
-    Error hiddenDelete(std::string param);
 
-    Error hiddenRun(std::string param);
-
-    Error hiddenList(Client& client);
 
 };
 

