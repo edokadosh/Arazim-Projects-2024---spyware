@@ -1,6 +1,6 @@
 
-#ifndef ERRORS_ENUM_H
-#define ERRORS_ENUM_H
+#ifndef STATUS_ENUM_H
+#define STATUS_ENUM_H
 
 typedef enum Status {
     SUCCSESS = 0,

@@ -1,5 +1,5 @@
 #include "HiddenFileHandler.h"
-#include "Errors.h"
+#include "Status.h"
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {

@@ -16,7 +16,7 @@ HIDER_UPLOAD
 #include <unistd.h>
 
 #include "FunCodes.h"
-#include "Errors.h"
+#include "Status.h"
 #include "client.h"
 
 #ifndef HIDER_MANEGER_H
