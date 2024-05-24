@@ -3,9 +3,11 @@
 #include <fstream>
 #include <cstdio>
 
-#include "Errors.h"
+// #define TESTING_MODE
 
+#include "Errors.h"
 #include "SoftwareManeger.h"
+#include "testing.h"
 
 #define SOFTWARE_DIR_PATH ("./")
 
@@ -48,3 +50,28 @@ Status SoftwareManeger::deleteFile(const std::string& fileName)
     }
     return SUCCSESS;
 }
+
+#ifdef TESTING_MODE
+
+void test_chunkWrite(SoftwareManeger swm)
+{
+    std::string fileName = "tempChunkWriteTest.txt";
+    std::string filePath = SOFTWARE_DIR_PATH + fileName;
+    IS_TRUE(swm.chunkWrite(fileName, false, std::string(CHUNK_SIZE, 'A').c_str()) == SUCCSESS);
+    IS_TRUE(swm.chunkWrite(fileName, true, std::string(CHUNK_SIZE, 'B').c_str()) == SUCCSESS);
+    
+    
+    std::ifstream file(filePath, std::ios::binary);
+    std::string fileContent;
+    getline(file, fileContent);
+    IS_TRUE(fileContent == std::string(CHUNK_SIZE, 'A') + std::string(CHUNK_SIZE, 'B'));
+}
+
+int main()
+{
+    SoftwareManeger swm = SoftwareManeger();
+    test_chunkWrite(swm);
+    return 0;
+}
+#endif
+
