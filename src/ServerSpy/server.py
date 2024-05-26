@@ -32,20 +32,14 @@ class Server:
 
 
     def handleConnection(self) -> None:
-        # Send a response back to the client
-        response = input("msg: ")
-        # self.client_socket.sendall(response.encode())
-        self.sendCommand(5, "HA", "ZI", "LU")
+        print(self.recvData())
 
+        self.sendCommand(3, "ls")
         msg = self.recvCommand()
 
         # Print received data
         print(f"Received data: {msg.fnccode},{msg.param1},{msg.param2},{msg.param3}")
-
-        print("Trying to receive a matbuja:")
-        self.recvFile("matbuj.jpg")
-        print("Done (Hopefully)")
-
+        
 
     def beServer(self):
         # Create a TCP/IP socket
