@@ -37,15 +37,46 @@ void Client::createSocket()
     setTimeout(SOCK_TIMEOUT);
 }
 
+void Client::bindSocket()
+{
+    clientAddr.sin_family = AF_INET;
+    clientAddr.sin_port = htons(PORT); // Port number
+    clientAddr.sin_addr.s_addr = INADDR_ANY; 
+
+    if (bind(clientSocket, (struct sockaddr *) &clientAddr, sizeof(clientSocket)) == -1) {
+        std::cerr << "Error: Bind failed." << std::endl;
+        close(clientSocket);
+        exit(1);
+    }
+    if (listen(clientSocket, 5) == -1) {
+        std::cerr << "Error: Listen failed." << std::endl;
+        close(clientSocket);
+        exit(1);
+    }
+}
+
+int Client::acceptConnection()
+{
+    socklen_t client_addr_size = sizeof(clientAddr);
+    int server_socket = accept(clientSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &client_addr_size);
+    if (server_socket == -1) {
+        std::cerr << "Error: Accept failed." << std::endl;
+        close(clientSocket);
+        return 1;
+    }
+    return 0;
+}
+
+// might need to remove this
 void Client::connectServer()
 {
     // Server address
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(PORT); // Port number
-    serverAddr.sin_addr.s_addr = inet_addr(HOST); // IP address of the server
+    clientAddr.sin_family = AF_INET;
+    clientAddr.sin_port = htons(PORT); // Port number
+    clientAddr.sin_addr.s_addr = inet_addr(HOST); // IP address of the server
 
     // Connect to the server
-    if (connect(clientSocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1) {
+    if (connect(clientSocket, (struct sockaddr *)&clientAddr, sizeof(clientAddr)) == -1) {
         std::cerr << "Error: Connection failed" << std::endl; // TODO remove this
         close(clientSocket);
         exit(1);

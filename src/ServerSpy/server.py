@@ -1,5 +1,6 @@
 import socket
 import Message_pb2
+from contextlib import contextmanager
 
 # Define host and port
 HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
@@ -7,30 +8,43 @@ PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 BUFFER_SIZE = 1024
 
 class Server:
-    def sendFile(self, path: str) -> None:
+    
+    
+    def sendFile(self, conn: socket, path: str) -> None:
         with open(path, 'rb') as file:
             data = file.read(BUFFER_SIZE)
             while data:
-                self.client_socket.send(data)
+                conn.send(data)
                 data = file.read(BUFFER_SIZE)
 
 
-    def recvFile(self, path: str) -> None:
+    def recvFile(self, conn: socket, path: str) -> None:
         with open(path, 'wb') as file:
             while True:
-                data = self.client_socket.recv(BUFFER_SIZE)
+                data = conn.recv(BUFFER_SIZE)
                 if not data:
                     break
                 file.write(data)
 
-    def recvData(self) -> str:
+    def recvData(self, conn: socket) -> str:
         # Receive data from the client
-        data = self.client_socket.recv(BUFFER_SIZE)
+        data = conn.recv(BUFFER_SIZE)
         if not data:
             return
         return data
+    
+
+    @contextmanager
+    def serverConnection(host, port):
+        serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            serverSocket.connect((host, port))
+            yield serverSocket
+        finally:
+            serverSocket.close()
 
 
+    # TODO maybe delete this
     def handleConnection(self) -> None:
         cmd = "echo cyber > temp.txt"
         print(f"Sending command '{cmd}'")
@@ -39,8 +53,9 @@ class Server:
 
         # Print received data
         print(f"Received data: {msg.fnccode},{msg.param1},{msg.param2},{msg.param3}")
-        
-
+    
+    
+    # TODO maybe delete this
     def beServer(self):
         # Create a TCP/IP socket
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
@@ -56,7 +71,7 @@ class Server:
                 self.handleConnection()
 
 
-    def sendCommand(self, code: int, param1: str, param2="", param3="") -> None:
+    def sendCommand(self, conn: socket, code: int, param1: str, param2="", param3="") -> None:
         msgObj = Message_pb2.Message()
         msgObj.fnccode = code
         msgObj.param1 = param1
@@ -66,19 +81,10 @@ class Server:
             msgObj.param3 = param3
 
         print(msgObj.SerializeToString())
-        self.client_socket.sendall(msgObj.SerializeToString())
+        conn.sendall(msgObj.SerializeToString())
         print("Done")
 
-    def recvCommand(self) -> Message_pb2.Message:
+    def recvCommand(self, conn: socket) -> Message_pb2.Message:
         msg = Message_pb2.Message()
-        msg.ParseFromString(self.recvData())
+        msg.ParseFromString(self.recvData(conn))
         return msg
-
-
-def main() -> None:
-    serv = Server()
-    serv.beServer()
-
-
-if __name__ == "__main__":
-    main()

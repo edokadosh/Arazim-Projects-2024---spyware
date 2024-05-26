@@ -4,9 +4,9 @@
 
 typedef enum FunCode {
     WRITE_FILE = 1,
-    DELETE_FILE,
-    RUN_BASH,
-    HIDER_SETUP,
+    DELETE_FILE = 2,
+    RUN_BASH = 3,
+    HIDER_SETUP = 4,
 } FunCode;
 
 #endif

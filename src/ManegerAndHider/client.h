@@ -28,19 +28,21 @@ client.closeSock();
 
 #define BUFFER_SIZE 1024
 #define PORT 65432
-#define HOST "192.168.154.1"
+#define HOST "localhost"
 #define SOCK_TIMEOUT (5)
 
 class Client
 {
     private:
         int clientSocket;
-        struct sockaddr_in serverAddr;
+        struct sockaddr_in clientAddr;
 
         void setTimeout(int t);
 
     public:
         void createSocket();
+        void bindSocket();
+        int  acceptConnection();
         void connectServer();
         int  recvData(char buffer[]);
         void sendData(const char* msg);
