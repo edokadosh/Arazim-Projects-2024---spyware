@@ -9,13 +9,10 @@
 
 #define CHUNK_SIZE (1024)
 
-#define FILES_CAPCITY (50)
 
 
 class SoftwareManeger {
 
-private:
-    Status chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE]);
 
 public:
 
@@ -23,7 +20,7 @@ public:
 
     ~SoftwareManeger();    
 
-    Status fileWrite(const Client& client, std::string param);
+    Status fileWrite(Client& client, std::string param);
 
     Status deleteFile(const std::string& fileName);
 };

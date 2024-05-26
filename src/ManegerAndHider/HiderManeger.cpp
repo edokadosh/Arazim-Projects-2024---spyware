@@ -4,6 +4,7 @@
 
 #include "HiderManeger.h"
 #include "HiderCodes.h"
+#include "client.h"
 
 HiderManeger::HiderManeger() :  hiderPath(DEFAULT_HIDER_PATH), \
                                 mthpipe{-1, -1}, \
