@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 # Define host and port
 HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+PORT = 23456        # Port to listen on (non-privileged ports are > 1023)
 BUFFER_SIZE = 1024
 
 FUNCODES = {'WRITE_FILE': 1,

@@ -27,7 +27,7 @@ client.closeSock();
 #define MANEGER_CLIENT_H
 
 #define BUFFER_SIZE 1024
-#define PORT 65432
+#define PORT 23456
 #define HOST "localhost"
 #define SOCK_TIMEOUT (5)
 

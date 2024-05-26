@@ -1,3 +1,4 @@
+#include <cerrno>
 #include "client.h"
 
 // int main() {
@@ -43,8 +44,9 @@ void Client::bindSocket()
     clientAddr.sin_port = htons(PORT); // Port number
     clientAddr.sin_addr.s_addr = INADDR_ANY; 
 
-    if (bind(clientSocket, (struct sockaddr *) &clientAddr, sizeof(clientSocket)) == -1) {
+    if (bind(clientSocket, (struct sockaddr *) &clientAddr, sizeof(clientAddr)) == -1) {
         std::cerr << "Error: Bind failed." << std::endl;
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         exit(1);
     }

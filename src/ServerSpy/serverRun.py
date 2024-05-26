@@ -1,8 +1,8 @@
 
 from server import Server
 
-HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+HOST = '192.168.83.130'  # Standard loopback interface address (localhost)
+PORT = 23456        # Port to listen on (non-privileged ports are > 1023)
 
 FunCode: dict[str, int] = {
     "WRITE_FILE": 1,
