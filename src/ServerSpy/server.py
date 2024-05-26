@@ -32,7 +32,7 @@ class Server:
 
 
     def handleConnection(self) -> None:
-        cmd = "cowsay cyber"
+        cmd = "echo cyber > temp.txt"
         print(f"Sending command '{cmd}'")
         self.sendCommand(3, cmd)
         msg = self.recvCommand()
