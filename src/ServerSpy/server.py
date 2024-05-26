@@ -4,7 +4,7 @@ import Message_pb2
 # Define host and port
 HOST = '192.168.154.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
-BUFFER_SIZE = 4096
+BUFFER_SIZE = 1024
 
 class Server:
     def sendFile(self, path: str) -> None:
@@ -32,9 +32,9 @@ class Server:
 
 
     def handleConnection(self) -> None:
-        print(self.recvData())
-
-        self.sendCommand(3, "ls")
+        cmd = "cowsay cyber"
+        print(f"Sending command '{cmd}'")
+        self.sendCommand(3, cmd)
         msg = self.recvCommand()
 
         # Print received data
@@ -65,8 +65,10 @@ class Server:
         if (param3):
             msgObj.param3 = param3
 
+        print(msgObj.SerializeToString())
         self.client_socket.sendall(msgObj.SerializeToString())
-    
+        print("Done")
+
     def recvCommand(self) -> Message_pb2.Message:
         msg = Message_pb2.Message()
         msg.ParseFromString(self.recvData())
