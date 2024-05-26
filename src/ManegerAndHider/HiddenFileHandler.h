@@ -8,6 +8,8 @@
 
 #ifndef HIDDEN_FILE_HANDLER_H
 #define HIDDEN_FILE_HANDLER_H
+#include "Status.h"
+
 
 namespace fs = std::filesystem;
 

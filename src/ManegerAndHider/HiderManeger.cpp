@@ -6,14 +6,20 @@
 #include "HiderCodes.h"
 
 HiderManeger::HiderManeger() :  hiderPath(DEFAULT_HIDER_PATH), \
-                                htmpipe({-1, -1}), \
-                                mthpipe({-1, -1}), \
-                                HtMredirect(false), \
-                                MtHredirect(false) {}
+                                mthpipe{-1, -1}, \
+                                MtHredirect(false), \
+                                htmpipe{-1, -1}, \
+                                HtMredirect(false) {}
+
+
+HiderManeger::~HiderManeger() {
+    // cyber
+}
 
 Status HiderManeger::setUpHider(std::string path)
 {
     hiderPath = path;
+    return SUCCSESS;
 }
 
 void HiderManeger::activateHiderChild(uint fncode, std::string param) {
@@ -31,7 +37,7 @@ void HiderManeger::activateHiderChild(uint fncode, std::string param) {
         close(htmpipe[1]);
     }
     
-    execl(hiderPath.c_str(), numericalArg, param);
+    execl(hiderPath.c_str(), numericalArg, param, NULL);
 }
 
 Status HiderManeger::activateHider(uint fncode, std::string param)
@@ -85,11 +91,12 @@ Status HiderManeger::hiddenAction(uint action, std::string& param, Client& clien
     if (action & HIDDEN_LIST) {
         hiddenList(client);
     }
+    return SUCCSESS;
 }
 
 Status HiderManeger::hiddenUpload(std::string param, Client& client)
 {
-
+    std::cout << "UPLOADING " << param << std::endl;
     // send file server -> pipe
     char buffer[BUFFER_SIZE] = { 0 };
     while (true)

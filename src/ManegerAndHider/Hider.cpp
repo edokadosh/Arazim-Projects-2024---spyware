@@ -44,7 +44,9 @@ uint Hider::manage_files(int argc, char* argv[])
 	return res_upload + (res_run << STATUS_SHIFT_AMOUT) + (res_delete << (2 * STATUS_SHIFT_AMOUT));
 }
 
+/*
 int main(int argc, char** argv) {
 	Hider hider = Hider();	
 	return hider.manage_files(argc, argv);
 }
+*/

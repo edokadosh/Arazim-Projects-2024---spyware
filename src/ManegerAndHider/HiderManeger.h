@@ -36,7 +36,7 @@ private:
 
     Status activateHider(uint fncode, std::string param);
 
-    void HiderManeger::activateHiderChild(uint fncode, std::string param) _GLIBCXX_NORETURN;
+    void activateHiderChild(uint fncode, std::string param);
     
     Status openPipes(int p[]);
 

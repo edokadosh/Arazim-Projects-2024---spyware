@@ -7,20 +7,24 @@
 #include "HiderManeger.h"
 #include "HiderCodes.h"
 
+void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger);
 void testSoftwareManeger(void);
 
-int main(int argc, char * argv[]) {
+int main() {
     
     Client client;
     client.createSocket();
+    std::cout << "Created Socket\n";
+    client.connectServer();
+    std::cout << "Connected to server\n";
     SoftwareManeger swm = SoftwareManeger();
     HiderManeger hiderManager = HiderManeger();
-    
-    client.sendData("Connected");
 
-    while (true)
+    bool cont = true;
+    while (cont)
     {
         loopIter(client, swm, hiderManager);
+        cont = false;
     }
 
     return EXIT_SUCCESS;
@@ -37,7 +41,6 @@ void testSoftwareManeger() {
 
 Status fileWrite(Client& client, std::string param, SoftwareManeger& swm)
 {
-    bool cont = true;
     bool isAppend = false;
     char buffer[BUFFER_SIZE] = {0};
     Status res = SUCCSESS;
@@ -69,11 +72,14 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
 {
     // receive command
     Message msg;
-    Status res;
+    Status res = SUCCSESS;
+    std::cout << "Trying to receive command\n";
     client.recvCommand(msg);
+    std::cout << "Command received\n";
     uint fncode = msg.fnccode();
     std::string param = msg.param1();
 
+    std::cout << "Server: fncode-" << fncode << " param-" << param << std::endl;
     std::string response = "";
     switch (fncode)
     {
@@ -102,5 +108,6 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
     Message msgres;
     msgres.set_fnccode(res);
     msgres.set_param1(response);
+    std::cout << "Client: res-" << res << " response-\n" << response << std::endl;
     client.sendCommand(msgres);
 }

@@ -21,7 +21,7 @@ client.closeSock();
 #include <unistd.h>
 #include <cstring>
 
-#include "Message.pb.h"
+#include "../../Message.pb.h"
 
 #ifndef MANEGER_CLIENT_H
 #define MANEGER_CLIENT_H

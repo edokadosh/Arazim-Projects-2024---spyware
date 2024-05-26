@@ -55,7 +55,7 @@ int Client::recvData(char buffer[])
 {
     // Receive data from the server
     int bytes_received = 0;
-    if (bytes_received = recv(clientSocket, buffer, BUFFER_SIZE, 0) == -1) {
+    if ((bytes_received = recv(clientSocket, buffer, BUFFER_SIZE, 0)) == -1) {
         std::cerr << "Error: Receive failed" << std::endl; // TODO remove this
         close(clientSocket);
         exit(1);
@@ -126,13 +126,13 @@ void Client::recvCommand(Message& msg)
 {
     char buffer[BUFFER_SIZE];
     recvData(buffer);
+    std::cout << "Buffer is: " << buffer << std::endl;
     
     if (!msg.ParseFromArray(buffer, strlen(buffer))) {
         std::cerr << "Failed to parse received data" << std::endl;
         closeSock();
         exit(1);
     }
-    std::cout << "Maybe??\n";
 }
 
 void Client::sendCommand(Message& msg)

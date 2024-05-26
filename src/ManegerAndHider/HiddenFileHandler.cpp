@@ -1,5 +1,4 @@
 #include "HiddenFileHandler.h"
-#include "Status.h"
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
@@ -7,11 +6,13 @@ void HiddenFileHandler::listFiles() {
         std::cout << entry.path() << std::endl;
 }
 
+
 Status HiddenFileHandler::runFile(const std::string& filename) {
     std::string filePath = folderName + "/" + filename;
-    int exit_code = std::system(filePath.c_str()); // I think that this function will try to run a bash script and not a exeutable
+    std::system(filePath.c_str()); // I think that this function will try to run a bash script and not a exeutable
     return SUCCSESS;
 }
+
 
 // Method to remove a file from the directory
 Status HiddenFileHandler::removeFile(const std::string& filename) {
