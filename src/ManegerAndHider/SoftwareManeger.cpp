@@ -19,21 +19,26 @@ SoftwareManeger::~SoftwareManeger(void) {};
 
 
 
-Status SoftwareManeger::fileWrite(const Client& client, std::string fileName)
+Status SoftwareManeger::fileWrite(Client& client, std::string fileName)
 {
     char fileContent[BUFFER_SIZE] = { 0 };
     Status res = SUCCSESS;
     
+    std::cout << fileName << std::endl;
+
     std::string filePath = SOFTWARE_DIR_PATH  + fileName;
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
     
+    client.sendData("OK");
+
     if (!outFile) {
         return FILE_NOT_OPEN_ERROR;
     }
 
     while (client.recvData(fileContent) > 0 && res == SUCCSESS)
     {
+        std::cout << fileContent;
         outFile << fileContent;
         if (!outFile) {
             return FILE_WRITE_ERROR;

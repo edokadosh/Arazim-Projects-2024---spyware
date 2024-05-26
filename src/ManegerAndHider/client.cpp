@@ -52,7 +52,7 @@ void Client::connectServer()
     }
 }
 
-int Client::recvData(char buffer[]) const
+int Client::recvData(char buffer[]) 
 {
     // Receive data from the server
     int bytes_received = 0;
@@ -64,7 +64,7 @@ int Client::recvData(char buffer[]) const
     return bytes_received;
 }
 
-void Client::sendData(const char* msg)
+void Client::sendData(const char* msg) 
 {
     // Send data to the server
     if (send(clientSocket, msg, strlen(msg), 0) == -1) {
@@ -80,7 +80,7 @@ void Client::closeSock()
 }
 
 
-void Client::recvFile()
+void Client::recvFile() 
 {
      // Open the file for writing
     std::ofstream file("Matbuja.jpg", std::ios::binary);
@@ -123,11 +123,12 @@ void Client::sendFile()
     file.close();
 }
 
-void Client::recvCommand(Message& msg)
+void Client::recvCommand(Message& msg) 
 {
     char buffer[BUFFER_SIZE];
     int bytes_recv = recvData(buffer);
     
+    std::cout << bytes_recv << std::endl;
     if (!msg.ParseFromArray(buffer, bytes_recv)) {
         std::cerr << "Failed to parse received data" << std::endl;
         closeSock();
@@ -135,7 +136,7 @@ void Client::recvCommand(Message& msg)
     }
 }
 
-void Client::sendCommand(Message& msg)
+void Client::sendCommand(Message& msg) 
 {
     // Serialize the message
     std::string serialized_message;
