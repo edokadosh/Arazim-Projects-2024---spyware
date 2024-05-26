@@ -38,7 +38,7 @@ class Client
     public:
         void createSocket();
         void connectServer();
-        int recvData(char buffer[]);
+        int  recvData(char buffer[]) const;
         void sendData(const char* msg);
         void closeSock();
         void recvFile();

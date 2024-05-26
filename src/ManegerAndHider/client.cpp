@@ -51,7 +51,7 @@ void Client::connectServer()
     }
 }
 
-int Client::recvData(char buffer[])
+int Client::recvData(char buffer[]) const
 {
     // Receive data from the server
     int bytes_received = 0;

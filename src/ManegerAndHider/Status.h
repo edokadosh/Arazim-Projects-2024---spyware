@@ -10,6 +10,7 @@ typedef enum Status {
     FILE_WRITE_ERROR,
     FILE_NOT_OPEN_ERROR,
     FILE_DELETION_ERROR,
+    CHMOD_TO_EXE_ERROR,
 
     HIDDEN_FILE_WRITE_ERROR,
     HIDDEN_FILE_NOT_OPEN_ERROR,
@@ -18,6 +19,7 @@ typedef enum Status {
     HIDER_PIPE_ERROR,
     HIDER_FORK_ERROR,
     HIDER_NO_ARGUMENTS_ERROR,
+
 
 } Status;
 

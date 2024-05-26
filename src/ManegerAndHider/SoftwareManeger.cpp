@@ -2,12 +2,14 @@
 #include <string>
 #include <fstream>
 #include <cstdio>
+#include <sys/stat.h>
 
 // #define TESTING_MODE
 
 #include "Status.h"
 #include "SoftwareManeger.h"
 #include "testing.h"
+#include "client.h"
 
 #define SOFTWARE_DIR_PATH ("./")
 
@@ -16,28 +18,38 @@ SoftwareManeger::SoftwareManeger(void) {};
 SoftwareManeger::~SoftwareManeger(void) {};
 
 
-Status SoftwareManeger::chunkWrite(const std::string& fileName, bool isAppend, const char fileContent[CHUNK_SIZE])
+
+Status SoftwareManeger::fileWrite(const Client& client, std::string fileName)
 {
+    char fileContent[BUFFER_SIZE] = { 0 };
+    Status res = SUCCSESS;
+    
     std::string filePath = SOFTWARE_DIR_PATH  + fileName;
     std::ofstream outFile;
-    if (isAppend) {
-        outFile.open(filePath, std::ios_base::app);
-    }
-    else {
-        outFile.open(filePath); // open and overwrite file
-    }
-
+    outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
+    
     if (!outFile) {
         return FILE_NOT_OPEN_ERROR;
     }
 
-    outFile << fileContent;
-
-    if (!outFile) {
-        return FILE_WRITE_ERROR;
+    while (client.recvData(fileContent) > 0 && res == SUCCSESS)
+    {
+        outFile << fileContent;
+        if (!outFile) {
+            return FILE_WRITE_ERROR;
+        }
     }
+    if (res != SUCCSESS) {
+        return res;
+    }
+
     outFile.close();
 
+    if (chmod(fileName.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
+    {
+        std::cerr << "Failed to set executable permission." << std::endl;
+        return CHMOD_TO_EXE_ERROR;
+    }
     return SUCCSESS;
 }
 
