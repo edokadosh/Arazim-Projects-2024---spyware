@@ -34,6 +34,7 @@ void Client::createSocket()
         std::cerr << "Error: Could not create socket" << std::endl; // TODO remove this
         exit(1);
     }
+    setTimeout(SOCK_TIMEOUT);
 }
 
 void Client::connectServer()
@@ -125,10 +126,9 @@ void Client::sendFile()
 void Client::recvCommand(Message& msg)
 {
     char buffer[BUFFER_SIZE];
-    recvData(buffer);
-    std::cout << "Buffer is: " << buffer << std::endl;
+    int bytes_recv = recvData(buffer);
     
-    if (!msg.ParseFromArray(buffer, strlen(buffer))) {
+    if (!msg.ParseFromArray(buffer, bytes_recv)) {
         std::cerr << "Failed to parse received data" << std::endl;
         closeSock();
         exit(1);
@@ -145,4 +145,16 @@ void Client::sendCommand(Message& msg)
         exit(1);
     }
     sendData(serialized_message.c_str());
+}
+
+void Client::setTimeout(int t)
+{
+    struct timeval timeout;
+    timeout.tv_sec = t;  
+    timeout.tv_usec = 0;
+    if (setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
+        std::cerr << "Error setting socket options\n";
+        closeSock();
+        exit(1);
+    }
 }
