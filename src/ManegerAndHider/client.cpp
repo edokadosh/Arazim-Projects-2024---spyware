@@ -33,9 +33,10 @@ void Client::createSocket()
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == -1) {
         std::cerr << "Error: Could not create socket" << std::endl; // TODO remove this
+        std::cerr << std::strerror(errno) << std::endl;
         exit(1);
     }
-    setTimeout(SOCK_TIMEOUT);
+    // setTimeout(SOCK_TIMEOUT);
 }
 
 void Client::bindSocket()
@@ -52,6 +53,7 @@ void Client::bindSocket()
     }
     if (listen(clientSocket, 5) == -1) {
         std::cerr << "Error: Listen failed." << std::endl;
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         exit(1);
     }
@@ -59,13 +61,19 @@ void Client::bindSocket()
 
 int Client::acceptConnection()
 {
-    socklen_t client_addr_size = sizeof(clientAddr);
-    int server_socket = accept(clientSocket, reinterpret_cast<struct sockaddr*>(&clientAddr), &client_addr_size);
-    if (server_socket == -1) {
+    sockaddr_in serverAddress;
+    socklen_t serverAddrSize = sizeof(serverAddress);
+    
+    if (accept(clientSocket, reinterpret_cast<struct sockaddr*>(&serverAddress), &serverAddrSize) == -1) {
         std::cerr << "Error: Accept failed." << std::endl;
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         return 1;
     }
+    char serverAddressStr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(serverAddress.sin_addr), serverAddressStr, INET_ADDRSTRLEN);
+    std::cout << "server Socket at address: " << serverAddressStr << ", port: " << ntohs(serverAddress.sin_port) << std::endl;
+
     return 0;
 }
 
@@ -80,6 +88,7 @@ void Client::connectServer()
     // Connect to the server
     if (connect(clientSocket, (struct sockaddr *)&clientAddr, sizeof(clientAddr)) == -1) {
         std::cerr << "Error: Connection failed" << std::endl; // TODO remove this
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         exit(1);
     }
@@ -87,10 +96,28 @@ void Client::connectServer()
 
 int Client::recvData(char buffer[]) 
 {
+    // DEBUG print bound addr
+    sockaddr_in boundAddress;
+    socklen_t boundAddressSize = sizeof(boundAddress);
+    if (getsockname(clientSocket, (struct sockaddr *)&boundAddress, &boundAddressSize) == -1) {
+        std::cerr << "Error getting bound address" << std::endl;
+        close(clientSocket);
+        return 1;
+    }
+
+    // Convert the address to a human-readable string
+    char boundAddressStr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(boundAddress.sin_addr), boundAddressStr, INET_ADDRSTRLEN);
+
+
+
+    std::cout << "Socket bound to address: " << boundAddressStr << ", port: " << ntohs(boundAddress.sin_port) << std::endl;
+
     // Receive data from the server
     int bytes_received = 0;
     if ((bytes_received = recv(clientSocket, buffer, BUFFER_SIZE, 0)) == -1) {
         std::cerr << "Error: Receive failed" << std::endl; // TODO remove this
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         exit(1);
     }
@@ -102,6 +129,7 @@ void Client::sendData(const char* msg)
     // Send data to the server
     if (send(clientSocket, msg, strlen(msg), 0) == -1) {
         std::cerr << "Error: Send failed" << std::endl; // TODO remove this
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         return exit(1);
     }
@@ -119,6 +147,7 @@ void Client::recvFile()
     std::ofstream file("Matbuja.jpg", std::ios::binary);
     if (!file) {
         std::cerr << "Error: Unable to create file" << std::endl; // TODO remove this
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         exit(1);
     }
@@ -136,12 +165,13 @@ void Client::recvFile()
     file.close();
 }
 
-void Client::sendFile()
+void Client::sendFile(const std::string& fileName)
 {
     // Open the file for reading
-    std::ifstream file("Matbuja.jpg", std::ios::binary);
+    std::ifstream file(fileName, std::ios::binary);
     if (!file) {
         std::cerr << "Error: Unable to open file" << std::endl;
+        std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
         exit(1);
     }
@@ -164,6 +194,7 @@ void Client::recvCommand(Message& msg)
     std::cout << bytes_recv << std::endl;
     if (!msg.ParseFromArray(buffer, bytes_recv)) {
         std::cerr << "Failed to parse received data" << std::endl;
+        std::cerr << std::strerror(errno) << std::endl;
         closeSock();
         exit(1);
     }
@@ -175,6 +206,7 @@ void Client::sendCommand(Message& msg)
     std::string serialized_message;
     if (!msg.SerializeToString(&serialized_message)) {
         std::cerr << "Failed to serialize message" << std::endl;
+        std::cerr << std::strerror(errno) << std::endl;
         closeSock();
         exit(1);
     }
@@ -188,6 +220,7 @@ void Client::setTimeout(int t)
     timeout.tv_usec = 0;
     if (setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0) {
         std::cerr << "Error setting socket options\n";
+        std::cerr << std::strerror(errno) << std::endl;
         closeSock();
         exit(1);
     }

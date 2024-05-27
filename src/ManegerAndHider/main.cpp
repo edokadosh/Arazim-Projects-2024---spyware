@@ -25,6 +25,7 @@ int main() {
     {
         loopIter(client, swm, hiderManager);
         cont = false; // TODO remove this
+        std::cout << "compleated loop iter\n";
     }
 
     return EXIT_SUCCESS;

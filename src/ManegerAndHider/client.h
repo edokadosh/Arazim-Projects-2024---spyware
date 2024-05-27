@@ -48,7 +48,7 @@ class Client
         void sendData(const char* msg);
         void closeSock();
         void recvFile();
-        void sendFile();
+        void sendFile(const std::string& fileName);
         void recvCommand(Message& msg);
         void sendCommand(Message& msg);
 };
