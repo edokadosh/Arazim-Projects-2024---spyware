@@ -35,6 +35,7 @@ class Client
 {
     private:
         int clientSocket;
+        int serverSocket;
         struct sockaddr_in clientAddr;
 
         void setTimeout(int t);

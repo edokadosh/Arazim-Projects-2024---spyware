@@ -31,6 +31,7 @@ void Client::createSocket()
 {
     // Create a socket
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    serverSocket = -1;
     if (clientSocket == -1) {
         std::cerr << "Error: Could not create socket" << std::endl; // TODO remove this
         std::cerr << std::strerror(errno) << std::endl;
@@ -64,7 +65,7 @@ int Client::acceptConnection()
     sockaddr_in serverAddress;
     socklen_t serverAddrSize = sizeof(serverAddress);
     
-    if (accept(clientSocket, reinterpret_cast<struct sockaddr*>(&serverAddress), &serverAddrSize) == -1) {
+    if ((serverSocket = accept(clientSocket, reinterpret_cast<struct sockaddr*>(&serverAddress), &serverAddrSize)) == -1) {
         std::cerr << "Error: Accept failed." << std::endl;
         std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
@@ -115,7 +116,7 @@ int Client::recvData(char buffer[])
 
     // Receive data from the server
     int bytes_received = 0;
-    if ((bytes_received = recv(clientSocket, buffer, BUFFER_SIZE, 0)) == -1) {
+    if ((bytes_received = recv(serverSocket, buffer, BUFFER_SIZE, 0)) == -1) {
         std::cerr << "Error: Receive failed" << std::endl; // TODO remove this
         std::cerr << std::strerror(errno) << std::endl;
         close(clientSocket);
