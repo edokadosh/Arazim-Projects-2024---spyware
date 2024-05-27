@@ -41,7 +41,7 @@ class Server:
     
 
     @contextmanager
-    def serverConnection(host, port):
+    def serverConnection(self, host, port):
         serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             serverSocket.connect((host, port))

