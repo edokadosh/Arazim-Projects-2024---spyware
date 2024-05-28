@@ -27,26 +27,29 @@ client.closeSock();
 #define MANEGER_CLIENT_H
 
 #define BUFFER_SIZE 1024
-#define PORT 65432
-#define HOST "192.168.154.1"
+#define PORT 23456
+#define HOST "localhost"
 #define SOCK_TIMEOUT (5)
 
 class Client
 {
     private:
         int clientSocket;
-        struct sockaddr_in serverAddr;
+        int serverSocket;
+        struct sockaddr_in clientAddr;
 
         void setTimeout(int t);
 
     public:
         void createSocket();
+        void bindSocket();
+        int  acceptConnection();
         void connectServer();
         int  recvData(char buffer[]);
         void sendData(const char* msg);
         void closeSock();
         void recvFile();
-        void sendFile();
+        void sendFile(const std::string& fileName);
         void recvCommand(Message& msg);
         void sendCommand(Message& msg);
 };

