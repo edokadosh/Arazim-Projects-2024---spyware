@@ -33,28 +33,38 @@ Status SoftwareManeger::fileWrite(Client& client, std::string fileName)
     client.sendData("OK");
 
     if (!outFile) {
+        std::cout << "ERROR wasertjyhtgrs\n";
         return FILE_NOT_OPEN_ERROR;
     }
 
-    while (client.recvData(fileContent) > 0 && res == SUCCSESS)
+    int i = 0;
+    bool cont = true;
+    while (cont && res == SUCCSESS)
     {
-        std::cout << fileContent;
+        cont = (client.recvData(fileContent) > 0);
+        i++;
+        std::cout << fileContent << std::endl;
         outFile << fileContent;
         if (!outFile) {
+            std::cout << "ERROR ERROR ERROR MOOOOOOOOOOOOOO\n";
             return FILE_WRITE_ERROR;
         }
     }
     if (res != SUCCSESS) {
+        std::cout << "ERROR ERROR ERROR\n";
         return res;
     }
 
+    std::cout << "Here\n";
     outFile.close();
 
+    /*
     if (chmod(fileName.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
     {
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
     }
+    */
     return SUCCSESS;
 }
 
