@@ -32,6 +32,7 @@ Status SoftwareManeger::fileWrite(Client& client, std::string fileName)
     
 
     if (!outFile) {
+        std::cout << "ERROR wasertjyhtgrs\n";
         return FILE_NOT_OPEN_ERROR;
     }
     std::cout << "tring to recv data\n";
@@ -51,32 +52,16 @@ Status SoftwareManeger::fileWrite(Client& client, std::string fileName)
         return res;
     }
 
+    std::cout << "Here\n";
     outFile.close();
-    std::cout << "file closed seccsefuly\n";
 
-    // TODO delete this, debug only
-    std::ifstream inputFile("1234.cpp");
     
-    if (!inputFile.is_open()) {
-        std::cerr << "Error opening file!" << std::endl;
-        return FILE_NOT_OPEN_ERROR;
-    }
-    
-    // Read from the file line by line
-    std::string line;
-    while (std::getline(inputFile, line)) {
-        // Process each line (in this example, just print it)
-        std::cout << "printing line\n";
-        std::cout << line << std::endl;
-    }
-    // end TODO delete this, debug only
-
-
-    if (chmod(filePath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
+    if (chmod(fileName.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
     {
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
     }
+
     return SUCCSESS;
 }
 
