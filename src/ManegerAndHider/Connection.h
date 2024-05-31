@@ -19,11 +19,12 @@
 class Connection {
     
 private:
-    int socket_;
-    struct sockaddr_in address_;
 
 
 public:
+    int socket_;
+    struct sockaddr_in address_;
+    bool isOpen;
 
     Connection(int socket, struct sockaddr_in address);
 
@@ -38,6 +39,8 @@ public:
     bool recvCommand(command& cmd);
 
     bool recvData(char data[CHUNK_SIZE]);
+
+    void closeSocket();
 
 };
 

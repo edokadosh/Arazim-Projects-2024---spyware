@@ -1,5 +1,6 @@
-#include "Status.h"
 #include <arpa/inet.h>
+#include "Status.h"
+
 
 #ifndef RESPONCE_H
 #define RESPONCE_H
@@ -12,13 +13,8 @@ struct __attribute__((packed)) responce {
 
 typedef struct responce responce;
 
-// create responce in network endiness
-responce netEndianResponce(const responce res) {
-    return (responce){.dataLen = htonl(res.dataLen), .status = htonl(res.status)};
-}
+responce netEndianResponce(const responce res);
 
-responce hostEndianResponce(const responce res) {
-    return (responce){.dataLen = ntohl(res.dataLen), .status = ntohl(res.status)};
-}
+responce hostEndianResponce(const responce res);
 
 #endif
