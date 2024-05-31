@@ -9,7 +9,7 @@
 
 #include "Status.h"
 #include "command.h"
-
+#include "responce.h"
 
 #ifndef CONNECTION_H
 #define CONNECTION_H
@@ -29,7 +29,7 @@ public:
 
     ~Connection();
 
-    bool sendResponce();
+    bool sendResponce(const responce res);
 
     bool sendData(const std::string& msg);
 

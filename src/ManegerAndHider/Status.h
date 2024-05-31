@@ -2,7 +2,7 @@
 #ifndef STATUS_ENUM_H
 #define STATUS_ENUM_H
 
-typedef enum Status {
+typedef enum Status : uint32_t {
     SUCCSESS = 0,
 
     INVALID_FUNCODE_ERROR,
