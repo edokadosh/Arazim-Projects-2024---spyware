@@ -21,7 +21,7 @@ SoftwareManeger::~SoftwareManeger(void) {};
 
 Status SoftwareManeger::fileWrite(Client& client, std::string fileName)
 {
-    char fileContent[BUFFER_SIZE] = { 0 };
+    char fileContent[BUFFER_SIZE] = "debug debug";
     Status res = SUCCSESS;
     
     std::cout << fileName << std::endl;
@@ -30,27 +30,49 @@ Status SoftwareManeger::fileWrite(Client& client, std::string fileName)
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
     
-    client.sendData("OK");
 
     if (!outFile) {
         return FILE_NOT_OPEN_ERROR;
     }
-
+    std::cout << "tring to recv data\n";
     while (client.recvData(fileContent) > 0 && res == SUCCSESS)
     {
+        std::cout << "recived data\n";
         std::cout << fileContent;
         outFile << fileContent;
         if (!outFile) {
+            std::cerr << "FILE_WRITE_ERROR\n"; 
             return FILE_WRITE_ERROR;
         }
     }
+    std::cout << "finnish loop\n";
     if (res != SUCCSESS) {
+        std::cerr << "res: " << res << std::endl;
         return res;
     }
 
     outFile.close();
+    std::cout << "file closed seccsefuly\n";
 
-    if (chmod(fileName.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
+    // TODO delete this, debug only
+    std::ifstream inputFile("1234.cpp");
+    
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return FILE_NOT_OPEN_ERROR;
+    }
+    
+    // Read from the file line by line
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        // Process each line (in this example, just print it)
+        std::cout << "printing line\n";
+        std::cout << line << std::endl;
+    }
+    // end TODO delete this, debug only
+
+
+    if (chmod(filePath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
     {
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
