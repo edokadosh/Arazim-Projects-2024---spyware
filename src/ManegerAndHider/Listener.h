@@ -25,7 +25,7 @@ public:
 
     ~Listener();
 
-    int acceptConnection(Connection * conn);
+    int acceptConnection(Connection& conn);
 
 };
 

@@ -33,7 +33,7 @@ Listener::~Listener() {
 }
 
 
-int Listener::acceptConnection(Connection * conn) {
+int Listener::acceptConnection(Connection& conn) {
         int homeSocket;
         struct sockaddr_in homeAddr;
         socklen_t homeAddrLen = sizeof(homeAddr);
@@ -44,6 +44,6 @@ int Listener::acceptConnection(Connection * conn) {
             std::cerr << "Error accepting connection" << std::endl;
             return -1;
         }
-        *conn = Connection(homeSocket, homeAddr);
+        conn = Connection(homeSocket, homeAddr);
         return homeSocket;
     }

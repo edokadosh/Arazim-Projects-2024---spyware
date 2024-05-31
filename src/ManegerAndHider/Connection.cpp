@@ -7,8 +7,15 @@ Connection::Connection(int socket, struct sockaddr_in address)
     address_ = address;
 }
 
+Connection::Connection()
+{
+    socket_ = -1;
+}
+
 Connection::~Connection() {
-    close(socket_);
+    if (socket_ != -1) {
+        close(socket_);
+    }
 }
 
 bool Connection::sendResponce(const responce res) {

@@ -27,6 +27,8 @@ public:
 
     Connection(int socket, struct sockaddr_in address);
 
+    Connection();
+
     ~Connection();
 
     bool sendResponce(const responce res);

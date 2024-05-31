@@ -9,8 +9,8 @@
 
 
 struct __attribute__((packed)) command {
-    FunCode fncode;
     uint32_t dataLen;
+    FunCode fncode;
     char strParam[STRING_PARAM_LEN];
 };
 
