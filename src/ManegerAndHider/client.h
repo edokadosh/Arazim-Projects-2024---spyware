@@ -29,7 +29,7 @@ client.closeSock();
 #define BUFFER_SIZE 1024
 #define PORT 23456
 #define HOST "localhost"
-#define SOCK_TIMEOUT (5)
+// #define SOCK_TIMEOUT (5)
 
 class Client
 {

@@ -97,21 +97,21 @@ void Client::connectServer()
 int Client::recvData(char buffer[]) 
 {
     // DEBUG print bound addr
-    sockaddr_in boundAddress;
-    socklen_t boundAddressSize = sizeof(boundAddress);
-    if (getsockname(clientSocket, (struct sockaddr *)&boundAddress, &boundAddressSize) == -1) {
-        std::cerr << "Error getting bound address" << std::endl;
-        close(clientSocket);
-        return 1;
-    }
+    // sockaddr_in boundAddress;
+    // socklen_t boundAddressSize = sizeof(boundAddress);
+    // if (getsockname(clientSocket, (struct sockaddr *)&boundAddress, &boundAddressSize) == -1) {
+    //     std::cerr << "Error getting bound address" << std::endl;
+    //     close(clientSocket);
+    //     return 1;
+    // }
 
-    // Convert the address to a human-readable string
-    char boundAddressStr[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(boundAddress.sin_addr), boundAddressStr, INET_ADDRSTRLEN);
+    // // Convert the address to a human-readable string
+    // char boundAddressStr[INET_ADDRSTRLEN];
+    // inet_ntop(AF_INET, &(boundAddress.sin_addr), boundAddressStr, INET_ADDRSTRLEN);
 
 
 
-    std::cout << "Socket bound to address: " << boundAddressStr << ", port: " << ntohs(boundAddress.sin_port) << std::endl;
+    // std::cout << "Socket bound to address: " << boundAddressStr << ", port: " << ntohs(boundAddress.sin_port) << std::endl;
 
     // Receive data from the server
     int bytes_received = 0;
