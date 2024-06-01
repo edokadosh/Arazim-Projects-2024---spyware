@@ -12,8 +12,8 @@ def main():
     agent = Agent(HOST, PORT)
     print(
         agent.write_file(
-            "/home/avner/Arazim-Projects-2024---spyware/src/ServerSpy/testBinSend.o",
-            "1212.o",
+            "/home/avner/Arazim-Projects-2024---spyware/src/ServerSpy/compiledAtHome.o",
+            "compiledAtHome.o",
         )
     )
 
