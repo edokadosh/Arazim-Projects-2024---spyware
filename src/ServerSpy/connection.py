@@ -1,7 +1,8 @@
 import socket
 import struct
 import sys
-from Command import Command
+from command import Command
+from responce import Responce
 
 
 class Connection:
@@ -31,10 +32,15 @@ class Connection:
     def send_data(self, data: bytes):
         self.socket.send(data)
 
-    def recv_data():
-        pass
+    # TODO add error handeling
+    def recv_bytes(self, amount: int) -> bytes:
+        return self.socket.recv(amount)
 
-    def recv_string():
+    def recv_responce(self):
+        bytes_recived = self.recv_bytes(Responce.sizeof)
+        return Responce.unpack(bytes_recived)
+
+    def recv_string(self):
         pass
 
     def __enter__(self):
