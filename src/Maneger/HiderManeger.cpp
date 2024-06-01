@@ -46,7 +46,6 @@ Status HiderManeger::activateHider(uint fncode, std::string param)
     if (pid == 0) { // child work
         activateHiderChild(fncode, param);
     }
-
     return SUCCSESS;
 }
 
