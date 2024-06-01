@@ -104,8 +104,6 @@ bool Connection::recvCommand(command& cmd)
     if (recv(socket_, &netCmd, sizeof(netCmd), 0) == -1) {
         std::cerr << "Receive command failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
-        std::cout << "conn.socket_: " << socket_ << std::endl;
-        std::cout << "conn.isOpen: " << isOpen << std::endl;
         return false;
     }
     cmd = hostEndianCommand(netCmd);
@@ -116,7 +114,7 @@ bool Connection::recvCommand(command& cmd)
 
 bool Connection::recvData(uint32_t size, char data[])
 {
-    if (recv(socket_, data, sizeof(data[0] * size), 0) == -1) {
+    if (recv(socket_, data, sizeof(data[0]) * size, 0) == -1) {
         std::cerr << "Receive data failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return false;

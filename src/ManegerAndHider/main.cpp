@@ -69,9 +69,7 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
     Status res = SUCCSESS;
     command cmd;
 
-    std::cout << "Trying to receive command\n";
     conn.recvCommand(cmd);
-    std::cout << "Command received\n";
     std::string strParam = cmd.strParam;
 
     std::cout << "Server: fncode-" << cmd.fncode << " strParam-" << strParam << std::endl;

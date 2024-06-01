@@ -21,19 +21,14 @@ SoftwareManeger::SoftwareManeger(void) {};
 SoftwareManeger::~SoftwareManeger(void) {};
 
 
-
 Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::string fileName)
 {
     char fileContent[BUFFER_SIZE] = { 0 };
     Status res = SUCCSESS;
     
-    std::cout << fileName << std::endl;
-
     std::string filePath = SOFTWARE_DIR_PATH  + fileName; // TODO better path find
     std::ofstream outFile;
-    std::cout << "tring to open file" << std::endl;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
-    std::cout << "finnish tring to open file" << std::endl;
     
 
     if (!outFile) {
