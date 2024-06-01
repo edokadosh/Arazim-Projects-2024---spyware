@@ -1,7 +1,6 @@
 #include "Hider.h"
 
-#include "Status.h"
-#include "HiderCodes.h"
+
 
 Hider::Hider() : handel(HiddenFileHandler()) {}
 

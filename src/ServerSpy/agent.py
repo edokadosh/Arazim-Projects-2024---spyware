@@ -15,13 +15,16 @@ class Agent:
     def __repr__(self) -> str:
         return f"Agent(host={self.host}, port={self.port})"
 
+    def connect(self) -> Connection:
+        return Connection.connect(self.host, self.port)
+    
     def run_bash(self, bash: str) -> tuple[Responce, str]:
-        with Connection.connect(self.host, self.port) as conn:
+        with self.connect() as conn:
             conn.send_command(Command(len(bash), FunCode.RUN_BASH, bash))
             return conn.recv_full_responce()
 
     def write_file(self, homeFilePath, targetFileName: str) -> Responce:
-        with Connection.connect(self.host, self.port) as conn:
+        with self.connect() as conn:
 
             with open(homeFilePath, "rb") as file:
                 fileContent = file.read()
@@ -31,3 +34,7 @@ class Agent:
             )
             conn.send_data(fileContent)
             return conn.recv_responce_struct()
+
+    def hidden_action(self) -> Responce:
+        with self.connect() as conn:
+            conn.send_command(Command())

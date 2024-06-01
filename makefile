@@ -5,25 +5,32 @@ CC = g++
 CFLAGS = -Wall -Wextra -std=c++17
 
 # Source files
-PROTO_SRCS = Message.proto
-SRCS = src/ManegerAndHider/Connection.cpp src/ManegerAndHider/Listener.cpp src/ManegerAndHider/HiddenFileHandler.cpp src/ManegerAndHider/HiderManeger.cpp src/ManegerAndHider/main.cpp src/ManegerAndHider/SoftwareManeger.cpp src/ManegerAndHider/command.cpp src/ManegerAndHider/responce.cpp
+M_SRCS = src/Maneger/Connection.cpp src/Maneger/Listener.cpp src/Maneger/HiddenFileHandler.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/Maneger/command.cpp src/Maneger/responce.cpp
+H_SRCS = src/Hider/Hider.cpp src/Hider/HiddenFileHandler.cpp 
 
 # Object files
-OBJS = $(SRCS:.cpp=.o)
+M_OBJS = $(M_SRCS:.cpp=.o)
+H_OBJS = $(H_SRCS:.cpp=.o)
 
-# Executable name
-EXEC = maneger
+# Executables names
+M_EXEC = maneger
+M_EXEC = hider
 
 # Rule to compile source files
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Build target
-all: $(EXEC)
+maneger: $(M_EXEC)
 
-$(EXEC): $(OBJS) $(PROTO_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(PROTO_OBJS) -o $@ -lprotobuf
+$(M_EXEC): $(M_OBJS)
+	$(CC) $(CFLAGS) $(M_OBJS) -o $@
+
+hider: $(H_EXEC)
+
+$(H_EXEC): $(H_OBJS)
+	$(CC) $(CFLAGS) $(H_OBJS) -o $@
 
 # Clean rule
 clean:
-	rm -f $(OBJS) $(PROTO_OBJS) $(EXEC)
+	rm -f $(M_OBJS) $(H_OBJS) $(M_EXEC) $(H_EXEC) 
