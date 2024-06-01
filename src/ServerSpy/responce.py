@@ -12,7 +12,7 @@ class Responce:
         self.status = status
 
     def __repr__(self) -> str:
-        return f"<Responce(dataLen={self.dataLen}, status={self.status.name})"
+        return f"Responce(dataLen={self.dataLen}, status={self.status.name})"
 
     @classmethod
     def unpack(cls, raw_res: bytes) -> "Responce":

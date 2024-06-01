@@ -33,15 +33,20 @@ class Connection:
         self.socket.send(data)
 
     # TODO add error handeling
-    def recv_bytes(self, amount: int) -> bytes:
-        return self.socket.recv(amount)
+    def recv_bytes(self, length: int) -> bytes:
+        return self.socket.recv(length)
 
-    def recv_responce(self):
+    def recv_responce_struct(self):
         bytes_recived = self.recv_bytes(Responce.sizeof)
         return Responce.unpack(bytes_recived)
 
-    def recv_string(self):
-        pass
+    def recv_string(self, length: int) -> str:
+        return self.recv_bytes(length).decode("utf-8")
+
+    def recv_full_responce(self) -> tuple[Responce, str]:
+        res = self.recv_responce_struct()
+        msg = self.recv_string(res.dataLen)
+        return res, msg
 
     def __enter__(self):
         return self
