@@ -1,4 +1,12 @@
 #include <string>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <cstdio>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "Status.h"
 #include "Connection.h"

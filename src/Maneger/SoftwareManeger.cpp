@@ -1,19 +1,11 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <cstdio>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <unistd.h>
+
 // #define TESTING_MODE
 
-#include "Status.h"
+
 #include "SoftwareManeger.h"
-#include "testing.h"
-#include "client.h"
 
 #define SOFTWARE_DIR_PATH ("./")
+#define BUFFER_SIZE (1024)
 #define MIN(x, y) (((x) < (y)) ? (x): (y))
 
 SoftwareManeger::SoftwareManeger(void) {};

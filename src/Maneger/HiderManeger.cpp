@@ -1,10 +1,6 @@
-#include <iostream>
-#include <unistd.h>
-#include <sys/wait.h>
-
 #include "HiderManeger.h"
-#include "HiderCodes.h"
-#include "client.h"
+
+#define BUFFER_SIZE (1024)
 
 HiderManeger::HiderManeger() :  hiderPath(DEFAULT_HIDER_PATH), \
                                 mthpipe{-1, -1}, \

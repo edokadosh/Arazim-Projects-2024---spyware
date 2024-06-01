@@ -12,12 +12,16 @@ HIDER_UPLOAD
 */
 
 
+#include <iostream>
 #include <fstream>
 #include <unistd.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include "FunCodes.h"
 #include "Status.h"
 #include "Connection.h"
+#include "HiderCodes.h"
 
 #ifndef HIDER_MANEGER_H
 #define HIDER_MANEGER_H
