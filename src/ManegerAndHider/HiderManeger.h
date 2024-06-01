@@ -17,7 +17,7 @@ HIDER_UPLOAD
 
 #include "FunCodes.h"
 #include "Status.h"
-#include "client.h"
+#include "Connection.h"
 
 #ifndef HIDER_MANEGER_H
 #define HIDER_MANEGER_H
@@ -40,9 +40,9 @@ private:
     
     Status openPipes(int p[]);
 
-    Status hiddenUpload(std::string param, Client& client);
+    Status hiddenUpload(std::string param, Connection& conn);
 
-    Status hiddenList(Client& client);
+    Status hiddenList(Connection& conn);
 
 public:
     HiderManeger();
@@ -50,7 +50,7 @@ public:
 
     Status setUpHider(std::string hiderPath);
 
-    Status hiddenAction(uint action, std::string& param, Client& client);
+    Status hiddenAction(uint action, std::string& param, Connection& conn);
 
 
 

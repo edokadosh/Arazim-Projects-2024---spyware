@@ -14,7 +14,6 @@ int main(int argc, char* argv[])
     while (true)
     {
         Connection conn;
-        command cmd;
 
         if (listener.acceptConnection(conn) == -1) {
             std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
@@ -32,7 +31,7 @@ int main(int argc, char* argv[])
         std::cout << "cmd.funcode: " << cmd.fncode << std::endl;
         std::cout << "cmd.strParam: " << cmd.strParam << std::endl;
 
-        conn.sendResponce((responce){.dataLen = 65, .status = FILE_WRITE_ERROR});
+        conn.sendResponceStruct((responce){.dataLen = 65, .status = FILE_WRITE_ERROR});
 
         conn.closeSocket();
     }
