@@ -14,6 +14,7 @@ int main(int argc, char* argv[])
     while (true)
     {
         Connection conn;
+        command cmd;
 
         if (listener.acceptConnection(conn) == -1) {
             std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
