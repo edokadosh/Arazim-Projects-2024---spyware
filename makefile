@@ -6,21 +6,13 @@ CFLAGS = -Wall -Wextra -std=c++17
 
 # Source files
 PROTO_SRCS = Message.proto
-SRCS = src/ManegerAndHider/client.cpp src/ManegerAndHider/HiddenFileHandler.cpp src/ManegerAndHider/Hider.cpp src/ManegerAndHider/HiderManeger.cpp src/ManegerAndHider/main.cpp src/ManegerAndHider/SoftwareManeger.cpp
+SRCS = src/ManegerAndHider/Connection.cpp src/ManegerAndHider/Listener.cpp src/ManegerAndHider/HiddenFileHandler.cpp src/ManegerAndHider/HiderManeger.cpp src/ManegerAndHider/main.cpp src/ManegerAndHider/SoftwareManeger.cpp src/ManegerAndHider/command.cpp src/ManegerAndHider/responce.cpp
 
 # Object files
-PROTO_OBJS = $(PROTO_SRCS:.proto=.pb.o)
 OBJS = $(SRCS:.cpp=.o)
 
 # Executable name
-EXEC = cyber
-
-#PROTOBUF_LIB = -lprotobuf
-
-# Rule to compile Protocol Buffers source files into object files
-%.pb.o: %.proto
-	protoc --cpp_out=. $<
-	$(CC) $(CFLAGS) -c $(<:.proto=.pb.cc) -o $@
+EXEC = maneger
 
 # Rule to compile source files
 %.o: %.cpp

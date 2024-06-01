@@ -63,7 +63,7 @@ Status HiderManeger::openPipes(int p[])
 }
 
 // add Status handling
-Status HiderManeger::hiddenAction(uint action, std::string& param, Client& client)
+Status HiderManeger::hiddenAction(uint action, std::string& param, Connection& conn)
 {
     if (action & HIDDEN_UPLOAD) {
         openPipes(mthpipe); // add Status handling
@@ -86,26 +86,26 @@ Status HiderManeger::hiddenAction(uint action, std::string& param, Client& clien
     }
 
     if (action & HIDDEN_UPLOAD) {
-        hiddenUpload(param, client);
+        hiddenUpload(param, conn);
     }
 
     if (action & HIDDEN_LIST) {
-        hiddenList(client);
+        hiddenList(conn);
     }
     return SUCCSESS;
 }
 
-Status HiderManeger::hiddenUpload(std::string param, Client& client)
+Status HiderManeger::hiddenUpload(std::string param, Connection& conn)
 {
     std::cout << "UPLOADING " << param << std::endl;
     // send file server -> pipe
     char buffer[BUFFER_SIZE] = { 0 };
     while (true)
     {
-        int bytes_received = client.recvData(buffer);
+        int bytes_received = conn.recvData(sizeof(buffer), buffer);
         if (bytes_received <= 0)
             break;
-        write(mthpipe[1], buffer, bytes_received); // add Status handling
+        write(mthpipe[1], buffer, bytes_received); // TODO add Status handling
     }
 
     close(mthpipe[1]);
@@ -114,16 +114,16 @@ Status HiderManeger::hiddenUpload(std::string param, Client& client)
 }
 
 
-Status HiderManeger::hiddenList(Client& client)
+Status HiderManeger::hiddenList(Connection& conn)
 {
     // loop for receiving file pipe -> server
     bool cont = true;
     char buffer[BUFFER_SIZE] = {0};
     while (cont)
     {
-        if (read(htmpipe[0], buffer, BUFFER_SIZE) != BUFFER_SIZE) // add Status handling
+        if (read(htmpipe[0], buffer, sizeof(buffer)) != sizeof(buffer)) // add Status handling
             cont = false;
-        client.sendData(buffer);
+        conn.sendString(buffer);
     }
     
     close(htmpipe[0]);

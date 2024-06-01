@@ -1,7 +1,7 @@
 #include <string>
 
 #include "Status.h"
-#include "client.h"
+#include "Connection.h"
 
 
 #ifndef SOFTWARE_MANEGER_H
@@ -20,7 +20,7 @@ public:
 
     ~SoftwareManeger();    
 
-    Status fileWrite(Client& client, std::string param);
+    Status fileWrite(Connection& conn, uint32_t fileSize, std::string param);
 
     Status deleteFile(const std::string& fileName);
 };

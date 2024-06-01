@@ -32,13 +32,17 @@ public:
 
     ~Connection();
 
-    bool sendResponce(const responce res);
+    bool sendString(const std::string& str);
 
-    bool sendData(const std::string& msg);
+    bool sendResponceStruct(const responce res);
+
+    bool sendResponce(uint32_t status, const std::string&);
+
+    bool sendData(uint32_t size, void* buffer);
 
     bool recvCommand(command& cmd);
 
-    bool recvData(char data[CHUNK_SIZE]);
+    bool recvData(uint32_t size, char data[CHUNK_SIZE]);
 
     void closeSocket();
 
