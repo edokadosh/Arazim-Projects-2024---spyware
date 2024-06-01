@@ -217,4 +217,8 @@ pyrightconfig.json
 tmp*
 temp*
 
+# our program
+maneger
+hider
+
 # End of https://www.toptal.com/developers/gitignore/api/c++,python
