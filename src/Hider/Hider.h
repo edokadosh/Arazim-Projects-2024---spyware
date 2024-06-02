@@ -1,4 +1,6 @@
 #include "HiddenFileHandler.h"
+#include "Status.h"
+#include "HiderCodes.h"
 
 #ifndef HIDER_H
 #define HIDER_H
