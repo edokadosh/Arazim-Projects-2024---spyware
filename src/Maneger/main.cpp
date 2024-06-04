@@ -94,7 +94,7 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
     }
     // hidden handling
     if (cmd.fncode & HIDDEN_OPRATION) {
-        res = hiderManeger.hiddenAction(cmd.fncode, strParam, conn);
+        res = hiderManeger.hiddenAction(cmd, conn);
     }
     
     // TODO change such that there will be response only if we want it to be 

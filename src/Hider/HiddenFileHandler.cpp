@@ -23,6 +23,7 @@ Status HiddenFileHandler::removeFile(const std::string& filename) {
     return SUCCSESS;
 }
 
+#pragma warning "notice!!! "
 Status HiddenFileHandler::putBytesInFile(const std::string& filename, const std::string& content) {
     std::string filePath = folderName + "/" + filename;
     std::ofstream outFile;

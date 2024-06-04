@@ -1,21 +1,22 @@
 #include "Hider.h"
-
+#include "../ManegerAndHider/encoding.h"
 
 
 Hider::Hider() : handel(HiddenFileHandler()) {}
 
+
+
+// argv[] = {fncode, uploadLen, strParam};
 uint Hider::manage_files(int argc, char* argv[])
 {
 	std::string line;
 	if (argc < 2) {
 		return HIDER_NO_ARGUMENTS_ERROR;
 	}
-	uint fncode = atoi(argv[1]);
-	std::string stringParam = nullptr;
+	uint32_t fncode = decodeInt(std::string(argv[1]));
+	uint32_t uploadLen = decodeInt(std::string(argv[2]));
+	std::string stringParam = decodeStr(std::string(argv[3]));
 
-	if (argc >= 3) {
-		std::string stringParam(argv[2]);
-	}
 	// TODO better Status handling
 	Status res_upload = SUCCSESS;
 	Status res_run = SUCCSESS;

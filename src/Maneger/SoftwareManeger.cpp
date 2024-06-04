@@ -13,12 +13,17 @@ SoftwareManeger::SoftwareManeger(void) {};
 SoftwareManeger::~SoftwareManeger(void) {};
 
 
+std::string SoftwareManeger::getPath(const std::string fileName) {
+    return SOFTWARE_DIR_PATH  + fileName; // TODO better path find
+}
+
+
 Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::string fileName)
 {
     char fileContent[BUFFER_SIZE] = { 0 };
     Status res = SUCCSESS;
     
-    std::string filePath = SOFTWARE_DIR_PATH  + fileName; // TODO better path find
+    std::string filePath = getPath(fileName);
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
     
@@ -59,9 +64,28 @@ Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::stri
 }
 
 
+// Status SoftwareManeger::runFile(const std::string fileName, int argc, char* argv[], int fdIn, int fdOut) {
+//     pid_t pid = fork();
+//     std::string filePath = getPath(fileName);
+//     if (pid == -1) {
+//         return HIDER_FORK_ERROR;
+//     }
+//     if (pid == 0) { // child work
+//         if (fdIn >= 0) {
+//             dup2(fdIn, STDIN_FILENO);
+//         }
+//     if (fdOut >= 0) {
+//         dup2(fdOut, STDOUT_FILENO);
+//     }
+    
+//     execl(filePath.c_str(), numericalArg, param, NULL); // FIX IT
+//     }
+//     return SUCCSESS;
+// }
+
 Status SoftwareManeger::deleteFile(const std::string& fileName)
 {
-    std::string filePath = SOFTWARE_DIR_PATH  + fileName;
+    std::string filePath = getPath(fileName);
     if (std::remove(filePath.c_str()) != 0) {
         return FILE_DELETION_ERROR;
     }
