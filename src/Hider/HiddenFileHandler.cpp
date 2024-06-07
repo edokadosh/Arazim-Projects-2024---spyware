@@ -29,7 +29,7 @@ Status HiddenFileHandler::deleteFile(const std::string& filename) {
 }
 
 #pragma warning "notice!!! "
-Status HiddenFileHandler::putBytesInFile(const std::string& fileName, uint32_t fileSize) {
+Status HiddenFileHandler::writeFile(const std::string& fileName, uint32_t fileSize) {
     char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
     

@@ -32,7 +32,7 @@ public:
 
 	Status deleteFile(const std::string& filename);
 
-	Status putBytesInFile(const std::string& filename, uint32_t fileSize);
+	Status writeFile(const std::string& filename, uint32_t fileSize);
 };
 
 #endif

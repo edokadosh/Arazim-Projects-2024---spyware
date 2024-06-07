@@ -24,10 +24,7 @@ uint Hider::manage_files(int argc, char* argv[])
 
 	if (fncode & HIDDEN_UPLOAD)
 	{
-		while (std::getline(std::cin, line) && res_upload == SUCCSESS) // TODO change from getting one line at a time to one chunk at a time
-		{
-			res_upload = handel.putBytesInFile(stringParam, line);
-		}
+		res_upload = handel.writeFile(stringParam, uploadLen);
 	}
 	if ((fncode & HIDDEN_RUN) && res_upload == SUCCSESS) {
 		res_run = handel.runFile(stringParam);
