@@ -10,12 +10,12 @@
 
 #include "Status.h"
 #include "Connection.h"
+#include "../ManegerAndHider/globalDefines.h"
 
 
 #ifndef SOFTWARE_MANEGER_H
 #define SOFTWARE_MANEGER_H
 
-#define CHUNK_SIZE (1024)
 
 
 

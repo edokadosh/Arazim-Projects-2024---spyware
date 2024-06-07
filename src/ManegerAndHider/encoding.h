@@ -5,9 +5,9 @@
 #ifndef ENCODING_H
 #define ENCODING_H
 
-std::string encodeInt(int num);
+std::string encodeInt(uint32_t num);
 
-int32_t decodeInt(std::string encoded);
+uint32_t decodeInt(std::string encoded);
 
 std::string encodeStr(std::string pt);
 

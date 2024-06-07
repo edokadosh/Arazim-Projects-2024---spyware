@@ -87,7 +87,7 @@ Status HiderManeger::hiddenUpload(const command& cmd, Connection& conn)
 {
     std::cout << "UPLOADING " << cmd.strParam << std::endl;
     // send file server -> pipe
-    char buffer[BUFFER_SIZE] = { 0 };
+    char buffer[CHUNK_SIZE] = { 0 };
     while (true)
     {
         int bytes_received = conn.recvData(sizeof(buffer), buffer);
@@ -106,7 +106,7 @@ Status HiderManeger::hiddenList(Connection& conn)
 {
     // loop for receiving file pipe -> server
     bool cont = true;
-    char buffer[BUFFER_SIZE] = {0};
+    char buffer[CHUNK_SIZE] = {0};
     while (cont)
     {
         if (read(htmpipe[0], buffer, sizeof(buffer)) != sizeof(buffer)) // add Status handling

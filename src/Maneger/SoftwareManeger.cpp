@@ -5,8 +5,6 @@
 #include "SoftwareManeger.h"
 
 #define SOFTWARE_DIR_PATH ("./")
-#define BUFFER_SIZE (1024)
-#define MIN(x, y) (((x) < (y)) ? (x): (y))
 
 SoftwareManeger::SoftwareManeger(void) {};
 
@@ -20,7 +18,7 @@ std::string SoftwareManeger::getPath(const std::string fileName) {
 
 Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::string fileName)
 {
-    char fileContent[BUFFER_SIZE] = { 0 };
+    char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
     
     std::string filePath = getPath(fileName);

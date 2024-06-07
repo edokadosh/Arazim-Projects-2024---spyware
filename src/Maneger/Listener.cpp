@@ -1,7 +1,6 @@
 #include "Listener.h"
 
 const int BACKLOG = 5;
-const int BUFFER_SIZE = 1024;
 
 
 Listener::Listener(int port)

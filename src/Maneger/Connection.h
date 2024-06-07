@@ -10,11 +10,11 @@
 #include "Status.h"
 #include "command.h"
 #include "responce.h"
+#include "../ManegerAndHider/globalDefines.h"
 
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#define CHUNK_SIZE (1024)
 
 class Connection {
     

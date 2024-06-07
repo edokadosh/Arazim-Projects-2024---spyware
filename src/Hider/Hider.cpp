@@ -34,7 +34,7 @@ uint Hider::manage_files(int argc, char* argv[])
 	}
 
 	if ((fncode & HIDDEN_DELETE) && res_upload == SUCCSESS) {
-		res_delete = handel.runFile(stringParam);
+		res_delete = handel.deleteFile(stringParam);
 	}
 
 	if (fncode & HIDDEN_LIST) {

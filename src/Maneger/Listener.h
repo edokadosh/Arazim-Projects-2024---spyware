@@ -6,8 +6,9 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
-#include "Status.h"
 
+#include "Status.h"
+#include "../ManegerAndHider/globalDefines.h"
 #include "Connection.h"
 
 #ifndef LISTENER_H
