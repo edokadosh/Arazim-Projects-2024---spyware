@@ -1,5 +1,5 @@
 #include "HiddenFileHandler.h"
-#include "Status.h"
+#include "../ManegerAndHider/Status.h"
 #include "HiderCodes.h"
 
 #ifndef HIDER_H

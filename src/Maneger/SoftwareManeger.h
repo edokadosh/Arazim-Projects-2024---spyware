@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "Status.h"
+#include "../ManegerAndHider/Status.h"
 #include "Connection.h"
 #include "../ManegerAndHider/globalDefines.h"
 

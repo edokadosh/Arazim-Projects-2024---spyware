@@ -13,6 +13,24 @@ HiderManeger::~HiderManeger() {
     // cyber
 }
 
+int waitChild(int pid) {
+    // dprintf(2, "waiting\n");
+    
+    while(waitpid(pid, NULL, 0) == -1) {
+        // dprintf(2, "more waiting\n");
+        
+        if (errno == EINTR) { // continue to loop only in case of EINTR
+            continue;
+        }
+        if (errno != ECHILD) {
+            dprintf(2, "Error: %s\n", strerror(errno));
+            return -1;
+        }
+        break;
+    }
+    return 0;
+}
+
 Status HiderManeger::setUpHider(std::string path)
 {
     hiderPath = path;
@@ -62,6 +80,9 @@ Status HiderManeger::activateHider(const command& cmd, int fdIn, int fdOut)
     }
     if (pid == 0) { // child work
         activateHiderChild(cmd, fdIn, fdOut);
+    }
+    if (waitChild(pid) != 0) {
+        return WAIT_ERROR;
     }
     return SUCCSESS;
 }

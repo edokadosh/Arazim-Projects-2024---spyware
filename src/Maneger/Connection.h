@@ -7,7 +7,7 @@
 #include <cstring>
 #include <cerrno>
 
-#include "Status.h"
+#include "../ManegerAndHider/Status.h"
 #include "command.h"
 #include "responce.h"
 #include "../ManegerAndHider/globalDefines.h"
