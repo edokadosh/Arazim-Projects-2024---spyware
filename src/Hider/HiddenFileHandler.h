@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "Status.h"
+#include "../ManegerAndHider/Status.h"
 #include "../ManegerAndHider/globalDefines.h"
 
 #ifndef HIDDEN_FILE_HANDLER_H

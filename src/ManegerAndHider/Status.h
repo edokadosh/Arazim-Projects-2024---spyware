@@ -22,6 +22,8 @@ typedef enum Status {
     HIDER_FORK_ERROR,
     HIDER_NO_ARGUMENTS_ERROR,
 
+    WAIT_ERROR,
+
 
 } Status;
 

@@ -18,8 +18,8 @@ HIDER_UPLOAD
 #include <sys/wait.h>
 
 #include "FunCodes.h"
-#include "Status.h"
 #include "Connection.h"
+#include "../ManegerAndHider/Status.h"
 #include "HiderCodes.h"
 #include "../ManegerAndHider/encoding.h"
 
