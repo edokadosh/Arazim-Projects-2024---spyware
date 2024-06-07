@@ -28,7 +28,6 @@ Status HiddenFileHandler::deleteFile(const std::string& filename) {
     return SUCCSESS;
 }
 
-#pragma warning "notice!!! "
 Status HiddenFileHandler::writeFile(const std::string& fileName, uint32_t fileSize) {
     char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
