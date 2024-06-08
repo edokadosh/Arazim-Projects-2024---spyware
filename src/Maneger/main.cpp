@@ -2,7 +2,7 @@
 #include <array>
 
 #include "SoftwareManeger.h"
-#include "Status.h"
+#include "../ManegerAndHider/Status.h"
 #include "FunCodes.h"
 #include "HiderManeger.h"
 #include "HiderCodes.h"
@@ -36,15 +36,7 @@ int main() {
 
     return EXIT_SUCCESS;
 }
-// & outdated
-// void testSoftwareManeger() {
-//     SoftwareManeger swm = SoftwareManeger();
-//     swm.fileWrite("tempSwmTest.txt", false, "this is my first test\n");
-//     swm.chunkWrite("tempSwmTest.txt", 1, "this is my second test\n");
-    
-//     swm.deleteFile("tempSwmTest.txt");
 
-// }
 
 
 
