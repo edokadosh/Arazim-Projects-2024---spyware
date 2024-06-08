@@ -16,6 +16,7 @@ HIDER_UPLOAD
 #include <fstream>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 #include "FunCodes.h"
 #include "Connection.h"
@@ -38,9 +39,9 @@ private:
     int htmpipe[2]; // pipe from hider -> manager
     bool HtMredirect;
 
-    Status activateHider(const command& cmd, int fdIn, int fdOut);
+    Status activateHider(const command& cmd);
 
-    void activateHiderChild(const command& cmd, int fdIn, int fdOut);
+    void activateHiderChild(const command& cmd);
     
     Status openPipes(int p[]);
 

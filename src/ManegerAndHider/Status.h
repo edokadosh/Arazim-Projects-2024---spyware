@@ -23,6 +23,7 @@ typedef enum Status {
     HIDER_NO_ARGUMENTS_ERROR,
 
     WAIT_ERROR,
+    SPLICE_ERROR,
 
 
 } Status;
