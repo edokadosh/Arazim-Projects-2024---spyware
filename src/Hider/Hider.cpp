@@ -49,7 +49,7 @@ uint Hider::manage_files(int argc, char* argv[])
 	write(STDOUT_FILENO, &res_run, sizeof(res_run));
 	write(STDOUT_FILENO, &res_delete, sizeof(res_delete));
 
-	return res_upload + (res_run << STATUS_SHIFT_AMOUT) + (res_delete << (2 * STATUS_SHIFT_AMOUT));
+	return SUCCSESS;
 }
 
 

@@ -1,7 +1,16 @@
 from enum import IntEnum, auto
+import struct
 
 
 class Status(IntEnum):
+
+    @classmethod
+    def unpack(cls, raw_res: bytes) -> "Status":
+        FMT = "!I"
+        sizeof = struct.calcsize(FMT)
+        assert sizeof == len(raw_res), "raw status size is invalid"
+        status = struct.unpack(FMT, raw_res)
+        return Status(status)
 
     def __repr__(self) -> str:
         return super().__repr__()
@@ -22,3 +31,5 @@ class Status(IntEnum):
     HIDER_PIPE_ERROR = auto()
     HIDER_FORK_ERROR = auto()
     HIDER_NO_ARGUMENTS_ERROR = auto()
+
+    WAIT_ERROR = auto()

