@@ -41,7 +41,7 @@ int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t 
     std::ofstream outputFile(fileName);
 
     if (outputFile.is_open()) {
-        outputFile << buffer << std::endl;
+        outputFile.write(buffer, std::min((unsigned int)len, (unsigned int)strlen(buffer) + 1));
         outputFile.close();
     } else {
         std::cerr << "Error: Unable to open file for writing." << std::endl;
