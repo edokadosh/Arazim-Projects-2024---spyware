@@ -40,7 +40,7 @@ public:
 
     bool recvCommand(command& cmd);
 
-    bool recvData(uint32_t size, void* data);
+    bool recvData(uint32_t size, char data[]);
 
     void closeSocket();
 
