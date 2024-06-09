@@ -31,7 +31,9 @@ bool Sniffer::callback(const Tins::PDU &pdu) {
 
 // stop sniffing and write remaining data to file
 int Sniffer::halt() {
+    std::cout << "here" << std::endl;
     raise(SIGINT);
+    std::cout << "here" << std::endl;
     writeFile();
     return 0;
 };
@@ -45,7 +47,7 @@ void Sniffer::signalHandler(int signal) {
 }
 
 // set up the sniffers loop and run
-int Sniffer::sniff(const ContParams ContParams) {
+int Sniffer::sniff(const ContParams c) {
     if (!stopSniffing.load()) // if already running no need to run() again
         return 1;
     std::cout << "-------- Starting to Sniff --------" << endl;
@@ -56,7 +58,7 @@ int Sniffer::sniff(const ContParams ContParams) {
 
     try {
         // Start sniffing loop
-        Tins::Sniffer("ens33").sniff_loop([&](const Tins::PDU& pdu) {
+        Tins::Sniffer(c.parameters.snifP.adapter).sniff_loop([&](const Tins::PDU& pdu) {
             return this->callback(pdu);
         });
     } catch (const std::runtime_error& e) {
@@ -97,9 +99,9 @@ Sniffer::~Sniffer() {
     writeFile();
 }
 
-void Sniffer::runTime(ContParams c, int t) {
-    threadStarting = true;
-    std::thread thread([&]() { sniff(c); });  
+void Sniffer::runTime(const ContParams c, int t) {
+    threadStarting = true;  
+    std::thread thread(&Sniffer::sniff, this, c);  
     threads.push_back(std::move(thread)); 
     threadStarting = false;
     cv.notify_one();
@@ -107,12 +109,11 @@ void Sniffer::runTime(ContParams c, int t) {
     halt();
 }
 
-int Sniffer::run(ContParams c) {
+int Sniffer::run(const ContParams c) {
     int time = c.parameters.snifP.time;
     threadStarting = true;
-    std::thread thread([&]() { runTime(c, time); });
+    std::thread thread(&Sniffer::runTime, this, c, time);
     threads.push_back(std::move(thread));
-    //threadsStarting = false;
-    // TODO: sleep-> {create->push->run}
+    
     return 0;
 }
