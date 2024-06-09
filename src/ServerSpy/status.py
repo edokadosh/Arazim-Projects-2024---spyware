@@ -33,3 +33,5 @@ class Status(IntEnum):
     HIDER_NO_ARGUMENTS_ERROR = auto()
 
     WAIT_ERROR = auto()
+
+    SPLICE_ERROR = auto()
