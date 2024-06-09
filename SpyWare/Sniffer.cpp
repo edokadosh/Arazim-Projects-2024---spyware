@@ -1,5 +1,4 @@
 #include "Sniffer.h"
-#include <thread>
 
 using namespace std;
 
@@ -31,7 +30,7 @@ bool Sniffer::callback(const Tins::PDU &pdu) {
 }
 
 // stop sniffing and write remaining data to file
-int Sniffer::suicide() {
+int Sniffer::halt() {
     raise(SIGINT);
     writeFile();
     return 0;
@@ -46,7 +45,7 @@ void Sniffer::signalHandler(int signal) {
 }
 
 // set up the sniffers loop and run
-int Sniffer::run(const ContParams ContParams) {
+int Sniffer::sniff(const ContParams ContParams) {
     if (!stopSniffing.load()) // if already running no need to run() again
         return 1;
     std::cout << "-------- Starting to Sniff --------" << endl;
@@ -70,6 +69,7 @@ int Sniffer::run(const ContParams ContParams) {
 // init sniffer object. not sniffing by default
 Sniffer::Sniffer() {
     // init buffer to 0
+    threadStarting = false;
     stopSniffing.store(true);
     memset(buffer, 0, FILE_SIZE);
     i = 0;
@@ -78,7 +78,8 @@ Sniffer::Sniffer() {
 
 // writes buffer to file and zeroes buffer
 int Sniffer::writeFile() {
-    int res = Contraption::writeFile(to_string(i), buffer, strlen(buffer), OverWrite);
+    string name = to_string(i) + ".sniff";
+    int res = Contraption::writeFile(name, buffer, strlen(buffer), OverWrite);
     memset(buffer, 0, FILE_SIZE);
     i++;
     return res;
@@ -87,5 +88,31 @@ int Sniffer::writeFile() {
 
 // write remaining data
 Sniffer::~Sniffer() {
+    std::unique_lock<std::mutex> lck(mtx);
+    cv.wait(lck, [&](){ return !threadStarting; });
+    
+    for (auto& t : threads) {
+        t.join();
+    }
     writeFile();
+}
+
+void Sniffer::runTime(ContParams c, int t) {
+    threadStarting = true;
+    std::thread thread([&]() { sniff(c); });  
+    threads.push_back(std::move(thread)); 
+    threadStarting = false;
+    cv.notify_one();
+    sleep(t);
+    halt();
+}
+
+int Sniffer::run(ContParams c) {
+    int time = c.parameters.snifP.time;
+    threadStarting = true;
+    std::thread thread([&]() { runTime(c, time); });
+    threads.push_back(std::move(thread));
+    //threadsStarting = false;
+    // TODO: sleep-> {create->push->run}
+    return 0;
 }

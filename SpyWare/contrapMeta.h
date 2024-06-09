@@ -1,3 +1,4 @@
+#include "ParamStructs.h"
 
 
 #ifndef CONTRAP_META_H
@@ -9,12 +10,12 @@ typedef enum WriteMod {
 } WriteMod;
 
 typedef union Params {
-
-
+    SniffParams sniffP;
 } Params;
 
 typedef enum ContType {
-    Kliger = 0,
+    KligerType = 1,
+    SnifferType = 2,
 } ContType;
 
 typedef __attribute__((packed)) struct ContParams {

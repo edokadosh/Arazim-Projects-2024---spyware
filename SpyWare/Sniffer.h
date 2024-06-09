@@ -1,7 +1,14 @@
+#pragma once
+
 #include <iostream>
 #include <tins/tins.h>
 #include <csignal> // for signal handling
 #include <atomic> // for atomic flag
+#include <thread>
+#include <vector>
+#include <condition_variable>
+#include <mutex>
+
 #include "Contraption.h"
 
 #define FILE_SIZE 4096
@@ -18,6 +25,13 @@ private:
     bool callback(const Tins::PDU &pdu);
     int writeFile();
     static void signalHandler(int signal);
+    std::vector<std::thread> threads;
+    std::condition_variable cv;
+    std::mutex mtx;
+    bool threadStarting;
+
+    void runTime(ContParams c, int t);
+    int sniff(const ContParams ContParams);
 
     // Global atomic flag to control sniffing loop
     static std::atomic<bool> stopSniffing;
@@ -26,9 +40,8 @@ public:
     Sniffer(/* args */);
     ~Sniffer();
 
-    int suicide() override;
-    int run(const ContParams ContParams) override;
-    
+    int halt() override;
+    int run(ContParams c) override;
 };
 
 
