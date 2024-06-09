@@ -42,7 +42,7 @@ public:
 
     bool recvCommand(command& cmd);
 
-    bool recvData(uint32_t size, char data[CHUNK_SIZE]);
+    bool recvData(uint32_t size, void* data);
 
     void closeSocket();
 

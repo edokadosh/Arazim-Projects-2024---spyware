@@ -110,9 +110,9 @@ bool Connection::recvCommand(command& cmd)
 
 
 
-bool Connection::recvData(uint32_t size, char data[])
+bool Connection::recvData(uint32_t size, void* buffer)
 {
-    if (recv(socket_, data, sizeof(data[0]) * size, 0) == -1) {
+    if (recv(socket_, buffer, size, 0) == -1) {
         std::cerr << "Receive data failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return false;
