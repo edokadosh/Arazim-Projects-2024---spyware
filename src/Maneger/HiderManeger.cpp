@@ -118,7 +118,6 @@ Status HiderManeger::hiddenAction(const command& cmd, Connection& conn)
         hiddenUpload(cmd, conn);
     }
 
-    sleep(2);
     int bytes_read;
     responce hiderRes = {.dataLen = 0, .status = SUCCSESS};
 
