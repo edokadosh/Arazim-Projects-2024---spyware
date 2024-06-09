@@ -3,8 +3,8 @@ from funCode import FunCode
 
 
 class Command:
-    FMT: str = "=II50s"
-    sizeof: int = struct.calcsize("=II50s")
+    FMT: str = "!II50s"
+    sizeof: int = struct.calcsize("!II50s")
 
     def __init__(self, dataLen: int, funcode: FunCode, strParam: str) -> None:
         self.dataLen = dataLen

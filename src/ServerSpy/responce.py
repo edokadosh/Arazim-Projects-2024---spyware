@@ -4,7 +4,7 @@ from status import Status
 
 class Responce:
 
-    FMT: str = "=II"
+    FMT: str = "!II"
     sizeof: int = struct.calcsize("!II")
 
     def __init__(self, dataLen: int, status: Status) -> None:
