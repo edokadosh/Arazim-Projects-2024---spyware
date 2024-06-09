@@ -8,9 +8,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "../ManegerAndHider/Status.h"
+#include "../IncludeCPP/Status.h"
 #include "Connection.h"
-#include "../ManegerAndHider/globalDefines.h"
+#include "../IncludeCPP/globalDefines.h"
 
 
 #ifndef SOFTWARE_MANEGER_H

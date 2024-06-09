@@ -7,10 +7,10 @@
 #include <cstring>
 #include <cerrno>
 
-#include "../ManegerAndHider/Status.h"
+#include "../IncludeCPP/Status.h"
 #include "command.h"
 #include "responce.h"
-#include "../ManegerAndHider/globalDefines.h"
+#include "../IncludeCPP/globalDefines.h"
 
 #ifndef CONNECTION_H
 #define CONNECTION_H

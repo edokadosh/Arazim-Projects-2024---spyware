@@ -1,5 +1,5 @@
 #include "Hider.h"
-#include "../ManegerAndHider/encoding.h"
+#include "../IncludeCPP/encoding.h"
 #include "../Maneger/responce.h"
 
 Hider::Hider() : handel(HiddenFileHandler()) {}

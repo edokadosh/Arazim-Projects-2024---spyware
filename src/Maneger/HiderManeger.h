@@ -20,9 +20,9 @@ HIDER_UPLOAD
 
 #include "FunCodes.h"
 #include "Connection.h"
-#include "../ManegerAndHider/Status.h"
+#include "../IncludeCPP/Status.h"
 #include "HiderCodes.h"
-#include "../ManegerAndHider/encoding.h"
+#include "../IncludeCPP/encoding.h"
 
 #ifndef HIDER_MANEGER_H
 #define HIDER_MANEGER_H

@@ -7,8 +7,8 @@
 #include <cstring>
 #include <cerrno>
 
-#include "../ManegerAndHider/Status.h"
-#include "../ManegerAndHider/globalDefines.h"
+#include "../IncludeCPP/Status.h"
+#include "../IncludeCPP/globalDefines.h"
 #include "Connection.h"
 
 #ifndef LISTENER_H
