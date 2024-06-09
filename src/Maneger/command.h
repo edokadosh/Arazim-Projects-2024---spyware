@@ -19,8 +19,4 @@ struct __attribute__((packed)) command {
 
 typedef struct command command;
 
-command netEndianCommand(const command cmd);
-
-command hostEndianCommand(const command cmd);
-
 #endif

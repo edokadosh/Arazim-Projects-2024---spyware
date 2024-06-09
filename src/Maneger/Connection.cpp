@@ -51,8 +51,7 @@ bool Connection::sendString(const std::string& str) {
 
 
 bool Connection::sendResponceStruct(const responce res) {
-    responce netRes = netEndianResponce(res); 
-    int bytesSent = ::send(socket_, &netRes, sizeof(netRes), 0);
+    int bytesSent = ::send(socket_, &res, sizeof(res), 0);
     if (bytesSent == -1) {
         std::cerr << "Error sending responce" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
@@ -100,13 +99,12 @@ bool Connection::sendResponce(uint32_t status, const std::string& msg) {
 
 bool Connection::recvCommand(command& cmd)
 {
-    command netCmd;
-    if (recv(socket_, &netCmd, sizeof(netCmd), 0) == -1) {
+    if (recv(socket_, &cmd, sizeof(cmd), 0) == -1) {
         std::cerr << "Receive command failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return false;
     }
-    cmd = hostEndianCommand(netCmd);
+
     return true;
 }
 
