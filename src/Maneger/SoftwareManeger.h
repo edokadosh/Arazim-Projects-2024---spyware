@@ -8,19 +8,22 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "Status.h"
+#include "../IncludeCPP/Status.h"
 #include "Connection.h"
+#include "../IncludeCPP/globalDefines.h"
 
 
 #ifndef SOFTWARE_MANEGER_H
 #define SOFTWARE_MANEGER_H
 
-#define CHUNK_SIZE (1024)
 
 
 
 class SoftwareManeger {
 
+private:
+
+    std::string getPath(const std::string fileName);
 
 public:
 
@@ -28,7 +31,9 @@ public:
 
     ~SoftwareManeger();    
 
-    Status fileWrite(Connection& conn, uint32_t fileSize, std::string param);
+    Status fileWrite(Connection& conn, uint32_t fileSize, std::string fileName);
+
+    Status runFile(const std::string fileName, int argc, char* argv[], int fdIn, int fdOut);
 
     Status deleteFile(const std::string& fileName);
 };

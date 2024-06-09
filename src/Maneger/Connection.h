@@ -7,14 +7,14 @@
 #include <cstring>
 #include <cerrno>
 
-#include "Status.h"
+#include "../IncludeCPP/Status.h"
 #include "command.h"
 #include "responce.h"
+#include "../IncludeCPP/globalDefines.h"
 
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#define CHUNK_SIZE (1024)
 
 class Connection {
     
