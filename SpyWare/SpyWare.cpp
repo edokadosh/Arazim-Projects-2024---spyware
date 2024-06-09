@@ -8,7 +8,9 @@ int main() {
     c.parameters.snifP.adapter[MAX_ADAPTER_NAMELEN - 1] = 0;
     c.type = SnifferType;
 
-    std::cout << "Adapter: " << c.parameters.snifP.adapter << std::endl;
+    s.run(c);
+
+    sleep(10);
     s.run(c);
 
     return 0;

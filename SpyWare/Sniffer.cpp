@@ -31,9 +31,7 @@ bool Sniffer::callback(const Tins::PDU &pdu) {
 
 // stop sniffing and write remaining data to file
 int Sniffer::halt() {
-    std::cout << "here" << std::endl;
     raise(SIGINT);
-    std::cout << "here" << std::endl;
     writeFile();
     return 0;
 };
