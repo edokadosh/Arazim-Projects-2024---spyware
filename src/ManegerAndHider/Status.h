@@ -25,6 +25,8 @@ typedef enum Status {
     WAIT_ERROR,
     SPLICE_ERROR,
 
+    READ_FROM_HIDER_ERROR,
+
 
 } Status;
 

