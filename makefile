@@ -39,7 +39,7 @@ $(H_EXEC): $(H_OBJS)
 spyware: $(S_EXEC)
 
 $(S_EXEC): $(S_OBJS)
-	$(CC) $(CFLAGS) $(S_OBJS) -o $@
+	$(CC) $(CFLAGS) $(S_OBJS) -o $@ -ltins
 
 
 # Clean rule
