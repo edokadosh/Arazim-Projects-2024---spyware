@@ -15,7 +15,7 @@ typedef union Params {
     SniffParams sniffP;
 } Params;
 
-typedef enum ContType {
+typedef enum ContType : uint32_t {
     KligerType = 1,
     SnifferType = 2,
 } ContType;
@@ -25,7 +25,7 @@ typedef struct __attribute__((packed)) ContParams {
     Params parameters;
 } ContParams;
 
-typedef enum SpywareCmdType {
+typedef enum SpywareCmdType : uint32_t {
 
     RunContraption = 1,
     HaltContraption = 2,

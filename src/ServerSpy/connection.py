@@ -32,6 +32,9 @@ class Connection:
     def send_data(self, data: bytes):
         self.socket.send(data)
 
+    def send_string(self, string: str):
+        self.send_data(string.encode("utf-8"))
+
     # TODO add error handeling
     def recv_bytes(self, length: int) -> bytes:
         return self.socket.recv(length)
@@ -47,6 +50,10 @@ class Connection:
         res = self.recv_responce_struct()
         msg = self.recv_string(res.dataLen)
         return res, msg
+
+    def recv_file(self) -> bytes:
+        length = struct.unpack("=I", self.recv_bytes(struct.calcsize("=I")))
+        return self.recv_bytes(length)
 
     def __enter__(self):
         return self

