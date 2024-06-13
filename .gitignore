@@ -217,6 +217,8 @@ pyrightconfig.json
 tmp*
 temp*
 
+fishfish.txt
+
 # our program
 maneger
 hider
