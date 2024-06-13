@@ -5,7 +5,7 @@
 #include "../IncludeCPP/Status.h"
 #include "FunCodes.h"
 #include "HiderManeger.h"
-#include "HiderCodes.h"
+#include "../Hider/HiderCodes.h"
 #include "Listener.h"
 #include "Connection.h"
 

@@ -118,21 +118,21 @@ Status HiderManeger::hiddenAction(const command& cmd, Connection& conn)
         hiddenUpload(cmd, conn);
     }
 
-    int bytes_read;
-    responce hiderRes = {.dataLen = 0, .status = SUCCSESS};
+    if (cmd.fncode & (HIDDEN_UPLOAD | HIDDEN_RUN | HIDDEN_DELETE))
+    {
+        responce hiderRes = {.dataLen = 0, .status = SUCCSESS};
 
-    for (int i = 0; i < 3; i++) {
-        if (read(htmpipe[0], &hiderRes, sizeof(hiderRes)) < 0) {
-            std::cerr << "error reading from hider pipe" << std::endl;
-            return READ_FROM_HIDER_ERROR;
+        for (int i = 0; i < 3; i++) {
+            if (read(htmpipe[0], &hiderRes, sizeof(hiderRes)) < 0) {
+                std::cerr << "error reading from hider pipe" << std::endl;
+                return READ_FROM_HIDER_ERROR;
+            }
+            conn.sendResponceStruct(hiderRes);
         }
-        conn.sendResponceStruct(hiderRes);
     }
 
-    bytes_read = splice(htmpipe[0], nullptr, conn.socket_, nullptr, 3 * sizeof(responce), SPLICE_F_MOVE);
-    if (bytes_read == -1) {
-        std::cerr << "Error splicing data from hider: " << std::strerror(errno) << std::endl;
-        return SPLICE_ERROR;
+    if (cmd.fncode & HIDDEN_RETRIEVE_FILE){
+        hiddenRetrieve(conn);
     }
     
 
@@ -157,7 +157,7 @@ Status HiderManeger::hiddenUpload(const command& cmd, Connection& conn)
     for (ctr = 0; ctr < cmd.dataLen; ctr += 4096)
     {
         transmitBytes = MIN(4096, cmd.dataLen - ctr);
-        if ((bytes_received = splice(conn.socket_, nullptr, mthpipe[1], nullptr, transmitBytes, SPLICE_F_MOVE)) == -1) {
+        if ((bytes_received = splice(conn.fdIn, nullptr, mthpipe[1], nullptr, transmitBytes, SPLICE_F_MOVE)) == -1) {
             std::cerr << "Error splicing data to hider: " << std::strerror(errno) << std::endl;
             return SPLICE_ERROR;
         }
@@ -169,12 +169,38 @@ Status HiderManeger::hiddenUpload(const command& cmd, Connection& conn)
     return SUCCSESS;
 }
 
+Status HiderManeger::hiddenRetrieve(Connection& conn) {
+    uint32_t fileSize;
+    char fileContent[CHUNK_SIZE];
+
+    if (read(htmpipe[0], &fileSize, sizeof(fileSize)) < 0)
+    {
+        std::cerr << "error reading from hider pipe" << std::endl;
+        return READ_FROM_HIDER_ERROR;
+    }
+    conn.sendData(sizeof(fileSize), &fileSize);
+    uint32_t ctr;
+    uint32_t tranmitBytes;
+    for (ctr = 0; ctr < fileSize; ctr += sizeof(fileContent))
+    {
+        tranmitBytes = MIN(sizeof(fileContent), fileSize - ctr);
+        if (read(htmpipe[0], fileContent, tranmitBytes) < 0)
+        {
+            std::cerr << "error reading from hider pipe" << std::endl;
+            return READ_FROM_HIDER_ERROR;
+        }
+        conn.sendData(tranmitBytes, fileContent);
+    }
+    
+    close(htmpipe[0]);
+    return SUCCSESS;
+}
 
 Status HiderManeger::hiddenList(Connection& conn)
 {
     // loop for receiving file pipe -> server
     int bytes_read;
-    while ((bytes_read = splice(htmpipe[0], nullptr, conn.socket_, nullptr, 4096, SPLICE_F_MOVE)) > 0) {
+    while ((bytes_read = splice(htmpipe[0], nullptr, conn.fdOut, nullptr, 4096, SPLICE_F_MOVE)) > 0) {
         if (bytes_read == -1) {
             std::cerr << "Error splicing data: " << std::strerror(errno) << std::endl;
             return SPLICE_ERROR;

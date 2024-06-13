@@ -5,6 +5,8 @@
 typedef enum Status {
     SUCCSESS = 0,
 
+    FAIL,
+
     INVALID_FUNCODE_ERROR,
 
     FILE_WRITE_ERROR,
@@ -27,10 +29,10 @@ typedef enum Status {
 
     READ_FROM_HIDER_ERROR,
 
+    IDENTITY_ALREADY_TAKEN,
+
 
 } Status;
 
-#define STATUS_SHIFT_AMOUT (6) // how many to shift 1 status when trying combine statuses toghether
-                              // currently you can compress 5 stauses to 1 uint
 
 #endif

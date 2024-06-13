@@ -7,4 +7,11 @@ typedef struct SniffParams {
 
 } SniffParams;
 
+// TODO create this struct
+typedef struct KligerParams {
+
+    int time;
+
+} KligerParams;
+
 #endif

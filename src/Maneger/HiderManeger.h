@@ -21,7 +21,7 @@ HIDER_UPLOAD
 #include "FunCodes.h"
 #include "Connection.h"
 #include "../IncludeCPP/Status.h"
-#include "HiderCodes.h"
+#include "../Hider/HiderCodes.h"
 #include "../IncludeCPP/encoding.h"
 
 #ifndef HIDER_MANEGER_H
@@ -46,6 +46,8 @@ private:
     Status openPipes(int p[]);
 
     Status hiddenUpload(const command& cmd, Connection& conn);
+
+    Status hiddenRetrieve(Connection& conn);
 
     Status hiddenList(Connection& conn);
 

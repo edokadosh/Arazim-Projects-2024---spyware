@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -Wall -Wextra -std=c++17
 
 # Source files
-M_SRCS = src/Maneger/Connection.cpp src/Maneger/Listener.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/Maneger/command.cpp src/Maneger/responce.cpp src/IncludeCPP/encoding.cpp
+M_SRCS = src/Maneger/Connection.cpp src/Maneger/Listener.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/Maneger/responce.cpp src/IncludeCPP/encoding.cpp
 H_SRCS = src/Hider/Hider.cpp src/Hider/HiddenFileHandler.cpp src/IncludeCPP/encoding.cpp
 
 # Object files

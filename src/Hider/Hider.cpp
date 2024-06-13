@@ -1,6 +1,5 @@
 #include "Hider.h"
-#include "../IncludeCPP/encoding.h"
-#include "../Maneger/responce.h"
+
 
 Hider::Hider() : handel(HiddenFileHandler()) {}
 
@@ -31,7 +30,7 @@ uint Hider::manage_files(int argc, char* argv[])
 	if (fncode & HIDDEN_UPLOAD)
 	{
 		std::cerr << "start hidden uploading\n";
-		res_upload.status = handel.writeFile(stringParam, uploadLen);
+		res_upload.status = handel.uploadFile(stringParam, uploadLen);
 		std::cerr << "res_upload: " << res_upload.status << std::endl;
 
 	}
@@ -46,11 +45,16 @@ uint Hider::manage_files(int argc, char* argv[])
 		res_delete.status = handel.deleteFile(stringParam);
 		std::cerr << "res_delete: " << res_delete.status << std::endl;
 	}
+	if (fncode & (HIDDEN_UPLOAD | HIDDEN_RUN | HIDDEN_DELETE))
+	{
+		write(STDOUT_FILENO, &res_upload, sizeof(res_upload));
+		write(STDOUT_FILENO, &res_run, sizeof(res_run));
+		write(STDOUT_FILENO, &res_delete, sizeof(res_delete));
+	}
 
-	write(STDOUT_FILENO, &res_upload, sizeof(res_upload));
-	write(STDOUT_FILENO, &res_run, sizeof(res_run));
-	write(STDOUT_FILENO, &res_delete, sizeof(res_delete));
-
+	if(fncode & HIDDEN_RETRIEVE_FILE) {
+		handel.retreiveFile(stringParam);
+	}
 
 	if (fncode & HIDDEN_LIST) {
 		handel.listFiles();
@@ -63,7 +67,6 @@ uint Hider::manage_files(int argc, char* argv[])
 
 int main(int argc, char* argv[]) {
 	std::cerr << "start hider\n";
-	
 	Hider hider = Hider();	
 	return hider.manage_files(argc, argv);
 }

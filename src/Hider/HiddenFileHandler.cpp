@@ -28,7 +28,30 @@ Status HiddenFileHandler::deleteFile(const std::string& filename) {
     return SUCCSESS;
 }
 
-Status HiddenFileHandler::writeFile(const std::string& fileName, uint32_t fileSize) {
+Status HiddenFileHandler::retreiveFile(const std::string& filename) {
+    const std::string filePath = getPath(filename);
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open the file." << std::endl;
+        return FILE_NOT_OPEN_ERROR;
+    }
+    const std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    uint32_t fileSize = buffer.size();
+    if (write(STDOUT_FILENO, &fileSize, sizeof(fileSize)) == -1) {
+        std::cerr << "Error msg length" << std::endl;
+        std::cerr << "Error: " << strerror(errno) << std::endl;
+    }
+    file.close();
+
+    if ((write(STDOUT_FILENO, buffer.data(), fileSize)) == -1) {
+        std::cerr << "Error msg length" << std::endl;
+        std::cerr << "Error: " << strerror(errno) << std::endl;
+    }
+
+    return SUCCSESS;
+}
+
+Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileSize) {
     char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
     

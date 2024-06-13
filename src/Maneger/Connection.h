@@ -19,14 +19,15 @@
 class Connection {
     
 private:
+    bool needCloseIn;
+    bool needCloseOut;
 
 
 public:
-    int socket_;
-    struct sockaddr_in address_;
-    bool isOpen;
+    int fdIn;
+    int fdOut;
 
-    Connection(int socket, struct sockaddr_in address);
+    Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput);
 
     Connection();
 
@@ -44,7 +45,9 @@ public:
 
     bool recvData(uint32_t size, void* data);
 
-    void closeSocket();
+    bool sendFile(std::string filePath);
+
+    void closeConnection();
 
 };
 
