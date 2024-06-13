@@ -20,7 +20,7 @@ typedef enum ContType {
     SnifferType = 2,
 } ContType;
 
-typedef __attribute__((packed)) struct ContParams {
+typedef struct __attribute__((packed)) ContParams {
     ContType type;
     Params parameters;
 } ContParams;
@@ -33,7 +33,7 @@ typedef enum SpywareCmdType {
 } SpywareFuncType;
 
 
-typedef __attribute__((packed)) struct SpywareCmd {
+typedef struct __attribute__((packed)) SpywareCmd {
     SpywareFuncType FuncType; // function to do: run contraption, send file, stop contraption
     ContType type; // Contraption type
     contIdent_t contIdentifier;

@@ -2,8 +2,8 @@
 #include <map>
 
 #include "Contraption.h"
-#include "Status.h"
-#include "Connection.h"
+#include "../IncludeCPP/Status.h"
+#include "../Maneger/Connection.h"
 #include "contrapMeta.h"
 #include "ParamStructs.h"
 #include "Sniffer.h"

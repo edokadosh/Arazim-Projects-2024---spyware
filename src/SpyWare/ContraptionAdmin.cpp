@@ -1,8 +1,9 @@
 #include "ContraptionAdmin.h"
 
-const size_t TYPE2PARAMSIZE[] = {
-            [KligerType] = sizeof(KligerParams),
-            [SnifferType] = sizeof(SniffParams), 
+const size_t TYPE2PARAMSIZE[] = { \
+            [0] = 0, \
+            [(uint32_t)KligerType] = sizeof(KligerParams), \
+            [(uint32_t)SnifferType] = sizeof(SniffParams) \
         };
 
 
@@ -14,7 +15,7 @@ Status ContraptionAdmin::runContraption(Connection& conn, ContType type, contIde
     ContParams runParams;
 
     runParams.type = type;
-    conn.recvData(paramsSize, &runParams.parameters);
+    conn.recvData(paramsSize, (char*)&runParams.parameters);
 
     if (contMap.find(identity) != contMap.end())
     {

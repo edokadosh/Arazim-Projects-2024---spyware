@@ -30,8 +30,8 @@ private:
     std::mutex mtx;
     bool threadStarting;
 
-    void runTime(ContParams c, int t);
-    int sniff(const ContParams ContParams);
+    void runTime(SniffParams sniffParams, int t);
+    int sniff(const SniffParams sniffParams);
 
     // Global atomic flag to control sniffing loop
     static std::atomic<bool> stopSniffing;
@@ -41,7 +41,7 @@ public:
     ~Sniffer();
 
     int halt() override;
-    int run(ContParams c) override;
+    int run(const ContParams sniffParams) override;
 };
 
 

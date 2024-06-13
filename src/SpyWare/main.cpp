@@ -3,9 +3,9 @@
 #include "../Maneger/Connection.h"
 #include "../IncludeCPP/Status.h"
 
-#include "HiderManeger.h"
-#include "HiderCodes.h"
-#include "Listener.h"
+#include "../Maneger/HiderManeger.h"
+#include "../Hider/HiderCodes.h"
+#include "../Maneger/Listener.h"
 #include "../Maneger/Connection.h"
 #include "contrapMeta.h"
 #include "Contraption.h"
@@ -13,13 +13,14 @@
 
 #define PORT (65411)
 
-void loopIter(Connection& conn, HiderManeger& hiderManeger);
+void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
 
 int main() {
     
     HiderManeger hiderManager = HiderManeger();
     Listener listener = Listener(PORT);
+    ContraptionAdmin admin = ContraptionAdmin();
 
     bool cont = true;
     while (cont)
@@ -31,7 +32,7 @@ int main() {
             sleep(10);
             continue;
         }
-        loopIter(conn, hiderManager);
+        loopIter(conn, hiderManager, admin);
         std::cout << "compleated loop iter\n";
     }
 
@@ -60,8 +61,11 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
         break;
 
     case SendFile:
-        stat = hiderManeger.hiddenAction(
-                    (const command){.dataLen = 0, .fncode = HIDDEN_OPRATION | HIDDEN_RETRIEVE_FILE}, conn);
+        command hiderCmd;
+        hiderCmd.dataLen =0;
+        hiderCmd.fncode = HIDDEN_OPRATION | HIDDEN_RETRIEVE_FILE;
+        conn.recvData(sizeof(hiderCmd.strParam), hiderCmd.strParam);
+        stat = hiderManeger.hiddenAction(hiderCmd, conn);
         break;
     }
     std::cout << "Conn: res-" << stat << " response-\n" << strRes << std::endl;

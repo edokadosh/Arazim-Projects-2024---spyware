@@ -19,7 +19,7 @@ public:
 
     Contraption() {};
 
-    ~Contraption() {};
+    virtual ~Contraption() {};
 
     int readFile(const std::string& fileName, char buffer[], uint32_t maxLen);
 
