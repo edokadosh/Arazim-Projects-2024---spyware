@@ -90,7 +90,7 @@ bool Connection::recvCommand(command& cmd)
 
 
 
-bool Connection::recvData(uint32_t size, void* buffer)
+bool Connection::recvData(uint32_t size, char* buffer)
 {
     if (recv(fdIn, buffer, size, 0) == -1) {
         std::cerr << "Receive data failed" << std::endl;
