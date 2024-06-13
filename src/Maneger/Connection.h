@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
@@ -43,7 +41,7 @@ public:
 
     bool recvCommand(command& cmd);
 
-    bool recvData(uint32_t size, void* data);
+    bool recvData(uint32_t size, char data[]);
 
     bool sendFile(std::string filePath);
 
