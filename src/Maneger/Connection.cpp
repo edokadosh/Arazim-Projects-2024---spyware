@@ -79,7 +79,7 @@ bool Connection::sendResponce(uint32_t status, const std::string& msg) {
 
 bool Connection::recvCommand(command& cmd)
 {
-    if (recv(fdIn, &cmd, sizeof(cmd), 0) == -1) {
+    if (recv(fdIn, &cmd, sizeof(cmd), 0) != sizeof(cmd)) {
         std::cerr << "Receive command failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return false;

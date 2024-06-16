@@ -11,7 +11,7 @@
 #include "Contraption.h"
 #include "ContraptionAdmin.h"
 
-#define PORT (65411)
+#define PORT (65410)
 
 void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
@@ -69,6 +69,9 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
         conn.recvData(sizeof(hiderCmd.strParam), hiderCmd.strParam);
         stat = hiderManeger.hiddenAction(hiderCmd, conn);
         break;
+    
+    case SUICIDE:
+        std::exit(EXIT_SUCCESS);
     }
     std::cout << "Conn: res-" << stat << " response-\n" << strRes << std::endl;
     conn.sendResponce(stat, strRes);

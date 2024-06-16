@@ -14,8 +14,30 @@ void HiddenFileHandler::listFiles() {
 
 Status HiddenFileHandler::runFile(const std::string& fileName) {
     std::string filePath = getPath(fileName);
-    std::system(filePath.c_str()); // I think that this function will try to run a bash script and not a exeutable
-    return SUCCSESS;
+    std::cerr << "path of file to run: " << filePath << std::endl;
+    int pid = fork();
+    if (pid < 0) {
+        return HIDER_FORK_ERROR;
+    }
+    if (pid > 0){
+        return SUCCSESS;
+    }
+
+    if (setsid() < 0) {
+        std::cerr << "error setting setion" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    pid = fork();
+    if (pid < 0) {
+        std::perror("Error forking second time");
+        std::exit(EXIT_FAILURE);
+    }
+    if (pid > 0) {
+        std::exit(EXIT_SUCCESS); // Exit the parent process
+    }
+    execl(filePath.c_str(), "");
+    std::exit(EXIT_FAILURE);
 }
 
 

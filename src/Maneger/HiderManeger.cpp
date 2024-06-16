@@ -127,6 +127,7 @@ Status HiderManeger::hiddenAction(const command& cmd, Connection& conn)
                 std::cerr << "error reading from hider pipe" << std::endl;
                 return READ_FROM_HIDER_ERROR;
             }
+            std::cout << "responce status from hider: " << hiderRes.status << std::endl;
             conn.sendResponceStruct(hiderRes);
         }
     }

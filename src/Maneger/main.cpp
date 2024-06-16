@@ -63,6 +63,7 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger
 
     conn.recvCommand(cmd);
     std::string strParam = cmd.strParam;
+    std::cout << "cmd.param: \n" << cmd.strParam;
 
     std::cout << "Server: fncode-" << cmd.fncode << " strParam-" << strParam << std::endl;
     std::string strRes = "";

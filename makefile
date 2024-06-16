@@ -44,4 +44,4 @@ $(S_EXEC): $(S_OBJS)
 
 # Clean rule
 clean:
-	rm -f $(M_OBJS) $(H_OBJS) $(M_EXEC) $(H_EXEC) 
+	rm -f $(M_OBJS) $(H_OBJS) $(S_OBJS) $(M_EXEC) $(H_EXEC) $(S_EXEC) 

@@ -21,7 +21,7 @@ namespace fs = std::filesystem;
 class HiddenFileHandler
 {
 private:
-	const std::string folderName = "./";
+	const std::string folderName = ".";
 	std::string getPath(const std::string fileName);
 
 public:
