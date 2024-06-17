@@ -43,6 +43,6 @@ int Listener::acceptConnection(Connection& conn) {
             std::cerr << "Error accepting connection" << std::endl;
             return -1;
         }
-        conn = Connection(homeSocket, homeSocket, true, true);
+        conn = Connection(homeSocket, homeSocket, true, true, true);
         return homeSocket;
     }
