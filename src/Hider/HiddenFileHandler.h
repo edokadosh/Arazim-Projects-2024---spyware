@@ -22,11 +22,17 @@ namespace fs = std::filesystem;
 class HiddenFileHandler
 {
 private:
-	const std::string folderName = ".";
+	std::string folderName;
 	std::string getPath(const std::string fileName);
 
 public:
 
+	HiddenFileHandler() {
+		fs::path folder = fs::current_path();
+		folderName = folder.string();
+		std::cerr << "setted folder name: " << folderName << std::endl;
+	}
+	
 	void listFiles();
 
 	Status runFile(const std::string& filename);

@@ -51,7 +51,10 @@ Status HiddenFileHandler::runFile(const std::string& fileName) {
     }
 #endif
     std::cerr << "exec hidden file" << std::endl;
-    execl(filePath.c_str(), "");
+    if (execl(filePath.c_str(), "", NULL) == -1) {
+        std::cerr << "didn't run hidden file, Error: " << strerror(errno) << std::endl;
+        std::cerr << "address: " << filePath << std::endl;
+    }
     std::exit(EXIT_FAILURE);
 }
 

