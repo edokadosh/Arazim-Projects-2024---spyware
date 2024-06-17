@@ -9,8 +9,4 @@ typedef struct SniffParams {
     char adapter[MAX_ADAPTER_NAMELEN];
 } SniffParams;
 
-typedef struct FileStealer {
-    char savedir[MAX_DIR_NAMELEN];
-} FileStealer;
-
 #endif

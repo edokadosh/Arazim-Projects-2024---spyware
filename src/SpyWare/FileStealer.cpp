@@ -37,7 +37,9 @@ int FileStealer::run(const ContParams contParams) {
     for (auto const & file : files) {
         if (hasFileChanged(file.first)) {
             // SEND FILE
-            std::cout << "FileStealer::Run: PlaceHolder for sending files" << std::endl;
+            // Hider.Save
+            std::cout << "FileStealer::Run: PlaceHolder for sending file" << std::endl;
+            std::cout << "FileStealer::Run: PlaceHolder for saving file in hider" << std::endl;
         }
     }
 
@@ -58,8 +60,4 @@ bool FileStealer::hasFileChanged(std::string path) {
     }
 
     return false; 
-}
-
-void addToDir(std::string filename) {
-    // TODO: Implement
 }

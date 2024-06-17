@@ -14,7 +14,6 @@ private:
     std::map <std::string, time_t> files;
 
     bool hasFileChanged(std::string path);
-    void addToDir(std::string filename);
 
 public:
     FileStealer();
