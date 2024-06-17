@@ -31,6 +31,10 @@ typedef enum Status {
 
     IDENTITY_ALREADY_TAKEN,
 
+    SUICIDE_SUCSESS,
+
+    DID_NOTHING,
+
 
 } Status;
 

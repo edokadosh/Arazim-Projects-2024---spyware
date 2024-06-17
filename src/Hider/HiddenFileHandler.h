@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include "../IncludeCPP/Status.h"
 #include "../IncludeCPP/globalDefines.h"
 

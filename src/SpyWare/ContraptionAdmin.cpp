@@ -7,22 +7,20 @@ const size_t TYPE2PARAMSIZE[] = { \
         };
 
 
-Status ContraptionAdmin::runContraption(Connection& conn, ContType type, contIdent_t identity)
+Status ContraptionAdmin::runContraption(Connection& conn, uint32_t paramsSize, contIdent_t identity)
 {
     
-    const size_t paramsSize = TYPE2PARAMSIZE[type];
     
     ContParams runParams;
 
-    runParams.type = type;
-    conn.recvData(paramsSize, (char*)&runParams.parameters);
+    conn.recvData(paramsSize, (char*)&runParams);
 
     if (contMap.find(identity) != contMap.end())
     {
         return IDENTITY_ALREADY_TAKEN;
     }
 
-    switch(type) {
+    switch(runParams.type) {
     case SnifferType:
         contMap[identity] = new Sniffer();
         break;

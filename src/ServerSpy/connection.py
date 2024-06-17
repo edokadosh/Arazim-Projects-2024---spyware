@@ -52,11 +52,7 @@ class Connection:
         return res, msg
 
     def recv_file(self) -> bytes:
-        length = int.from_bytes(
-            struct.unpack("=I", self.recv_bytes(struct.calcsize("=I"))),
-            byteorder="little",
-            signed=False,
-        )
+        (length,) = struct.unpack("=I", self.recv_bytes(struct.calcsize("=I")))
         return self.recv_bytes(length)
 
     def __enter__(self):

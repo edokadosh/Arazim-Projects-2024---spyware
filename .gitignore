@@ -219,6 +219,10 @@ temp*
 
 fishfish.txt
 
+sentSpyware.spy
+*.spy
+*.log
+
 # our program
 maneger
 hider

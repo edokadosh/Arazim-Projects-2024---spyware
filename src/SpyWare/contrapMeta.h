@@ -25,18 +25,6 @@ typedef struct __attribute__((packed)) ContParams {
     Params parameters;
 } ContParams;
 
-typedef enum SpywareCmdType : uint32_t {
 
-    RunContraption = 1,
-    HaltContraption = 2,
-    SendFile = 3,
-} SpywareFuncType;
-
-
-typedef struct __attribute__((packed)) SpywareCmd {
-    SpywareFuncType FuncType; // function to do: run contraption, send file, stop contraption
-    ContType type; // Contraption type
-    contIdent_t contIdentifier;
-} SpywareCmd;
 
 #endif

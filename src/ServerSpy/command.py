@@ -16,7 +16,6 @@ class Command:
         self.strParam = strParam.encode("utf-8")
 
     def pack(self) -> bytes:
-        print(f"{self.strParam}")
         return struct.pack(
             self.FMT, self.dataLen, self.funCode, self.identifier, self.strParam
         )

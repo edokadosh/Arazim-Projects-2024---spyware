@@ -24,7 +24,7 @@ public:
         contMap.clear();
     };
 
-    Status runContraption(Connection& conn, ContType type, contIdent_t identity);
+    Status runContraption(Connection& conn, uint32_t paramsSize, contIdent_t identity);
 
     Status haltContraption(contIdent_t identity);
 };

