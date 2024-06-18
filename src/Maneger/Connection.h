@@ -35,6 +35,7 @@ public:
     Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSocket);
 
     Connection();
+    Connection::Connection(Connection&& other) noexcept;
 
     ~Connection();
 
@@ -59,7 +60,6 @@ public:
     bool sendFile(std::string filePath);
     bool sendFile(std::string filePath, int flags);
 
-    void closeConnection();
 
 friend class HiderManeger;
 };

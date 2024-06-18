@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         
         if (!conn.recvCommand(cmd)) {
             std::cerr << "conn.recvCommand(cmd) failed" << std::endl;
-            conn.closeConnection();
+            conn.~Connection();
             continue;
         }
         std::cout << "cmd.dataLen: " << cmd.dataLen << std::endl;
@@ -34,6 +34,6 @@ int main(int argc, char* argv[])
 
         conn.sendResponceStruct((responce){.dataLen = 65, .status = FILE_WRITE_ERROR});
 
-        conn.closeConnection();
+        conn.~Connection();
     }
 }

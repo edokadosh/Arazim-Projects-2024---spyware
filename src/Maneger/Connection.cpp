@@ -18,12 +18,24 @@ Connection::Connection(int fdInput, int fdOutput, bool needCloseInput, bool need
 Connection::Connection() {}
 
 Connection::~Connection() {
-    // std::cout << "deastroy" << std::endl;
-    // if (socket_ != -1) {
-    //     close(socket_);
-    // }
-    // needCloseIn = false;
+    if(needCloseIn)
+        close(fdIn);
+    
+    if(needCloseOut)
+        close(fdOut);
 }
+
+    Connection::Connection(Connection&& other) noexcept 
+    {
+        fdIn = other.fdIn;
+        fdOut = other.fdOut;
+        fdIn = other.fdIn;
+        isSocket = other.isSocket;
+        needCloseIn = other.needCloseIn;
+        needCloseOut = other.needCloseOut;
+        other.needCloseIn = false;
+        other.needCloseOut = false;
+    }
 
 int Connection::doSend(const void* buf, size_t size, int flags) {
     if (isSocket)
@@ -49,13 +61,6 @@ int Connection::doRecv(void* buf, size_t size) {
     return read(fdOut, buf, size);
 }
 
-void Connection::closeConnection() {
-    if(needCloseIn)
-        close(fdIn);
-    
-    if(needCloseOut)
-        close(fdOut);
-}
 
 
 bool Connection::sendData(uint32_t size, void* buffer, int flags) {
