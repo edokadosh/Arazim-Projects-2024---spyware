@@ -9,7 +9,7 @@ int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t 
     if (bufferLen == 0)
         return 0;
 
-    std::cout << "Writing to file " << fileName << std::endl;
+    std::cerr << "Writing to file " << fileName << std::endl;
     std::ofstream outputFile(fileName);
 
     if (outputFile.is_open()) {

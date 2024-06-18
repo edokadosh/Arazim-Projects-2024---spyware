@@ -19,7 +19,7 @@ void FileStealer::rmFilePath(std::string path) {
 
 void FileStealer::printFilePaths() {
     for (auto const & path : files) {
-        std::cout << path.first << std::endl;
+        std::cerr << path.first << std::endl;
     }
 }
 
@@ -49,7 +49,7 @@ int FileStealer::run(const ContParams contParams) {
 bool FileStealer::hasFileChanged(std::string path) {
     struct stat fileInfo;
     if (stat(path.c_str(), &fileInfo) != 0) {
-        std::cout << path << " not found" << std::endl;
+        std::cerr << path << " not found" << std::endl;
         return false;
     }
 

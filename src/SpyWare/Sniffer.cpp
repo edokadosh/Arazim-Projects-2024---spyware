@@ -48,7 +48,7 @@ void Sniffer::signalHandler(int signal) {
 int Sniffer::sniff(const SniffParams sniffP) {
     if (!stopSniffing.load()) // if already running no need to run() again
         return 1;
-    std::cout << "-------- Starting to Sniff --------" << endl;
+    std::cerr << "-------- Starting to Sniff --------" << endl;
     stopSniffing.store(false);
 
     // Install signal handler for SIGINT
@@ -60,7 +60,7 @@ int Sniffer::sniff(const SniffParams sniffP) {
             return this->callback(pdu);
         });
     } catch (const std::runtime_error& e) {
-        std::cout << "-------- Sniffing stopped --------" << std::endl;
+        std::cerr << "-------- Sniffing stopped --------" << std::endl;
     }
 
     return 0;
