@@ -7,8 +7,7 @@ from time import sleep
 from contParams import *
 from structParams import *
 
-# HOST = "192.168.83.130"
-HOST = "localhost"
+HOST = "192.168.83.131"
 PORT_MANEGER = 65432
 PORT_SPYWARE = 65410
 
