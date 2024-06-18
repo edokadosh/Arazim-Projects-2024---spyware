@@ -17,7 +17,7 @@ void testSoftwareManeger(void);
 int main() {
     
     SoftwareManeger swm = SoftwareManeger();
-    HiderManeger hiderManager = HiderManeger();
+    HiderManeger& hiderManager = HiderManeger::getInstance();
     Listener listener = Listener(PORT);
 
     bool cont = true;

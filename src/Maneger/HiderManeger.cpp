@@ -155,9 +155,9 @@ Status HiderManeger::hiddenUpload(const command& cmd, Connection& conn)
     uint32_t ctr;
     uint32_t transmitBytes;
     int bytes_received;
-    for (ctr = 0; ctr < cmd.dataLen; ctr += 4096)
+    for (ctr = 0; ctr < cmd.dataLen; ctr += PAGE_SIZE)
     {
-        transmitBytes = MIN(4096, cmd.dataLen - ctr);
+        transmitBytes = MIN(PAGE_SIZE, cmd.dataLen - ctr);
         if ((bytes_received = splice(conn.fdIn, nullptr, mthpipe[1], nullptr, transmitBytes, SPLICE_F_MOVE)) == -1) {
             std::cerr << "Error splicing data to hider: " << std::strerror(errno) << std::endl;
             return SPLICE_ERROR;
@@ -209,6 +209,14 @@ Status HiderManeger::hiddenList(Connection& conn)
     }
     
     close(htmpipe[0]);
+
+    return SUCCSESS;
+}
+
+Status HiderManeger::hideFile(const std::string filename, std::string identifier) {
+    std::cout << "HiderManeger::hideFile: hiding " << 
+            filename << identifier << "implementation missing" << std::endl;
+    // need to call Hider.Hide()
 
     return SUCCSESS;
 }
