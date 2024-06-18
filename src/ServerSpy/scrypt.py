@@ -12,6 +12,8 @@ PORT_SPYWARE = 65410
 
 def clean():
     spyAgent = Agent(HOST, PORT_SPYWARE)
+    agent = Agent(HOST, PORT_MANEGER)
+    agent.suicide()
     spyAgent.suicide()
 
 
@@ -26,5 +28,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    # clean()
+    # main()
+    clean()

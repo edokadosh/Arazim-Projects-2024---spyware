@@ -11,3 +11,8 @@ class SniffParams(ctypes.Structure):
         ("time", ctypes.c_int),
         ("adapter", ctypes.c_char * MAX_ADAPTER_NAMELEN),
     ]
+
+
+if __name__ == "__main__":
+    sniffp = SniffParams(5, b"ens33")
+    print(sniffp)

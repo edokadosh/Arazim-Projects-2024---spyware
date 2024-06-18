@@ -16,6 +16,5 @@ class Responce:
 
     @classmethod
     def unpack(cls, raw_res: bytes) -> "Responce":
-        assert cls.sizeof == len(raw_res), "raw responce size is invalid"
         dataLen, status = struct.unpack(cls.FMT, raw_res)
         return Responce(dataLen, Status(status))

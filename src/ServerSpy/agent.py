@@ -100,5 +100,9 @@ class Agent:
             assert res.status == Status.SUICIDE_SUCSESS, "FAILED TO SUICIDE"
             return res
 
-    def runContraption(self, params: ContParams):
-        pass
+    def runContraption(self, params: ContParams, identifier: int):
+        with self.connect() as conn:
+            conn.send_command(Command(0, FunCode.RunContraption, identifier, ""))
+            conn.send_data(bytes(params))
+            res = conn.recv_responce_struct()
+            return res

@@ -85,6 +85,11 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger
     case HIDER_SETUP:
         res = hiderManeger.setUpHider(strParam);
         break;
+    
+    case SUICIDE:
+        conn.sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
+        std::exit(EXIT_SUCCESS);
+    
     }
     // hidden handling
     if (cmd.fncode & HIDDEN_OPRATION) {

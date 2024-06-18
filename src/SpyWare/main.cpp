@@ -57,7 +57,7 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
     switch (cmd.fncode)
     {
     case RunContraption:
-        stat = admin.runContraption(conn, cmd.dataLen, cmd.identifier);
+        stat = admin.runContraption(conn, cmd.identifier);
         break;
 
     case HaltContraption:

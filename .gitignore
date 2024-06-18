@@ -218,6 +218,8 @@ pyrightconfig.json
 tmp*
 temp*
 
+*.pyc
+
 fishfish.txt
 
 sentSpyware.spy
