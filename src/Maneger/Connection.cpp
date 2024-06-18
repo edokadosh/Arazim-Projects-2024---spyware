@@ -37,6 +37,20 @@ Connection::~Connection() {
         other.needCloseOut = false;
     }
 
+    Connection& Connection::operator=(Connection&& other) noexcept {
+        if (this != &other) {
+            fdIn = other.fdIn;
+            fdOut = other.fdOut;
+            fdIn = other.fdIn;
+            isSocket = other.isSocket;
+            needCloseIn = other.needCloseIn;
+            needCloseOut = other.needCloseOut;
+            other.needCloseIn = false;
+            other.needCloseOut = false;
+        }
+        return *this;
+    }
+
 int Connection::doSend(const void* buf, size_t size, int flags) {
     if (isSocket)
     {

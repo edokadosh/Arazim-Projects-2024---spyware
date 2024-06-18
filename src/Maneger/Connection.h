@@ -35,7 +35,8 @@ public:
     Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSocket);
 
     Connection();
-    Connection::Connection(Connection&& other) noexcept;
+    Connection(Connection&& other) noexcept;
+    Connection& operator=(Connection&& other) noexcept;
 
     ~Connection();
 
