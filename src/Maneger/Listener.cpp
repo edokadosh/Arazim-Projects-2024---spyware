@@ -16,7 +16,7 @@ Listener::Listener(int port)
     address_.sin_port = htons(port);
 
     if (bind(listeningSocket_, (struct sockaddr *)&address_, sizeof(address_)) == -1) {
-        std::cerr << "Error binding listening socket" << std::endl;
+        std::cerr << "Error binding listening socket: " << strerror(errno) << std::endl;
         return;
     }
 
