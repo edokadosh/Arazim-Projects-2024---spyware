@@ -54,8 +54,8 @@ public:
     bool recvCommand(command& cmd);
     bool recvCommand(command& cmd, int flags);
 
-    bool recvData(uint32_t size, char data[]);
-    bool recvData(uint32_t size, char data[], int flags);
+    int recvData(uint32_t size, char data[]);
+    int recvData(uint32_t size, char data[], int flags);
 
     bool sendFile(std::string filePath);
     bool sendFile(std::string filePath, int flags);

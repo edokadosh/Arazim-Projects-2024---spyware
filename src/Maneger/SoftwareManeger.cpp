@@ -32,9 +32,9 @@ Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fil
     uint32_t ctr;
     for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += sizeof(fileContent))
     {
-        int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
+        int tranferAmount = 0;
         // TODO recv exact amount
-        if (!conn->recvData(sizeof(fileContent), fileContent)) {
+        if ((tranferAmount = conn->recvData(sizeof(fileContent), fileContent)) == -1) {
             std::cerr << "Error reciving file contesnt from socket" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             res = RECV_FILE_CONTENT_ERROR;
