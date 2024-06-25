@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <memory>
 
 #include "../IncludeCPP/Status.h"
 #include "Connection.h"
@@ -31,7 +32,7 @@ public:
 
     ~SoftwareManeger();    
 
-    Status fileWrite(Connection& conn, uint32_t fileSize, std::string fileName);
+    Status fileWrite(std::shared_ptr<Connection> conn, uint32_t fileSize, std::string fileName);
 
     Status runFile(const std::string fileName, int argc, char* argv[], int fdIn, int fdOut);
 

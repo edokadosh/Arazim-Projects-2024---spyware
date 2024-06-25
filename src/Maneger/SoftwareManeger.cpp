@@ -16,7 +16,7 @@ std::string SoftwareManeger::getPath(const std::string fileName) {
 }
 
 
-Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::string fileName)
+Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fileSize, std::string fileName)
 {
     char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
@@ -34,7 +34,7 @@ Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::stri
     {
         int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
         // TODO recv exact amount
-        if (!conn.recvData(sizeof(fileContent), fileContent)) {
+        if (!conn->recvData(sizeof(fileContent), fileContent)) {
             std::cerr << "Error reciving file contesnt from socket" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             res = RECV_FILE_CONTENT_ERROR;

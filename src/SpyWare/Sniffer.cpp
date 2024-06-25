@@ -61,6 +61,8 @@ int Sniffer::sniff(const SniffParams sniffP) {
         });
     } catch (const std::runtime_error& e) {
         std::cerr << "-------- Sniffing stopped --------" << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
+        exit(1);
     }
 
     return 0;
@@ -69,9 +71,13 @@ int Sniffer::sniff(const SniffParams sniffP) {
 // init sniffer object. not sniffing by default
 Sniffer::Sniffer() {
     // init buffer to 0
+    std::cerr << "started sniffer creation" << std::endl;
     threadStarting = false;
     stopSniffing.store(true);
-    memset(buffer, 0, FILE_SIZE);
+    std::cerr << "stopSniffing.store(true); didn't segment fault" << std::endl;
+    memset(buffer, 0, sizeof(buffer));
+    std::cerr << "memset(buffer, 0, FILE_SIZE); didn't segment fault" << std::endl;
+
     i = 0;
 }
 
@@ -98,11 +104,13 @@ Sniffer::~Sniffer() {
 }
 
 void Sniffer::runTime(const SniffParams sniffP, int t) {
+    std::cerr << "start runTime\n";
     threadStarting = true;  
     std::thread thread(&Sniffer::sniff, this, sniffP);  
     threads.push_back(std::move(thread)); 
     threadStarting = false;
     cv.notify_one();
+    std::cerr << "sleep runTime\n";
     sleep(t);
     halt();
 }
@@ -110,9 +118,14 @@ void Sniffer::runTime(const SniffParams sniffP, int t) {
 int Sniffer::run(const ContParams c) {
 
     int time = c.parameters.sniffP.time;
+    std::cerr << "runParams time: " << time << std::endl;
+
     threadStarting = true;
     std::thread thread(&Sniffer::runTime, this, c.parameters.sniffP, time);
+    std::cerr << "created sniffer thread" << std::endl;
     threads.push_back(std::move(thread));
+    std::cerr << "pushed back sniffer thread" << std::endl;
+
     
     return 0;
 }

@@ -2,7 +2,7 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -std=c++17
+CFLAGS = -Wall -Wextra -std=c++17 -g
 
 # Source files
 M_SRCS = src/Maneger/Connection.cpp src/Maneger/Listener.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp

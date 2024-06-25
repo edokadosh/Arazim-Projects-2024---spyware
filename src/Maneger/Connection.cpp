@@ -4,52 +4,56 @@
 #include "responce.h"
 
 Connection::Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSock)
+    : fdIn(fdInput), fdOut(fdOutput), isSocket(isSock), needCloseIn(needCloseInput), needCloseOut(false)
 {
-    fdIn = fdInput;
-    fdOut = fdOutput;
-    isSocket = isSock;
-
-    needCloseIn = needCloseInput;
     if (fdIn != fdOut) {
         needCloseOut = needCloseOutput;
     }
 }
 
-Connection::Connection() {}
+// Connection::Connection() {}
 
 Connection::~Connection() {
+    // if(needCloseIn)
+    //     close(fdIn);
+    
+    // if(needCloseOut)
+    //     close(fdOut);
+}
+
+void Connection::closeConn() {
     if(needCloseIn)
         close(fdIn);
     
     if(needCloseOut)
-        close(fdOut);
+        close(fdOut);    
 }
 
-    Connection::Connection(Connection&& other) noexcept 
-    {
-        fdIn = other.fdIn;
-        fdOut = other.fdOut;
-        fdIn = other.fdIn;
-        isSocket = other.isSocket;
-        needCloseIn = other.needCloseIn;
-        needCloseOut = other.needCloseOut;
-        other.needCloseIn = false;
-        other.needCloseOut = false;
-    }
+    // Connection::Connection(Connection&& other) noexcept 
+    // {
+    //     fdIn = other.fdIn;
+    //     fdOut = other.fdOut;
+    //     fdIn = other.fdIn;
+    //     isSocket = other.isSocket;
+    //     needCloseIn = other.needCloseIn;
+    //     needCloseOut = other.needCloseOut;
+    //     other.needCloseIn = false;
+    //     other.needCloseOut = false;
+    // }
 
-    Connection& Connection::operator=(Connection&& other) noexcept {
-        if (this != &other) {
-            fdIn = other.fdIn;
-            fdOut = other.fdOut;
-            fdIn = other.fdIn;
-            isSocket = other.isSocket;
-            needCloseIn = other.needCloseIn;
-            needCloseOut = other.needCloseOut;
-            other.needCloseIn = false;
-            other.needCloseOut = false;
-        }
-        return *this;
-    }
+    // Connection& Connection::operator=(Connection&& other) noexcept {
+    //     if (this != &other) {
+    //         fdIn = other.fdIn;
+    //         fdOut = other.fdOut;
+    //         fdIn = other.fdIn;
+    //         isSocket = other.isSocket;
+    //         needCloseIn = other.needCloseIn;
+    //         needCloseOut = other.needCloseOut;
+    //         other.needCloseIn = false;
+    //         other.needCloseOut = false;
+    //     }
+    //     return *this;
+    // }
 
 int Connection::doSend(const void* buf, size_t size, int flags) {
     if (isSocket)

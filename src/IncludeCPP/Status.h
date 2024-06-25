@@ -35,6 +35,8 @@ typedef enum Status {
 
     DID_NOTHING,
 
+    INVALID_RUN_PARAMS_TYPE,
+
 
 } Status;
 

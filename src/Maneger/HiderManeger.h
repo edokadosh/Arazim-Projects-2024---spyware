@@ -19,6 +19,7 @@ HIDER_UPLOAD
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <memory>
 
 #include "FunCodes.h"
 #include "Connection.h"
@@ -46,11 +47,11 @@ private:
     
     Status openPipes(int p[]);
 
-    Status hiddenUpload(const command& cmd, Connection& conn);
+    Status hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn);
 
-    Status hiddenRetrieve(Connection& conn);
+    Status hiddenRetrieve(std::shared_ptr<Connection> conn);
 
-    Status hiddenList(Connection& conn);
+    Status hiddenList(std::shared_ptr<Connection> conn);
 
     HiderManeger();
 
@@ -68,7 +69,7 @@ public:
     
     Status setUpHider(std::string hiderPath);
 
-    Status hiddenAction(const command& cmd, Connection& conn);
+    Status hiddenAction(const command& cmd, std::shared_ptr<Connection> conn);
 
     Status hideFile(const std::string filename, std::string identifier);
 };

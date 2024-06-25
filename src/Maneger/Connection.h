@@ -17,13 +17,11 @@
 class Connection {
     
 private:
-    bool needCloseIn;
-    bool needCloseOut;
-
-    bool isSocket;
-
     int fdIn;
     int fdOut;
+    bool isSocket;
+    bool needCloseIn;
+    bool needCloseOut;
 
     int doSend(const void* buf, size_t size, int flags);
     int doSend(const void* buf, size_t size);
@@ -34,11 +32,12 @@ public:
 
     Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSocket);
 
-    Connection();
-    Connection(Connection&& other) noexcept;
-    Connection& operator=(Connection&& other) noexcept;
+    // Connection(Connection&& other) noexcept;
+    // Connection& operator=(Connection&& other) noexcept;
 
     ~Connection();
+
+    void closeConn(void);
 
     bool sendString(const std::string& str);
     bool sendString(const std::string& str, int flags);

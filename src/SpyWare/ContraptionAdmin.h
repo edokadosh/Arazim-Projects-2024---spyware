@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <memory>
 
 #include "Contraption.h"
 #include "../IncludeCPP/Status.h"
@@ -14,17 +15,22 @@
 class ContraptionAdmin {
 
 private:
-    std::map<contIdent_t, Contraption *> contMap;
+    std::map<uint32_t, Contraption *> contMap;
 
 public:
 
-    ContraptionAdmin() {};
+    ContraptionAdmin();
+        // std::cerr << "map size check: " << contMap.size() << std::endl;
 
-    ~ContraptionAdmin() {
-        contMap.clear();
-    };
+    ~ContraptionAdmin();
 
-    Status runContraption(Connection& conn, contIdent_t identity);
+//     ~ContraptionAdmin() {
+// #pragma warning "free map elements"
+//         contMap.clear();
+//     }
+    void segTest();
+
+    Status runContraption(std::shared_ptr<Connection> conn, contIdent_t identity);
 
     Status haltContraption(contIdent_t identity);
 };

@@ -32,7 +32,7 @@ Listener::~Listener() {
 }
 
 
-int Listener::acceptConnection(Connection& conn) {
+int Listener::acceptConnection(std::shared_ptr<Connection>& conn_ptr) {
         int homeSocket;
         struct sockaddr_in homeAddr;
         socklen_t homeAddrLen = sizeof(homeAddr);
@@ -43,6 +43,6 @@ int Listener::acceptConnection(Connection& conn) {
             std::cerr << "Error accepting connection" << std::endl;
             return -1;
         }
-        conn = Connection(homeSocket, homeSocket, true, true, true);
+        conn_ptr = std::make_shared<Connection>(homeSocket, homeSocket, true, true, true);
         return homeSocket;
     }

