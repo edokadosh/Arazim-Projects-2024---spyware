@@ -30,6 +30,20 @@ class Agent:
         self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, bash))
         return self.conn.recv_full_responce()
 
+    """
+    goes into loop of reading a command from stdin and executing on red side
+    stops on sigint (or other exception/interrupt) or q
+    """
+    def bash_mode(self):
+        try:
+            while True:
+                line = input("$ ")
+                if (line == 'q'):
+                    break
+                print(self.run_bash(line))
+        except Exception as e:
+            print(e)
+
     def write_file(self, homeFilePath, targetFileName: str) -> Responce:
 
         with open(homeFilePath, "rb") as file:
