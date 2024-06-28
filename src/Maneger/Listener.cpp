@@ -43,6 +43,6 @@ int Listener::acceptConnection(std::shared_ptr<Connection>& conn_ptr) {
             std::cerr << "Error accepting connection" << std::endl;
             return -1;
         }
-        conn_ptr = std::make_shared<Connection>(homeSocket, homeSocket, true, true, true);
+        conn_ptr = std::make_shared<Connection>(homeSocket, homeSocket, true, true, true, homeAddr);
         return homeSocket;
     }

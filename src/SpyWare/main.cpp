@@ -26,6 +26,8 @@ int main() {
     ContraptionAdmin admin;
     std::shared_ptr<Connection> conn;
     
+    sleep(2); // wait for python to start
+
     if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
         exit(EXIT_FAILURE);
     }
@@ -43,20 +45,16 @@ int main() {
 
 void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
-    // admin.segTest();
     command cmd;
 
     conn->recvData(sizeof(cmd), (char*)&cmd);
-    // admin.segTest();
 
     Status stat = DID_NOTHING;
     std::string strRes = "";
-    // admin.segTest();
 
     switch (cmd.fncode)
     {
     case RunContraption:
-        // admin.segTest();
         stat = admin.runContraption(conn, cmd.identifier);
         break;
 

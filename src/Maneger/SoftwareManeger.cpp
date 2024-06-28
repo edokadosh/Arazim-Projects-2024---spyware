@@ -35,12 +35,13 @@ Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fil
     for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += tranferAmount)
     {
         // TODO recv exact amount
-
-        if ((tranferAmount = conn->recvData(sizeof(fileContent), fileContent)) == -1) {
+        std::cout << "tring recv\n";
+        if ((tranferAmount = conn->recvData(MIN(sizeof(fileContent), fileSize - ctr), fileContent)) == -1) {
             std::cerr << "Error reciving file contesnt from socket" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             res = RECV_FILE_CONTENT_ERROR;
         }
+        // std::cout << "totSize: " << fileSize <<"\nctr: " << ctr << "\nrecived: " << tranferAmount << std::endl;
         outFile.write(fileContent, tranferAmount);
         if (!outFile) {
             std::cerr << "Error writting to file " << std::endl;
@@ -49,7 +50,7 @@ Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fil
         }
     }
     outFile.close();
-
+    // std::cout << "finnish write\n";    
 
     if (res != SUCCSESS) {
         return res;
@@ -60,6 +61,8 @@ Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fil
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
     }
+    // std::cout << "finnish chmmod\n";    
+
     return SUCCSESS;
 }
 

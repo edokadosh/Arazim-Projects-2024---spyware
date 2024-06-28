@@ -62,14 +62,15 @@ void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeg
 
     conn->recvCommand(cmd);
     std::string strParam = cmd.strParam;
-    std::cout << "cmd.param: \n" << cmd.strParam;
 
-    std::cout << "Server: fncode-" << cmd.fncode << " strParam-" << strParam << std::endl;
+    std::cout << "Server: fncode- " << cmd.fncode << "\nstrParam-" << strParam << std::endl;
     std::string strRes = "";
     switch (cmd.fncode)
     {
     case WRITE_FILE:
+        // std::cout << "start write_file\n";
         res = swm.fileWrite(conn, cmd.dataLen, strParam);
+        // std::cout << "finnish write_file\n";
         break;
 
     case DELETE_FILE:
