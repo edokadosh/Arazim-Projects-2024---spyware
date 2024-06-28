@@ -6,4 +6,6 @@
 
 #define PAGE_SIZE (4096)
 
+#define HOME_HOST ("localhost")
+
 #endif

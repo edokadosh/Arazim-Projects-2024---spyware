@@ -4,15 +4,18 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
+#include <vector>
+#include <memory>
+#include <sys/types.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
 #include "../IncludeCPP/Status.h"
 #include "command.h"
 #include "responce.h"
 #include "../IncludeCPP/globalDefines.h"
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
-
+#pragma once
 
 class Connection {
     
@@ -20,6 +23,7 @@ private:
     int fdIn;
     int fdOut;
     bool isSocket;
+    struct addrinfo peerAddr; // meaningfull only when conn is socket
     bool needCloseIn;
     bool needCloseOut;
 
@@ -30,12 +34,14 @@ private:
 
 public:
 
-    Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSocket);
+    Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSocket, struct addrinfo addr);
 
     // Connection(Connection&& other) noexcept;
     // Connection& operator=(Connection&& other) noexcept;
 
     ~Connection();
+
+    static int connectTCP(std::string host, int port, std::shared_ptr<Connection>& conn);
 
     void closeConn(void);
 
@@ -63,5 +69,3 @@ public:
 
 friend class HiderManeger;
 };
-
-#endif

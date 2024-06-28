@@ -1,10 +1,7 @@
-#include <cerrno>
-#include <vector>
 #include "Connection.h"
-#include "responce.h"
 
-Connection::Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSock)
-    : fdIn(fdInput), fdOut(fdOutput), isSocket(isSock), needCloseIn(needCloseInput), needCloseOut(false)
+Connection::Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSock, struct addrinfo addr)
+    : fdIn(fdInput), fdOut(fdOutput), isSocket(isSock), peerAddr(addr), needCloseIn(needCloseInput), needCloseOut(false)
 {
     if (fdIn != fdOut) {
         needCloseOut = needCloseOutput;
@@ -29,31 +26,38 @@ void Connection::closeConn() {
         close(fdOut);    
 }
 
-    // Connection::Connection(Connection&& other) noexcept 
-    // {
-    //     fdIn = other.fdIn;
-    //     fdOut = other.fdOut;
-    //     fdIn = other.fdIn;
-    //     isSocket = other.isSocket;
-    //     needCloseIn = other.needCloseIn;
-    //     needCloseOut = other.needCloseOut;
-    //     other.needCloseIn = false;
-    //     other.needCloseOut = false;
-    // }
 
-    // Connection& Connection::operator=(Connection&& other) noexcept {
-    //     if (this != &other) {
-    //         fdIn = other.fdIn;
-    //         fdOut = other.fdOut;
-    //         fdIn = other.fdIn;
-    //         isSocket = other.isSocket;
-    //         needCloseIn = other.needCloseIn;
-    //         needCloseOut = other.needCloseOut;
-    //         other.needCloseIn = false;
-    //         other.needCloseOut = false;
-    //     }
-    //     return *this;
-    // }
+int Connection::connectTCP(std::string host, int port, std::shared_ptr<Connection>& conn_ptr)
+{
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd == -1) {
+        std::cerr << "Failed to create socket\n";
+        std::cerr << strerror(errno) << std::endl;
+        return -1;
+    }
+    struct addrinfo hints, *res;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;     // IPv4
+    hints.ai_socktype = SOCK_STREAM; // TCP
+
+
+    int status = getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res);
+    if (status != 0) {
+        std::cerr << "getaddrinfo error: " << gai_strerror(status) << "\n";
+        close(sockfd);
+        return -1;
+    }
+
+    if ((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) == -1) {
+        std::cerr << "Failed to connect to server\n";
+        std::cerr << strerror(errno) << std::endl;
+        close(sockfd);
+        return -1;
+    }
+
+    conn_ptr = std::make_shared<Connection>(sockfd, sockfd, true, true, true, *res);
+    return SUCCSESS;
+}
 
 int Connection::doSend(const void* buf, size_t size, int flags) {
     if (isSocket)
@@ -141,7 +145,7 @@ bool Connection::sendResponce(uint32_t status, const std::string& msg) {
 
 bool Connection::recvCommand(command& cmd, int flags)
 {
-    if (doRecv(&cmd, sizeof(cmd), flags) != sizeof(cmd)) {
+    if (recvData(sizeof(cmd), (char*)&cmd, flags) != sizeof(cmd)) {
         std::cerr << "Receive command failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return false;
@@ -156,13 +160,18 @@ bool Connection::recvCommand(command& cmd) {
 
 int Connection::recvData(uint32_t size, char* buffer, int flags)
 {
-    int res = 0;
-    if ((res = doRecv(buffer, size, flags)) == -1) {
-        std::cerr << "Receive data failed" << std::endl;
-        std::cerr << "Error: " << strerror(errno) << std::endl;
-        return -1;
+    int recvied = 0;
+    uint32_t recviedTotal = 0;
+    while (recviedTotal < size)
+    {
+        if ((recvied = doRecv(buffer, size - recviedTotal, flags)) == -1) {
+            std::cerr << "Receive data failed after recving" << recviedTotal << "bytes" << std::endl;
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+            return -1;
+        }
+        recviedTotal += recvied;
     }
-    return res;
+    return recviedTotal;
 }
 
 int Connection::recvData(uint32_t size, char* buffer) {
