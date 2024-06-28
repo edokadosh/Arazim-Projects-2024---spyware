@@ -32,15 +32,15 @@ bool Sniffer::callback(const Tins::PDU &pdu) {
 // stop sniffing and write remaining data to file
 int Sniffer::halt() {
     cout << "Halting" << endl;
-    raise(SIGINT);
+    raise(SIGUSR1);
     writeFile();
     return 0;
 };
 
 
-// Signal handler to handle SIGINT (Ctrl+C)
+// Signal handler to handle SIGUSR1 (Ctrl+C)
 void Sniffer::signalHandler(int signal) {
-    if (signal == SIGINT) {
+    if (signal == SIGUSR1) {
         stopSniffing.store(true);
     }
 }
@@ -52,8 +52,8 @@ int Sniffer::sniff(const SniffParams sniffP) {
     std::cerr << "-------- Starting to Sniff --------" << endl;
     stopSniffing.store(false);
 
-    // Install signal handler for SIGINT
-    std::signal(SIGINT, signalHandler);
+    // Install signal handler for SIGUSR1
+    std::signal(SIGUSR1, signalHandler);
 
     try {
         // Start sniffing loop

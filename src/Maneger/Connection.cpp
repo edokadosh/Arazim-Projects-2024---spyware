@@ -154,17 +154,18 @@ bool Connection::recvCommand(command& cmd) {
     return recvCommand(cmd, 0);
 }
 
-bool Connection::recvData(uint32_t size, char* buffer, int flags)
+int Connection::recvData(uint32_t size, char* buffer, int flags)
 {
-    if (doRecv(buffer, size, flags) == -1) {
+    int res = 0;
+    if ((res = doRecv(buffer, size, flags)) == -1) {
         std::cerr << "Receive data failed" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
-        return false;
+        return -1;
     }
-    return true;
+    return res;
 }
 
-bool Connection::recvData(uint32_t size, char* buffer) {
+int Connection::recvData(uint32_t size, char* buffer) {
     return recvData(size, buffer, 0);
 }
 

