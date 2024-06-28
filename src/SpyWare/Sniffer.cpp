@@ -31,6 +31,7 @@ bool Sniffer::callback(const Tins::PDU &pdu) {
 
 // stop sniffing and write remaining data to file
 int Sniffer::halt() {
+    cout << "Halting" << endl;
     raise(SIGINT);
     writeFile();
     return 0;
@@ -62,7 +63,7 @@ int Sniffer::sniff(const SniffParams sniffP) {
     } catch (const std::runtime_error& e) {
         std::cerr << "-------- Sniffing stopped --------" << std::endl;
         std::cerr << "Error: " << e.what() << std::endl;
-        exit(1);
+        //exit(1);
     }
 
     return 0;
@@ -125,7 +126,5 @@ int Sniffer::run(const ContParams c) {
     std::cerr << "created sniffer thread" << std::endl;
     threads.push_back(std::move(thread));
     std::cerr << "pushed back sniffer thread" << std::endl;
-
-    
     return 0;
 }
