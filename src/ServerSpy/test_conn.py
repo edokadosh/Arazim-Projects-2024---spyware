@@ -22,7 +22,7 @@ def main():
             targetHiderPath,
         )
     )
-    print(agent.hider_setup(targetHiderPath))
+    print(agent.hider_setup(targetHiderPath, 'fs.iso', 'fs'))
 
     print(
         agent.hidden_action_with_upload(

@@ -23,13 +23,16 @@ class HiddenFileHandler
 {
 private:
 	std::string folderName;
+	std::string imagePath;
 	std::string getPath(const std::string fileName);
 
 public:
 
 	HiddenFileHandler() {
-		fs::path folder = fs::current_path();
-		folderName = folder.string();
+		//fs::path folder = fs::current_path();
+		//folderName = folder.string();
+		folderName = "fs";
+		imagePath = "fs.iso";
 		std::cerr << "setted folder name: " << folderName << std::endl;
 	}
 	

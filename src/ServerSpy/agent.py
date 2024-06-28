@@ -13,7 +13,9 @@ class Agent:
 
     def __init__(self, host: str, port: int) -> None:
         self.host = host
-        self.port = port
+        self.port = port    
+        self.mountedFS = False
+        self.mountPath = 'DefaultMount' # so its obviuos when debugging
 
     def __repr__(self) -> str:
         return f"Agent(host={self.host}, port={self.port})"
@@ -102,12 +104,34 @@ class Agent:
             return conn.recv_full_responce(), results
 
     # prob redundant in future
-    def hider_setup(self, hiderPath: str) -> Responce:
+    def hider_setup(self, hiderPath: str, imagePath: str, mountPath: str) -> Responce:
+        self.mountPath = mountPath
+        self.hiding_env_setup(imagePath)
+            
         with self.connect() as conn:
-            conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, hiderPath))
+            strParam = hiderPath + ';' + imagePath + ';' + mountPath
+            conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
             return conn.recv_responce_struct()
 
+    def hiding_env_setup(self, imagePath: str):
+        res = self.run_bash(f'file {imagePath}')
+        if 'ext4' not in res:
+            self.run_bash(f'dd if=/dev/zero of={imagePath} bs=1M count=100')
+            self.run_bash(f'sudo losetup /dev/loop0 {imagePath}')
+            self.run_bash(f'sudo mkfs.ext4 /dev/loop0')
+        self.mountFS()
+
+    def mountFS(self):
+        self.run_bash(f'sudo mkdir {self.mountPath}')
+        self.run_bash(f'sudo mount /dev/loop0 {self.mountPath}')
+    
+    def unmountFS(self):
+        self.run_bash(f'sudo umount {self.mountPath}')
+        self.run_bash(f'rm {self.mountPath}')
+        self.run_bash(f'sudo losetup -d /dev/loop0')
+
     def suicide(self):
+        self.unmountFS()
         with self.connect() as conn:
             conn.send_command(Command(0, FunCode.SUICIDE, 0, ""))
             res = conn.recv_responce_struct()

