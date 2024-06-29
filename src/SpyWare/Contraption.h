@@ -27,7 +27,7 @@ public:
 
     virtual int halt() = 0;
 
-    virtual int run(const ContParams contParams) = 0;
+    virtual void run(const ContParams contParams) = 0;
 
 };
 

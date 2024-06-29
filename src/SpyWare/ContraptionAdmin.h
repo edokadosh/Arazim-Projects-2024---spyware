@@ -16,6 +16,9 @@ class ContraptionAdmin {
 
 private:
     std::map<uint32_t, Contraption *> contMap;
+    std::map<uint32_t, std::thread> threadMap;
+
+    Status runContBackgrnd(contIdent_t contId, const ContParams& contParams);
 
 public:
 

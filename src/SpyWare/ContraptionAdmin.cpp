@@ -49,19 +49,22 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
             return INVALID_RUN_PARAMS_TYPE;
     }
 
-
     std::cerr << "start running contraption" << std::endl;
     std::cerr << "runParams time: " << runParams.parameters.sniffP.time << std::endl;
-    if (contMap[identity]->run(runParams) == 0) {
-        return SUCCSESS;
-    }
 
-    return FAIL;
+    return runContBackgrnd(identity, runParams);
+}
+
+Status ContraptionAdmin::runContBackgrnd(contIdent_t contId, const ContParams& contParams) {
+    if (contMap.find(contId) == contMap.end()) {
+        return CONTRAPTION_NOT_FOUND;
+    }
+    threadMap.insert({(uint32_t)contId, std::thread(&Contraption::run, contParams)});
 }
 
 Status ContraptionAdmin::haltContraption(contIdent_t identity) {
-
     contMap[identity]->halt();
+    threadMap[identity].join();
     delete contMap[identity];
     contMap.erase(identity);
     return SUCCSESS;
