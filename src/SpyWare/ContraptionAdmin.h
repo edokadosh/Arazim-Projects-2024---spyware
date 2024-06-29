@@ -20,17 +20,16 @@ private:
 public:
 
     ContraptionAdmin();
-        // std::cerr << "map size check: " << contMap.size() << std::endl;
 
     ~ContraptionAdmin();
 
-//     ~ContraptionAdmin() {
-// #pragma warning "free map elements"
-//         contMap.clear();
-//     }
-    void segTest();
+    // ~ContraptionAdmin() {
+    //     contMap.clear();
+    // }
 
     Status runContraption(std::shared_ptr<Connection> conn, contIdent_t identity);
 
     Status haltContraption(contIdent_t identity);
+
+    Status listContraptions(std::shared_ptr<Connection> conn);
 };
