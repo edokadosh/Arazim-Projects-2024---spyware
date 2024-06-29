@@ -31,10 +31,18 @@ int waitChild(int pid) {
     return 0;
 }
 
-Status HiderManeger::setUpHider(std::string path)
+Status HiderManeger::setUpHider(std::string strParam)
 {
-    this->hiderPath = path;
+    std::vector<std::string> params = split(strParam, ';');
+    if (params.size() != 3)
+        return HIDER_SETUP_ERROR;
+
+    this->hiderPath = params.at(0);
+    this->imagePath = params.at(1);
+    this->mountPath = params.at(2);
     std::cout << "setted hider path: " << hiderPath.c_str() << std::endl;
+    std::cout << "setted image path: " << imagePath.c_str() << std::endl;
+    std::cout << "setted mount path: " << mountPath.c_str() << std::endl;
     return SUCCSESS;
 }
 
@@ -146,8 +154,6 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
 }
 
 
-
-
 Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn)
 {
     std::cout << "UPLOADING " << cmd.strParam << std::endl;
@@ -219,4 +225,17 @@ Status HiderManeger::hideFile(const std::string filename, std::string identifier
     // need to call Hider.Hide()
 
     return SUCCSESS;
+}
+
+
+std::vector<std::string> HiderManeger::split(const std::string &str, char delimiter) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(str);
+    std::string item;
+
+    while (std::getline(ss, item, delimiter)) {
+        tokens.push_back(item);
+    }
+
+    return tokens;
 }

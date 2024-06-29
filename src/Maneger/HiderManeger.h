@@ -20,6 +20,9 @@ HIDER_UPLOAD
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <memory>
+#include <vector>
+#include <string>
+#include <sstream>
 
 #include "FunCodes.h"
 #include "Connection.h"
@@ -36,6 +39,9 @@ private:
     static HiderManeger* instancePtr;
 
     std::string hiderPath;
+    std::string imagePath;
+    std::string mountPath;
+
     int mthpipe[2]; // pipe from manager -> hider
     bool MtHredirect;
     int htmpipe[2]; // pipe from hider -> manager
@@ -52,6 +58,8 @@ private:
     Status hiddenRetrieve(std::shared_ptr<Connection> conn);
 
     Status hiddenList(std::shared_ptr<Connection> conn);
+
+    std::vector<std::string> split(const std::string &str, char delimiter);
 
     HiderManeger();
 
