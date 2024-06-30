@@ -6,10 +6,6 @@
 
 typedef uint32_t contIdent_t;
 
-typedef enum WriteMod {
-    OverWrite = 0,
-    AppendMod,
-} WriteMod;
 
 typedef union Params {
     SniffParams sniffP;

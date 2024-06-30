@@ -33,6 +33,8 @@ HIDER_UPLOAD
 
 #define DEFAULT_HIDER_PATH ("./matbuja")
 
+
+
 class HiderManeger
 {
 private:
