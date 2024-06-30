@@ -46,13 +46,13 @@ Status HiderManeger::setUpHider(std::string strParam)
     return SUCCSESS;
 }
 
-Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len) {
+Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) {
     command cmd = { 0 };
     Status res = SUCCSESS;
     if (fileName.size() >= sizeof(cmd.strParam)) {
         return FILENAME_TO_LONG;
     }
-    cmd = (command){.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD};
+    cmd = (command){.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD, .writeMod = writeMod};
     strcpy(cmd.strParam, fileName.c_str());
     int p[2] = { 0 };
     if ((res = openPipes(p)) != SUCCSESS) {
@@ -71,6 +71,9 @@ void HiderManeger::activateHiderChild(const command& cmd) {
     std::string encFunCode = encodeInt(cmd.fncode);
     std::string encDataLen = encodeInt(cmd.dataLen);
     std::string encStrParam = encodeStr(cmd.strParam);
+    std::string encWriteMod = encodeInt(cmd.writeMod);
+    std::string encMountPath = encodeStr(mountPath);
+    
 
     std::cout << "hider path: " << this->hiderPath.c_str() << std::endl;
 
@@ -85,7 +88,7 @@ void HiderManeger::activateHiderChild(const command& cmd) {
         // close(htmpipe[1]);
     }
     std::cerr << "exec hider\n";
-    if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), NULL) == -1) {
+    if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), encMountPath.c_str(), encWriteMod.c_str(), NULL) == -1) {
         std::cerr << "error executing hider: " << std::strerror(errno) << std::endl;
     }
 }
