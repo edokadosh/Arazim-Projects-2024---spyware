@@ -10,6 +10,10 @@
 #include "contrapMeta.h"
 #include "Contraption.h"
 #include "ContraptionAdmin.h"
+#include "../IncludeCPP/getBasicInfo.h"
+
+int initRun(std::shared_ptr<Connection> conn);
+
 
 #define PORT (65410)
 
@@ -41,6 +45,19 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+
+// perform stuff after connection to home creation
+// meant for sending information required for operation
+int initRun(std::shared_ptr<Connection> conn) {
+
+
+    if (conn->sendString(getMachineID(), true) == false) {
+        std::cerr << "error sending machine id" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
 
 
 void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
