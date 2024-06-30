@@ -99,7 +99,16 @@ bool Connection::sendData(uint32_t size, void* buffer) {
     return sendData(size, buffer, 0);
 }
 
-bool Connection::sendString(const std::string& str, int flags) {
+bool Connection::sendString(const std::string& str, int flags, bool sendLegnth) {
+    if (sendLegnth){
+        uint32_t strLen = str.size();
+        if (doSend(&strLen, sizeof(strLen), flags | MSG_MORE) == -1) {
+            std::cerr << "Error sending string length" << std::endl;
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+            return false;
+        }
+    }
+    
     int bytesSent = doSend(str.c_str(), str.length(), flags);
     if (bytesSent == -1) {
         std::cerr << "Error sending string" << std::endl;
@@ -108,8 +117,8 @@ bool Connection::sendString(const std::string& str, int flags) {
     }
     return true;
 }
-bool Connection::sendString(const std::string& str) {
-    return sendString(str, 0);
+bool Connection::sendString(const std::string& str, bool sendLegnth) {
+    return sendString(str, 0, sendLegnth);
 }
 
 bool Connection::sendResponceStruct(const responce res, int flags) {
@@ -132,7 +141,7 @@ bool Connection::sendResponce(uint32_t status, const std::string& msg, int flags
     if(!sendResponceStruct((responce){.dataLen = dataLen, .status = status}, flags)) {
         return false;
     }
-    if (!sendString(msg), flags) {
+    if (!sendString(msg, false), flags) {
         std::cerr << "Error sending responce msg" << std::endl;
         return false;
     }

@@ -45,8 +45,8 @@ public:
 
     void closeConn(void);
 
-    bool sendString(const std::string& str);
-    bool sendString(const std::string& str, int flags);
+    bool sendString(const std::string& str, bool sendLegnth);
+    bool sendString(const std::string& str, int flags, bool sendLegnth);
 
     bool sendResponceStruct(const responce res);
     bool sendResponceStruct(const responce res, int flags);
