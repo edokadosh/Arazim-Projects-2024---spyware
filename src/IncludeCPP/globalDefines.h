@@ -8,9 +8,9 @@
 
 #define HOME_HOST ("localhost")
 
-typedef enum WriteMod {
-    OverWrite = 0,
-    AppendMod,
-} WriteMod;
+
+#define  M_OVERWRITE (1)
+#define  M_APPEND (2)
+
 
 #endif
