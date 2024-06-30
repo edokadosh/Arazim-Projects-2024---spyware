@@ -46,6 +46,15 @@ Status HiderManeger::setUpHider(std::string strParam)
     return SUCCSESS;
 }
 
+// Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod) {
+//     const command cmd = { 0 };
+//     if (fileName.size() >= sizeof(cmd.strParam)) {
+//         return FILENAME_TO_LONG;
+//     }
+//     {.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD, .strParam = fileName.c_str()}
+
+//     return SUCCSESS;
+// }
 
 void HiderManeger::activateHiderChild(const command& cmd) {
     std::string encFunCode = encodeInt(cmd.fncode);

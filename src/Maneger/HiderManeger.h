@@ -80,6 +80,8 @@ public:
     Status hiddenAction(const command& cmd, std::shared_ptr<Connection> conn);
 
     Status hideFile(const std::string filename, std::string identifier);
+
+    Status writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod);
 };
 
 #endif

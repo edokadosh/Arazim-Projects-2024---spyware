@@ -13,13 +13,18 @@ uint Hider::manage_files(int argc, char* argv[])
 	std::cerr << "hider argv[0]: " << argv[0] << std::endl;
 	std::cerr << "hider argv[1]: " << argv[1] << std::endl;
 	std::cerr << "hider argv[2]: " << argv[2] << std::endl;
+	std::cerr << "hider argv[3]: " << argv[3] << std::endl;
 
-	if (argc < 3) {
+	if (argc < 4) {
 		return HIDER_NO_ARGUMENTS_ERROR;
 	}
 	uint32_t fncode = decodeInt(std::string(argv[0]));
 	uint32_t uploadLen = decodeInt(std::string(argv[1]));
 	std::string stringParam = decodeStr(std::string(argv[2]));
+	std::string mountPath = decodeStr(std::string(argv[3]));
+
+	std::cout << "Setting mount path." << std::endl;
+	handel.setFolderName(mountPath);
 
 	// TODO better Status handling
 	responce res_upload = {.dataLen = 0, .status = SUCCSESS};

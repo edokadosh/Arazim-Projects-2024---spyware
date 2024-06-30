@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include "../IncludeCPP/Status.h"
 #include "../IncludeCPP/globalDefines.h"
+#include <contrapMeta.h>
 
 #ifndef HIDDEN_FILE_HANDLER_H
 #define HIDDEN_FILE_HANDLER_H
@@ -31,12 +32,13 @@ public:
 	HiddenFileHandler() {
 		//fs::path folder = fs::current_path();
 		//folderName = folder.string();
-		folderName = "fs";
-		imagePath = "fs.iso";
-		std::cerr << "setted folder name: " << folderName << std::endl;
+		folderName = "NDA";
+		imagePath = "NDA";
 	}
 	
 	void listFiles();
+
+	void setFolderName(const std::string& name);
 
 	Status runFile(const std::string& filename);
 
@@ -45,6 +47,8 @@ public:
 	Status uploadFile(const std::string& filename, uint32_t fileSize);
 
 	Status retreiveFile(const std::string& filename);
+
+	Status writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod);
 };
 
 #endif

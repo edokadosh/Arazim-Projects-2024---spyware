@@ -39,6 +39,8 @@ typedef enum Status {
 
     INVALID_RUN_PARAMS_TYPE,
 
+    FILENAME_TO_LONG,
+
 
 } Status;
 
