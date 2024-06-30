@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include "../IncludeCPP/Status.h"
 #include "../IncludeCPP/globalDefines.h"
-#include <contrapMeta.h>
 
 #ifndef HIDDEN_FILE_HANDLER_H
 #define HIDDEN_FILE_HANDLER_H
