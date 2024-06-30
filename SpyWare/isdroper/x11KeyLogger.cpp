@@ -19,8 +19,14 @@ USAGE: xkbcat [-display <display>] [-up]\n\
         DEFAULT_DISPLAY, (DEFAULT_PRINT_UP ? "yes" : "no") );
     exit(0);
 }
+class kliger{   
 
-int main(int argc, char * argv[]) {
+private:
+     writeBuf
+
+public:
+
+int keystrock(int argc, char * argv[]) {
 
     const char * xDisplayName = DEFAULT_DISPLAY;
     bool         printKeyUps  = DEFAULT_PRINT_UP;
@@ -161,4 +167,5 @@ int main(int argc, char * argv[]) {
             }
         }
     }
+}
 }
