@@ -29,7 +29,7 @@ class Agent:
         return Agent(conn, "spy")
 
     def run_bash(self, bash: str) -> tuple[Responce, str]:
-        self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, bash))
+        self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, 0, bash))
         return self.conn.recv_full_responce()
 
     """
@@ -129,6 +129,10 @@ class Agent:
         self.run_bash(f"sudo umount {self.mountPath}")
         self.run_bash(f"rm {self.mountPath}")
         self.run_bash(f"sudo losetup -d /dev/loop0")
+
+    def validateSelf(self) -> str:
+        machine_id = self.conn.recv_len_and_string()
+        return machine_id
 
     def suicide(self):
         self.unmountFS()

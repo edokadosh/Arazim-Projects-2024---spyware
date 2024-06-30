@@ -46,6 +46,10 @@ class Connection:
     def recv_string(self, length: int) -> str:
         return self.recv_bytes(length).decode("utf-8")
 
+    def recv_len_and_string(self) -> str:
+        length = struct.unpack("=I", self.recv_bytes(struct.calcsize("=I")))
+        return self.recv_string(length)
+
     def recv_full_responce(self) -> tuple[Responce, str]:
         res = self.recv_responce_struct()
         msg = self.recv_string(res.dataLen)
