@@ -5,6 +5,7 @@
 #include <string>
 
 #include "contrapMeta.h"
+#include "../Maneger/HiderManeger.h"
 
 #ifndef CONTRAPTION_H
 #define CONTRAPTION_H
