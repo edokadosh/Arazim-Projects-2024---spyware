@@ -1,4 +1,3 @@
-
 #include <cstdint>
 #include <cstring>
 #include <arpa/inet.h>
@@ -15,13 +14,10 @@
 struct __attribute__((packed)) command {
     uint32_t dataLen;
     uint32_t fncode;
+    uint32_t identifier;
     char strParam[STRING_PARAM_LEN];
 };
 
 typedef struct command command;
-
-command netEndianCommand(const command cmd);
-
-command hostEndianCommand(const command cmd);
 
 #endif

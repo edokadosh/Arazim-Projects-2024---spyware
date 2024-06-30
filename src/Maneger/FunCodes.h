@@ -7,6 +7,9 @@ typedef enum FunCode {
     DELETE_FILE = 2,
     RUN_BASH = 3,
     HIDER_SETUP = 4,
+    RunContraption = 5,
+    HaltContraption = 6,
+    SUICIDE = 7,
 } FunCode;
 
 #endif

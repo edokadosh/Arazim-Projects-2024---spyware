@@ -5,20 +5,23 @@
 #include "SoftwareManeger.h"
 
 #define SOFTWARE_DIR_PATH ("./")
-#define BUFFER_SIZE (1024)
-#define MIN(x, y) (((x) < (y)) ? (x): (y))
 
 SoftwareManeger::SoftwareManeger(void) {};
 
 SoftwareManeger::~SoftwareManeger(void) {};
 
 
-Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::string fileName)
+std::string SoftwareManeger::getPath(const std::string fileName) {
+    return SOFTWARE_DIR_PATH  + fileName; // TODO better path find
+}
+
+
+Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fileSize, std::string fileName)
 {
-    char fileContent[BUFFER_SIZE] = { 0 };
+    char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
     
-    std::string filePath = SOFTWARE_DIR_PATH  + fileName; // TODO better path find
+    std::string filePath = getPath(fileName);
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
     
@@ -27,15 +30,18 @@ Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::stri
         return FILE_NOT_OPEN_ERROR;
     }
     uint32_t ctr;
-    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += sizeof(fileContent))
+    int tranferAmount = 0;
+
+    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += tranferAmount)
     {
-        int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
         // TODO recv exact amount
-        if (!conn.recvData(sizeof(fileContent), fileContent)) {
+        // std::cout << "tring recv\n";
+        if ((tranferAmount = conn->recvData(MIN(sizeof(fileContent), fileSize - ctr), fileContent)) == -1) {
             std::cerr << "Error reciving file contesnt from socket" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             res = RECV_FILE_CONTENT_ERROR;
         }
+        // std::cout << "totSize: " << fileSize <<"\nctr: " << ctr << "\nrecived: " << tranferAmount << std::endl;
         outFile.write(fileContent, tranferAmount);
         if (!outFile) {
             std::cerr << "Error writting to file " << std::endl;
@@ -44,7 +50,7 @@ Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::stri
         }
     }
     outFile.close();
-
+    // std::cout << "finnish write\n";    
 
     if (res != SUCCSESS) {
         return res;
@@ -55,13 +61,34 @@ Status SoftwareManeger::fileWrite(Connection& conn, uint32_t fileSize, std::stri
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
     }
+    // std::cout << "finnish chmmod\n";    
+
     return SUCCSESS;
 }
 
 
+// Status SoftwareManeger::runFile(const std::string fileName, int argc, char* argv[], int fdIn, int fdOut) {
+//     pid_t pid = fork();
+//     std::string filePath = getPath(fileName);
+//     if (pid == -1) {
+//         return HIDER_FORK_ERROR;
+//     }
+//     if (pid == 0) { // child work
+//         if (fdIn >= 0) {
+//             dup2(fdIn, STDIN_FILENO);
+//         }
+//     if (fdOut >= 0) {
+//         dup2(fdOut, STDOUT_FILENO);
+//     }
+    
+//     execl(filePath.c_str(), numericalArg, param, NULL); // FIX IT
+//     }
+//     return SUCCSESS;
+// }
+
 Status SoftwareManeger::deleteFile(const std::string& fileName)
 {
-    std::string filePath = SOFTWARE_DIR_PATH  + fileName;
+    std::string filePath = getPath(fileName);
     if (std::remove(filePath.c_str()) != 0) {
         return FILE_DELETION_ERROR;
     }

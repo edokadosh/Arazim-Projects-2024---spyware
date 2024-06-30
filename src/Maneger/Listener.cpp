@@ -1,7 +1,6 @@
 #include "Listener.h"
 
 const int BACKLOG = 5;
-const int BUFFER_SIZE = 1024;
 
 
 Listener::Listener(int port)
@@ -17,7 +16,7 @@ Listener::Listener(int port)
     address_.sin_port = htons(port);
 
     if (bind(listeningSocket_, (struct sockaddr *)&address_, sizeof(address_)) == -1) {
-        std::cerr << "Error binding listening socket" << std::endl;
+        std::cerr << "Error binding listening socket: " << strerror(errno) << std::endl;
         return;
     }
 
@@ -33,7 +32,7 @@ Listener::~Listener() {
 }
 
 
-int Listener::acceptConnection(Connection& conn) {
+int Listener::acceptConnection(std::shared_ptr<Connection>& conn_ptr) {
         int homeSocket;
         struct sockaddr_in homeAddr;
         socklen_t homeAddrLen = sizeof(homeAddr);
@@ -44,6 +43,6 @@ int Listener::acceptConnection(Connection& conn) {
             std::cerr << "Error accepting connection" << std::endl;
             return -1;
         }
-        conn = Connection(homeSocket, homeAddr);
+        conn_ptr = std::make_shared<Connection>(homeSocket, homeSocket, true, true, true, homeAddr);
         return homeSocket;
     }

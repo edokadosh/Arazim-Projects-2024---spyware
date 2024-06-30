@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,python
 
 *.vscode
+*.sniff
 
 ### C++ ###
 # Prerequisites
@@ -217,8 +218,17 @@ pyrightconfig.json
 tmp*
 temp*
 
+*.pyc
+
+fishfish.txt
+
+sentSpyware.spy
+*.spy
+*.log
+
 # our program
 maneger
 hider
+spyware
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,python

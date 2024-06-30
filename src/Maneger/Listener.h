@@ -6,8 +6,10 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
-#include "Status.h"
+#include <memory>
 
+#include "../IncludeCPP/Status.h"
+#include "../IncludeCPP/globalDefines.h"
 #include "Connection.h"
 
 #ifndef LISTENER_H
@@ -25,7 +27,7 @@ public:
 
     ~Listener();
 
-    int acceptConnection(Connection& conn);
+    int acceptConnection(std::shared_ptr<Connection>& conn);
 
 };
 

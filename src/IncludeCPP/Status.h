@@ -5,6 +5,8 @@
 typedef enum Status {
     SUCCSESS = 0,
 
+    FAIL,
+
     INVALID_FUNCODE_ERROR,
 
     FILE_WRITE_ERROR,
@@ -21,11 +23,24 @@ typedef enum Status {
     HIDER_PIPE_ERROR,
     HIDER_FORK_ERROR,
     HIDER_NO_ARGUMENTS_ERROR,
+    HIDER_SETUP_ERROR,
+
+    WAIT_ERROR,
+    SPLICE_ERROR,
+
+    READ_FROM_HIDER_ERROR,
+
+    IDENTITY_ALREADY_TAKEN,
+    CONTRAPTION_NOT_FOUND,
+
+    SUICIDE_SUCSESS,
+
+    DID_NOTHING,
+
+    INVALID_RUN_PARAMS_TYPE,
 
 
 } Status;
 
-#define STATUS_SHIFT_AMOUT (6) // how many to shift 1 status when trying combine statuses toghether
-                              // currently you can compress 5 stauses to 1 uint
 
 #endif
