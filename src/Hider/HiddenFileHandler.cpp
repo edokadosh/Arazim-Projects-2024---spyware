@@ -91,29 +91,37 @@ Status HiddenFileHandler::retreiveFile(const std::string& filename) {
     return SUCCSESS;
 }
 
-Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileSize) {
+Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileSize, uint32_t writeMode) {
     char fileContent[CHUNK_SIZE] = { 0 };
     Status res = SUCCSESS;
     
     std::string filePath = getPath(fileName);
     std::ofstream outFile;
-    outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
-    
+    if (writeMode == M_OVERWRITE) {
+        outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
+    }
+    else if (writeMode == M_APPEND) {
+        outFile.open(filePath, std::ios::binary | std::ios::app); // open and append file
+    }
+    else {
+        return INVALID_WRITE_MODE;
+    }
 
-    if (!outFile) {
+    if (!outFile.is_open()) {
         return FILE_NOT_OPEN_ERROR;
     }
     uint32_t ctr;
-    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += sizeof(fileContent))
+    int recvied = 0;
+    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += recvied)
     {
         int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
         // TODO recv exact amount
-        if (read(STDIN_FILENO, fileContent, tranferAmount) < 0) {
+        if ((recvied = read(STDIN_FILENO, fileContent, tranferAmount)) < 0) {
             std::cerr << "Error reciving file contesnt from socket" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             res = RECV_FILE_CONTENT_ERROR;
         }
-        outFile.write(fileContent, tranferAmount);
+        outFile.write(fileContent, recvied);
         if (!outFile) {
             std::cerr << "Error writting to file " << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
@@ -137,26 +145,4 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
 
 void HiddenFileHandler::setFolderName(const std::string& name) {
     folderName = name;
-}
-
-Status HiddenFileHandler::writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod) 
-{
-    if (writeMod != OverWrite)
-        return FILE_WRITE_ERROR; // not implemented sorry ):
-
-    int bufferLen = strlen(buffer);
-    if (bufferLen == 0)
-        return SUCCSESS;
-
-    std::cerr << "Writing to file " << fileName << std::endl;
-    std::ofstream outputFile(fileName);
-
-    if (outputFile.is_open()) {
-        outputFile.write(buffer, std::min((unsigned int)len, (unsigned int)bufferLen + 1));
-        outputFile.close();
-    } else {
-        std::cerr << "Error: Unable to open file for writing." << std::endl;
-    }
-
-    return SUCCSESS;   
 }

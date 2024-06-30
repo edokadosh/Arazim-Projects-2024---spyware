@@ -8,9 +8,9 @@
 
 #define HOME_HOST ("localhost")
 
-typedef enum WriteMod {
+typedef enum uint32_t {
     OverWrite = 0,
     AppendMod,
-} WriteMod;
+} uint32_t;
 
 #endif

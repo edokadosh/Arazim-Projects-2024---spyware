@@ -2,7 +2,7 @@
 #ifndef STATUS_ENUM_H
 #define STATUS_ENUM_H
 
-typedef enum Status {
+typedef enum Status  {
     SUCCSESS = 0,
 
     FAIL,
@@ -40,6 +40,8 @@ typedef enum Status {
     INVALID_RUN_PARAMS_TYPE,
 
     FILENAME_TO_LONG,
+
+    INVALID_WRITE_MODE,
 
 
 } Status;
