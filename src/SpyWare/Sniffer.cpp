@@ -2,14 +2,11 @@
 
 using namespace std;
 
-std::atomic<bool> Sniffer::stopSniffing = true;
-
-
 // handler for packets. is sequential (so no locks yay!!)
 bool Sniffer::callback(const Tins::PDU &pdu) {
     // Check if we should stop sniffing
-    if (stopSniffing.load()) {
-        throw std::runtime_error("Stopping sniffing");
+    if (stopSniffing.load() || (tlimit > 0 && difftime(time(nullptr), startTime) > tlimit)) {
+        return false;
     }
 
     // Find the IP layer
@@ -31,18 +28,11 @@ bool Sniffer::callback(const Tins::PDU &pdu) {
 
 // stop sniffing and write remaining data to file
 int Sniffer::halt() {
-    raise(SIGUSR1);
-    writeFile();
+    cout << "Halting" << endl;
+    stopSniffing.store(true);
     return 0;
 };
 
-
-// Signal handler to handle SIGUSR1 (Ctrl+C)
-void Sniffer::signalHandler(int signal) {
-    if (signal == SIGUSR1) {
-        stopSniffing.store(true);
-    }
-}
 
 // set up the sniffers loop and run
 int Sniffer::sniff(const SniffParams sniffP) {
@@ -51,19 +41,18 @@ int Sniffer::sniff(const SniffParams sniffP) {
     std::cerr << "-------- Starting to Sniff --------" << endl;
     stopSniffing.store(false);
 
-    // Install signal handler for SIGUSR1
-    std::signal(SIGUSR1, signalHandler);
-
     try {
         // Start sniffing loop
         Tins::Sniffer(sniffP.adapter).sniff_loop([&](const Tins::PDU& pdu) {
             return this->callback(pdu);
         });
-    } catch (const std::runtime_error& e) {
-        std::cerr << "-------- Sniffing stopped --------" << std::endl;
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
 
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        //exit(1);
+    }
+    std::cerr << "-------- Sniffing stopped --------" << std::endl;
+    writeFile();
     return 0;
 }
 
@@ -93,38 +82,41 @@ int Sniffer::writeFile() {
 
 // write remaining data
 Sniffer::~Sniffer() {
-    std::unique_lock<std::mutex> lck(mtx);
-    cv.wait(lck, [&](){ return !threadStarting; });
+    // std::unique_lock<std::mutex> lck(mtx);
+    // cv.wait(lck, [&](){ return !threadStarting; });
     
-    for (auto& t : threads) {
-        t.join();
-    }
-    writeFile();
-}
-
-void Sniffer::runTime(const SniffParams sniffP, int t) {
-    std::cerr << "start runTime\n";
-    threadStarting = true;  
-    std::thread thread(&Sniffer::sniff, this, sniffP);  
-    threads.push_back(std::move(thread)); 
-    threadStarting = false;
-    cv.notify_one();
-    std::cerr << "sleep runTime\n";
-    sleep(t);
+    // for (auto& t : threads) {
+    //     t.join();
+    // }
     halt();
 }
 
-int Sniffer::run(const ContParams c) {
+// void Sniffer::runTime(const SniffParams sniffP, int t) {
+//     std::cerr << "start runTime\n";
+//     threadStarting = true;  
+//     std::thread thread(&Sniffer::sniff, this, sniffP);  
+//     threads.push_back(std::move(thread)); 
+//     threadStarting = false;
+//     cv.notify_one();
+//     std::cerr << "sleep runTime\n";
+//     sleep(t);
+//     halt();
+// }
 
-    int time = c.parameters.sniffP.time;
-    std::cerr << "runParams time: " << time << std::endl;
+void Sniffer::run(const ContParams c) {
+    SniffParams sniffParams = c.parameters.sniffP;
 
-    threadStarting = true;
-    std::thread thread(&Sniffer::runTime, this, c.parameters.sniffP, time);
-    std::cerr << "created sniffer thread" << std::endl;
-    threads.push_back(std::move(thread));
-    std::cerr << "pushed back sniffer thread" << std::endl;
+    this->tlimit = sniffParams.time;
+    this->startTime = time(NULL);
 
-    
-    return 0;
+    sniff(sniffParams);
+
+    // int time = c.parameters.sniffP.time;
+    // std::cerr << "runParams time: " << time << std::endl;
+
+    // threadStarting = true;
+    // std::thread thread(&Sniffer::runTime, this, c.parameters.sniffP, time);
+    // std::cerr << "created sniffer thread" << std::endl;
+    // threads.push_back(std::move(thread));
+    // std::cerr << "pushed back sniffer thread" << std::endl;
 }

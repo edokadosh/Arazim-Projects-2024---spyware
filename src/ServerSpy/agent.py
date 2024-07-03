@@ -23,7 +23,7 @@ class Agent:
 
     def run_bash(self, bash: str) -> tuple[Responce, str]:
         with self.connect() as conn:
-            conn.send_command(Command(len(bash), FunCode.RUN_BASH, bash))
+            conn.send_command(Command(len(bash), FunCode.RUN_BASH, 1, bash))
             return conn.recv_full_responce()
 
     def write_file(self, homeFilePath, targetFileName: str) -> Responce:

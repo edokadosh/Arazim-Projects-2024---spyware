@@ -1,6 +1,6 @@
 #include "Contraption.h"
 
-int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod) 
+int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) 
 {
     if (writeMod != OverWrite)
         return 1; // not implemented sorry ):
