@@ -134,3 +134,29 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
     }
     return SUCCSESS;
 }
+
+void HiddenFileHandler::setFolderName(const std::string& name) {
+    folderName = name;
+}
+
+Status HiddenFileHandler::writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod) 
+{
+    if (writeMod != OverWrite)
+        return FILE_WRITE_ERROR; // not implemented sorry ):
+
+    int bufferLen = strlen(buffer);
+    if (bufferLen == 0)
+        return SUCCSESS;
+
+    std::cerr << "Writing to file " << fileName << std::endl;
+    std::ofstream outputFile(fileName);
+
+    if (outputFile.is_open()) {
+        outputFile.write(buffer, std::min((unsigned int)len, (unsigned int)bufferLen + 1));
+        outputFile.close();
+    } else {
+        std::cerr << "Error: Unable to open file for writing." << std::endl;
+    }
+
+    return SUCCSESS;   
+}
