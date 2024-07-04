@@ -1,8 +1,11 @@
 #include "Contraption.h"
 
-int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t len, WriteMod writeMod) 
+// write mode == 1, means overWrite
+// write mode == 2, means Append
+int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) 
 {
-    if (writeMod != OverWrite)
+#pragma warning "remember to handle write mode"
+    if (writeMod != M_OVERWRITE)
         return 1; // not implemented sorry ):
 
     int bufferLen = strlen(buffer);

@@ -19,7 +19,6 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
 {
     ContParams runParams;
 
-    std::cerr << "map print: ";
     write(STDERR_FILENO, &contMap, sizeof(contMap));
     std::cerr << std::endl;
 

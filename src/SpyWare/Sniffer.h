@@ -2,14 +2,15 @@
 
 #include <iostream>
 #include <tins/tins.h>
-#include <csignal> // for signal handling
 #include <atomic> // for atomic flag
 #include <thread>
 #include <vector>
 #include <condition_variable>
 #include <mutex>
+#include <ctime>
 
 #include "Contraption.h"
+#include "../IncludeCPP/globalDefines.h"
 
 #define FILE_SIZE 4096
 
@@ -21,10 +22,12 @@ class Sniffer : public Contraption
 private:
     int i;
     char buffer[FILE_SIZE];
-    
+
+    time_t startTime;
+    time_t tlimit;
+
     bool callback(const Tins::PDU &pdu);
     int writeFile();
-    static void signalHandler(int signal);
     std::vector<std::thread> threads;
     std::condition_variable cv;
     std::mutex mtx;
@@ -34,7 +37,7 @@ private:
     int sniff(const SniffParams sniffParams);
 
     // Global atomic flag to control sniffing loop
-    static std::atomic<bool> stopSniffing;
+    std::atomic<bool> stopSniffing;
 
 public:
     Sniffer(/* args */);
