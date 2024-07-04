@@ -61,4 +61,5 @@ int SocketConnection::flushInput() {
             // You can log or process the discarded data if needed
         }
     }
+    return 0;
 }
