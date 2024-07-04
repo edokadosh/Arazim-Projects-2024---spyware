@@ -37,7 +37,6 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
         cont = std::make_shared<Sniffer>();
         std::cerr << "created sniffer" << std::endl;
         std::cerr << "id:" << identity << std::endl;
-        std::cerr << "map size: " << contMap.size() << std::endl;
 
         contMap.insert({(uint32_t)identity, cont});
         std::cerr << "map insertion didn't segment fault" << std::endl;

