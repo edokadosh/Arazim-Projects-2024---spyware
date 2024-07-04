@@ -1,21 +1,18 @@
 #include "Connection.h"
 
-Connection::Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSock, struct addrinfo addr)
-    : fdIn(fdInput), fdOut(fdOutput), isSocket(isSock), peerAddr(addr), needCloseIn(needCloseInput), needCloseOut(false)
+Connection::Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput)
+    : fdIn(fdInput), fdOut(fdOutput), needCloseIn(needCloseInput), needCloseOut(false)
 {
     if (fdIn != fdOut) {
         needCloseOut = needCloseOutput;
     }
+    isSocket = false;
 }
 
 // Connection::Connection() {}
 
 Connection::~Connection() {
-    // if(needCloseIn)
-    //     close(fdIn);
-    
-    // if(needCloseOut)
-    //     close(fdOut);
+    closeConn();
 }
 
 void Connection::closeConn() {
@@ -23,41 +20,12 @@ void Connection::closeConn() {
         close(fdIn);
     
     if(needCloseOut)
-        close(fdOut);    
+        close(fdOut);
+    needCloseIn = false;
+    needCloseOut = false;    
 }
 
 
-int Connection::connectTCP(std::string host, int port, std::shared_ptr<Connection>& conn_ptr)
-{
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1) {
-        std::cerr << "Failed to create socket\n";
-        std::cerr << strerror(errno) << std::endl;
-        return -1;
-    }
-    struct addrinfo hints, *res;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;     // IPv4
-    hints.ai_socktype = SOCK_STREAM; // TCP
-
-
-    int status = getaddrinfo(host.c_str(), std::to_string(port).c_str(), &hints, &res);
-    if (status != 0) {
-        std::cerr << "getaddrinfo error: " << gai_strerror(status) << "\n";
-        close(sockfd);
-        return -1;
-    }
-
-    if ((status = connect(sockfd, res->ai_addr, res->ai_addrlen)) == -1) {
-        std::cerr << "Failed to connect to server\n";
-        std::cerr << strerror(errno) << std::endl;
-        close(sockfd);
-        return -1;
-    }
-
-    conn_ptr = std::make_shared<Connection>(sockfd, sockfd, true, true, true, *res);
-    return SUCCSESS;
-}
 
 int Connection::doSend(const void* buf, size_t size, int flags) {
     if (isSocket)
@@ -99,7 +67,16 @@ bool Connection::sendData(uint32_t size, void* buffer) {
     return sendData(size, buffer, 0);
 }
 
-bool Connection::sendString(const std::string& str, int flags) {
+bool Connection::sendString(const std::string& str, int flags, bool sendLegnth) {
+    if (sendLegnth){
+        uint32_t strLen = str.size();
+        if (doSend(&strLen, sizeof(strLen), flags | MSG_MORE) == -1) {
+            std::cerr << "Error sending string length" << std::endl;
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+            return false;
+        }
+    }
+    
     int bytesSent = doSend(str.c_str(), str.length(), flags);
     if (bytesSent == -1) {
         std::cerr << "Error sending string" << std::endl;
@@ -108,8 +85,8 @@ bool Connection::sendString(const std::string& str, int flags) {
     }
     return true;
 }
-bool Connection::sendString(const std::string& str) {
-    return sendString(str, 0);
+bool Connection::sendString(const std::string& str, bool sendLegnth) {
+    return sendString(str, 0, sendLegnth);
 }
 
 bool Connection::sendResponceStruct(const responce res, int flags) {
@@ -132,7 +109,7 @@ bool Connection::sendResponce(uint32_t status, const std::string& msg, int flags
     if(!sendResponceStruct((responce){.dataLen = dataLen, .status = status}, flags)) {
         return false;
     }
-    if (!sendString(msg), flags) {
+    if (!sendString(msg, false), flags) {
         std::cerr << "Error sending responce msg" << std::endl;
         return false;
     }
@@ -205,5 +182,7 @@ bool Connection::sendFile(std::string filePath, int flags)
 bool Connection::sendFile(std::string filePath) {
     return sendFile(filePath, 0);
 }
+
+
 
 
