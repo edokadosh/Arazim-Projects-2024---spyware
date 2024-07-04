@@ -3,6 +3,7 @@ import struct
 import sys
 from command import Command
 from responce import Responce
+from icecream import ic
 
 
 class Connection:
@@ -27,6 +28,7 @@ class Connection:
         self.socket.close()
 
     def send_command(self, cmd: Command):
+        ic(cmd.funCode)
         self.socket.send(cmd.pack())
 
     def send_data(self, data: bytes):

@@ -4,8 +4,8 @@ from icecream import ic
 
 
 class Command:
-    FMT: str = "=III50s"
-    sizeof: int = struct.calcsize("=III50s")
+    FMT: str = "=III100s"
+    sizeof: int = struct.calcsize("=III100s")
 
     def __init__(
         self, dataLen: int, funcode: FunCode, identifier: int, strParam: str

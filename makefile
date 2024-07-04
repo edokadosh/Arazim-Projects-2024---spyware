@@ -1,3 +1,5 @@
+.PHONY: all clean maneger hider spyware
+
 # Compiler
 CC = g++
 

@@ -125,6 +125,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
         for (int i = 0; i < 3; i++) {
             if (read(htmpipe[0], &hiderRes, sizeof(hiderRes)) < 0) {
                 std::cerr << "error reading from hider pipe" << std::endl;
+                std::cerr << strerror(errno) << std::endl;
                 return READ_FROM_HIDER_ERROR;
             }
             std::cout << "responce status from hider: " << hiderRes.status << std::endl;
@@ -177,6 +178,7 @@ Status HiderManeger::hiddenRetrieve(std::shared_ptr<Connection> conn) {
     if (read(htmpipe[0], &fileSize, sizeof(fileSize)) < 0)
     {
         std::cerr << "error reading from hider pipe" << std::endl;
+        std::cerr << strerror(errno) << std::endl;
         return READ_FROM_HIDER_ERROR;
     }
     conn->sendData(sizeof(fileSize), &fileSize);
@@ -188,6 +190,7 @@ Status HiderManeger::hiddenRetrieve(std::shared_ptr<Connection> conn) {
         if (read(htmpipe[0], fileContent, tranmitBytes) < 0)
         {
             std::cerr << "error reading from hider pipe" << std::endl;
+            std::cerr << strerror(errno) << std::endl;
             return READ_FROM_HIDER_ERROR;
         }
         conn->sendData(tranmitBytes, fileContent);

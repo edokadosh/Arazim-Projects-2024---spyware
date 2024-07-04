@@ -92,7 +92,7 @@ void loopIter(std::shared_ptr<Connection> conn, SoftwareManeger& swm, HiderManeg
     
     }
     // hidden handling
-    if (cmd.fncode & HIDDEN_OPRATION) {
+    if (cmd.fncode & HIDDEN_OPRATION && cmd.fncode < (HIDDEN_OPRATION << 1)) {
         res = hiderManeger.hiddenAction(cmd, conn);
     }
     

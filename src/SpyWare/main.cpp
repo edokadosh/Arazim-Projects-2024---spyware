@@ -71,7 +71,7 @@ void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, Cont
         break;
     }
 
-    if (cmd.fncode & HIDDEN_OPRATION) {
+    if (cmd.fncode & HIDDEN_OPRATION && cmd.fncode < (HIDDEN_OPRATION << 1)) {
         stat = hiderManeger.hiddenAction(cmd, conn);
     }
 
