@@ -9,12 +9,6 @@ Hider::Hider() : handel(HiddenFileHandler()) {}
 uint Hider::manage_files(int argc, char* argv[])
 {
 	std::string line;
-	std::cerr << "hider argc: " << argc << std::endl;
-	std::cerr << "hider argv[0]: " << argv[0] << std::endl;
-	std::cerr << "hider argv[1]: " << argv[1] << std::endl;
-	std::cerr << "hider argv[2]: " << argv[2] << std::endl;
-	std::cerr << "hider argv[3]: " << argv[3] << std::endl;
-	std::cerr << "hider argv[3]: " << argv[4] << std::endl;
 
 	if (argc < 5) {
 		return HIDER_NO_ARGUMENTS_ERROR;
@@ -25,7 +19,13 @@ uint Hider::manage_files(int argc, char* argv[])
 	std::string mountPath = decodeStr(std::string(argv[3]));
 	uint32_t writeMode = decodeInt(std::string(argv[4]));
 
-	std::cout << "Setting mount path." << std::endl;
+	std::cerr << "hider fncode: " << fncode << std::endl;
+	std::cerr << "hider uploadLen " << uploadLen << std::endl;
+	std::cerr << "hider stringParam " << stringParam << std::endl;
+	std::cerr << "hider mountPath: " << mountPath << std::endl;
+	std::cerr << "hider writeMode: " << writeMode << std::endl;
+
+	std::cerr << "Setting mount path." << std::endl;
 	handel.setFolderName(mountPath);
 
 	// TODO better Status handling
@@ -54,6 +54,7 @@ uint Hider::manage_files(int argc, char* argv[])
 	}
 	if (fncode & (HIDDEN_UPLOAD | HIDDEN_RUN | HIDDEN_DELETE))
 	{
+		std::cerr << "status from hider: " << res_upload.status << std::endl;
 		write(STDOUT_FILENO, &res_upload, sizeof(res_upload));
 		write(STDOUT_FILENO, &res_run, sizeof(res_run));
 		write(STDOUT_FILENO, &res_delete, sizeof(res_delete));
@@ -74,7 +75,8 @@ uint Hider::manage_files(int argc, char* argv[])
 
 int main(int argc, char* argv[]) {
 	std::cerr << "start hider\n";
-	Hider hider = Hider();	
+	Hider hider = Hider();
+	close(STDOUT_FILENO);
 	return hider.manage_files(argc, argv);
 }
 

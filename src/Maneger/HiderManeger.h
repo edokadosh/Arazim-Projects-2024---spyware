@@ -30,6 +30,7 @@ HIDER_UPLOAD
 #include "../Hider/HiderCodes.h"
 #include "../IncludeCPP/encoding.h"
 #include "../IncludeCPP/globalDefines.h"
+#include "PipeConnection.h"
 
 #define DEFAULT_HIDER_PATH ("./matbuja")
 
@@ -83,7 +84,7 @@ public:
 
     Status hideFile(const std::string filename, std::string identifier);
 
-    Status writeFile(const std::string& fileName, char buffer[], uint32_t len);
+    Status writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMode);
 };
 
 #endif

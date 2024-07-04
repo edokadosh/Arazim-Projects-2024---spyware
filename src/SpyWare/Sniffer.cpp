@@ -73,7 +73,7 @@ Sniffer::Sniffer() {
 // writes buffer to file and zeroes buffer
 int Sniffer::writeFile() {
     string name = to_string(i) + ".sniff";
-    int res = Contraption::writeFile(name, buffer, strlen(buffer), OverWrite);
+    int res = Contraption::writeFile(name, buffer, strlen(buffer), M_OVERWRITE);
     memset(buffer, 0, FILE_SIZE);
     i++;
     return res;

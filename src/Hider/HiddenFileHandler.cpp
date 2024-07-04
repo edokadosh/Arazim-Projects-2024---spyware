@@ -8,8 +8,8 @@ std::string HiddenFileHandler::getPath(const std::string fileName) {
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
-    for (const auto& entry : fs::directory_iterator(folderName))
-        std::cout << entry.path() << std::endl;
+    // for (const auto& entry : fs::directory_iterator(folderName))
+        // std::cout << entry.path() << std::endl;
 }
 
 
@@ -98,7 +98,7 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
     std::string filePath = getPath(fileName);
     std::ofstream outFile;
     if (writeMode == M_OVERWRITE) {
-        outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
+        outFile.open(filePath, std::ios::binary); // open and overwrite file
     }
     else if (writeMode == M_APPEND) {
         outFile.open(filePath, std::ios::binary | std::ios::app); // open and append file
@@ -107,12 +107,14 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
         return INVALID_WRITE_MODE;
     }
 
-    if (!outFile.is_open()) {
+    if (!outFile) {
+        std::cerr << strerror(errno) << std::endl;
+        
         return FILE_NOT_OPEN_ERROR;
     }
     uint32_t ctr;
-    int recvied = 0;
-    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += recvied)
+    int recvied = 1;
+    for (ctr = 0; ctr < fileSize && res == SUCCSESS && recvied != 0; ctr += recvied)
     {
         int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
         // TODO recv exact amount
@@ -127,7 +129,9 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
             std::cerr << "Error: " << strerror(errno) << std::endl;
             res = FILE_WRITE_ERROR;
         }
+        std::cerr << "read: " << ctr << std::endl;
     }
+    std::cerr << "finnish read\n";
     outFile.close();
 
 

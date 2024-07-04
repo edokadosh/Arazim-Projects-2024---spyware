@@ -8,6 +8,8 @@
 #ifndef HIDER_H
 #define HIDER_H
 
+#define cout cerr
+
 class Hider
 {
 private:

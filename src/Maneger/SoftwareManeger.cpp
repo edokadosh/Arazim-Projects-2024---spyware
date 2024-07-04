@@ -27,6 +27,7 @@ Status SoftwareManeger::fileWrite(std::shared_ptr<Connection> conn, uint32_t fil
     
 
     if (!outFile) {
+        std::cerr << "file not open for write: " << strerror(errno) << std::endl;
         return FILE_NOT_OPEN_ERROR;
     }
     uint32_t ctr;

@@ -54,12 +54,12 @@ Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint3
     }
     cmd = (command){.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD, .writeMod = writeMod};
     strcpy(cmd.strParam, fileName.c_str());
-    int p[2] = { 0 };
+    int p[2];
     if ((res = openPipes(p)) != SUCCSESS) {
         return res;
     }
-
-    std::shared_ptr<Connection> pipeConn = std::make_shared<Connection>(p[0], p[1], true, true, false, (addrinfo){0});
+    std::shared_ptr<PipeConnection> pipeConn;
+    PipeConnection::createPipeConnection(pipeConn, p);
 
     hiddenAction(cmd, pipeConn);
     pipeConn->closeConn();
@@ -80,14 +80,19 @@ void HiderManeger::activateHiderChild(const command& cmd) {
     if (MtHredirect) {
         close(mthpipe[1]);
         dup2(mthpipe[0], STDIN_FILENO);
-        // close(mthpipe[0]);
+        close(mthpipe[0]);
     }
     if (HtMredirect) {
         close(htmpipe[0]);
         dup2(htmpipe[1], STDOUT_FILENO);
-        // close(htmpipe[1]);
+        close(htmpipe[1]);
     }
     std::cerr << "exec hider\n";
+    std::cout << "sdfg fncode: " << cmd.fncode << std::endl;
+    std::cout << "sdfg datalen: " << cmd.dataLen << std::endl;
+    std::cout << "sdfg strParam: " << cmd.strParam << std::endl;
+    std::cout << "MountPath " << mountPath << std::endl;
+    std::cout << "encMountPath " << encMountPath << std::endl;
     if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), encMountPath.c_str(), encWriteMod.c_str(), NULL) == -1) {
         std::cerr << "error executing hider: " << std::strerror(errno) << std::endl;
     }
@@ -121,6 +126,8 @@ Status HiderManeger::activateHider(const command& cmd)
 
 Status HiderManeger::openPipes(int p[])
 {
+    p[0] = 0;
+    p[1] = 0;
     if (pipe(p) == -1) {
         std::cerr << "error opening pipes" << std::endl;
         return HIDER_PIPE_ERROR;
@@ -154,9 +161,13 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
         responce hiderRes = {.dataLen = 0, .status = SUCCSESS};
 
         for (int i = 0; i < 3; i++) {
-            if (read(htmpipe[0], &hiderRes, sizeof(hiderRes)) < 0) {
+            int res = 0;
+            if ((res = read(htmpipe[0], &hiderRes, sizeof(hiderRes))) < 0) {
                 std::cerr << "error reading from hider pipe" << std::endl;
                 return READ_FROM_HIDER_ERROR;
+            }
+            if (res != sizeof(hiderRes)) {
+                std::cout << "weird\n";
             }
             std::cout << "responce status from hider: " << hiderRes.status << std::endl;
             conn->sendResponceStruct(hiderRes);
@@ -210,11 +221,12 @@ Status HiderManeger::hiddenRetrieve(std::shared_ptr<Connection> conn) {
     }
     conn->sendData(sizeof(fileSize), &fileSize);
     uint32_t ctr;
-    uint32_t tranmitBytes;
-    for (ctr = 0; ctr < fileSize; ctr += sizeof(fileContent))
+    uint32_t tranmitBytes = 0;
+    int recived = 0;
+    for (ctr = 0; ctr < fileSize; ctr += recived)
     {
         tranmitBytes = MIN(sizeof(fileContent), fileSize - ctr);
-        if (read(htmpipe[0], fileContent, tranmitBytes) < 0)
+        if ((recived = read(htmpipe[0], fileContent, tranmitBytes)) < 0)
         {
             std::cerr << "error reading from hider pipe" << std::endl;
             return READ_FROM_HIDER_ERROR;

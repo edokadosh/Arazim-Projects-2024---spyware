@@ -21,6 +21,7 @@ def main():
 
     image_path = "fs.iso"
     mount_path = "fs"
+    # mount_path = "."
 
     agents = list()
     recrutionEvent = threading.Event()

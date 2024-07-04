@@ -19,29 +19,27 @@
 
 class Connection {
     
-private:
+protected:
     int fdIn;
     int fdOut;
-    bool isSocket;
-    struct addrinfo peerAddr; // meaningfull only when conn is socket
     bool needCloseIn;
     bool needCloseOut;
 
     int doSend(const void* buf, size_t size, int flags);
-    int doSend(const void* buf, size_t size);
+    virtual int doSend(const void* buf, size_t size);
     int doRecv(void* buf, size_t size, int flags);
-    int doRecv(void* buf, size_t size);
+    virtual int doRecv(void* buf, size_t size);
+    bool isSocket;
 
 public:
 
-    Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, bool isSocket, struct addrinfo addr);
+    Connection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput);
 
     // Connection(Connection&& other) noexcept;
     // Connection& operator=(Connection&& other) noexcept;
 
     ~Connection();
 
-    static int connectTCP(std::string host, int port, std::shared_ptr<Connection>& conn);
 
     void closeConn(void);
 
@@ -66,6 +64,7 @@ public:
     bool sendFile(std::string filePath);
     bool sendFile(std::string filePath, int flags);
 
+    int flushInput(void);
 
 friend class HiderManeger;
 };
