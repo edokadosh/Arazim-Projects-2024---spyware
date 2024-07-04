@@ -2,7 +2,7 @@
 #ifndef STATUS_ENUM_H
 #define STATUS_ENUM_H
 
-typedef enum Status {
+typedef enum Status  {
     SUCCSESS = 0,
 
     FAIL,
@@ -23,6 +23,7 @@ typedef enum Status {
     HIDER_PIPE_ERROR,
     HIDER_FORK_ERROR,
     HIDER_NO_ARGUMENTS_ERROR,
+    HIDER_SETUP_ERROR,
 
     WAIT_ERROR,
     SPLICE_ERROR,
@@ -30,12 +31,17 @@ typedef enum Status {
     READ_FROM_HIDER_ERROR,
 
     IDENTITY_ALREADY_TAKEN,
+    CONTRAPTION_NOT_FOUND,
 
     SUICIDE_SUCSESS,
 
     DID_NOTHING,
 
     INVALID_RUN_PARAMS_TYPE,
+
+    FILENAME_TO_LONG,
+
+    INVALID_WRITE_MODE,
 
 
 } Status;

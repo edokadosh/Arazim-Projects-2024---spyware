@@ -15,22 +15,24 @@
 class ContraptionAdmin {
 
 private:
-    std::map<uint32_t, Contraption *> contMap;
+    std::map<uint32_t, std::shared_ptr<Contraption>> contMap;
+    std::map<uint32_t, std::shared_ptr<std::thread>> threadMap;
+
+    Status runContBackgrnd(contIdent_t contId, const ContParams& contParams);
 
 public:
 
     ContraptionAdmin();
-        // std::cerr << "map size check: " << contMap.size() << std::endl;
 
     ~ContraptionAdmin();
 
-//     ~ContraptionAdmin() {
-// #pragma warning "free map elements"
-//         contMap.clear();
-//     }
-    void segTest();
+    // ~ContraptionAdmin() {
+    //     contMap.clear();
+    // }
 
     Status runContraption(std::shared_ptr<Connection> conn, contIdent_t identity);
 
     Status haltContraption(contIdent_t identity);
+
+    Status listContraptions(std::shared_ptr<Connection> conn);
 };

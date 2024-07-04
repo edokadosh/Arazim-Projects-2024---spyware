@@ -32,6 +32,7 @@ uint Hider::manage_files(int argc, char* argv[])
 		std::cerr << "start hidden uploading\n";
 		res_upload.status = handel.uploadFile(stringParam, uploadLen);
 		std::cerr << "res_upload: " << res_upload.status << std::endl;
+		std::cerr << "hider: " << strerror(errno) << std::endl;
 
 	}
 	if ((fncode & HIDDEN_RUN) && res_upload.status == SUCCSESS) {
