@@ -25,6 +25,6 @@ class PipeConnection : public Connection {
 public:
     PipeConnection(int pIn, int pOut, bool closeIn, bool closeOut);
     
-    static Status createPipeConnection(std::shared_ptr<PipeConnection>& pipeConn, int p[2]);
+    static Status createPipeConnection(std::unique_ptr<PipeConnection>& pipeConn, int fdInput, int fdOutput);
 
 };

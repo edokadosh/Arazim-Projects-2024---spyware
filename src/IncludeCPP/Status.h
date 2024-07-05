@@ -43,6 +43,12 @@ typedef enum Status  {
 
     INVALID_WRITE_MODE,
 
+    ERROR_RECVIVING_FROM_CONNECTION,
+
+    ERROR_WRITING_TO_HIDER,
+
+    HIDER_DIDNT_RECV_ENTIRE_UPLOAD,
+
 
 } Status;
 

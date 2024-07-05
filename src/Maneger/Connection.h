@@ -52,8 +52,8 @@ public:
     bool sendResponce(uint32_t status, const std::string& ansString);
     bool sendResponce(uint32_t status, const std::string& ansString, int flags);
 
-    bool sendData(uint32_t size, void* buffer);
-    bool sendData(uint32_t size, void* buffer, int flags);
+    int sendData(uint32_t size, void* buffer);
+    int sendData(uint32_t size, void* buffer, int flags);
 
     bool recvCommand(command& cmd);
     bool recvCommand(command& cmd, int flags);

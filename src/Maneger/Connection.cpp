@@ -53,17 +53,17 @@ int Connection::doRecv(void* buf, size_t size) {
 
 
 
-bool Connection::sendData(uint32_t size, void* buffer, int flags) {
+int Connection::sendData(uint32_t size, void* buffer, int flags) {
     int bytesSent = doSend(buffer, size, flags);
     if (bytesSent == -1) {
         std::cerr << "Error sending data" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
-        return false;
+        return bytesSent;
     }
-    return true;
+    return bytesSent;
 }
 
-bool Connection::sendData(uint32_t size, void* buffer) {
+int Connection::sendData(uint32_t size, void* buffer) {
     return sendData(size, buffer, 0);
 }
 

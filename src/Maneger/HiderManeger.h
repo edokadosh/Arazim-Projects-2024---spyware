@@ -46,10 +46,13 @@ private:
     std::string imagePath;
     std::string mountPath;
 
+    // TODO add mutex
+
     int mthpipe[2]; // pipe from manager -> hider
     bool MtHredirect;
     int htmpipe[2]; // pipe from hider -> manager
     bool HtMredirect;
+    std::unique_ptr<PipeConnection> pipeConn;
 
     Status activateHider(const command& cmd);
 

@@ -34,11 +34,12 @@ class Agent:
     goes into loop of reading a command from stdin and executing on red side
     stops on sigint (or other exception/interrupt) or q
     """
+
     def bash_mode(self):
         try:
             while True:
                 line = input("$ ")
-                if (line == 'q'):
+                if line == "q":
                     break
                 print(self.run_bash(line))
         except Exception as e:
@@ -88,7 +89,7 @@ class Agent:
 
         self.conn.send_command(
             Command(
-                len(fileContent),
+                ic(len(fileContent)),
                 FunCode.HIDDEN_OPRATION | fncode,
                 0,
                 targetFileName,

@@ -127,6 +127,8 @@ Status HiderManeger::activateHider(const command& cmd)
         close(mthpipe[0]);
     }
 
+    PipeConnection::createPipeConnection(pipeConn, htmpipe[0], mthpipe[1]);
+
 
     return SUCCSESS;
 }
@@ -145,14 +147,15 @@ Status HiderManeger::openPipes(int p[])
 // add Status handling
 Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection> conn)
 {
-    if (cmd.fncode & HIDDEN_UPLOAD) {
-        if (openPipes(mthpipe) != SUCCSESS) {
-            return HIDER_PIPE_ERROR;
-        }
-        MtHredirect = true;
+
+    if (openPipes(mthpipe) != SUCCSESS) {
+        return HIDER_PIPE_ERROR;
     }
+    MtHredirect = true;
 
     if (openPipes(htmpipe) != SUCCSESS) {
+        close(mthpipe[0]);
+        close(mthpipe[1]);
         return HIDER_PIPE_ERROR;
     }
     HtMredirect = true;
@@ -199,17 +202,27 @@ Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection
 {
     std::cout << "UPLOADING " << cmd.strParam << std::endl;
     // send file server -> pipe
-    uint32_t ctr;
-    uint32_t transmitBytes;
-    int bytes_received;
-    for (ctr = 0; ctr < cmd.dataLen; ctr += PAGE_SIZE)
+    char buffer[CHUNK_SIZE] = {0};
+    uint32_t ctr = 0;
+    uint32_t transmitBytes = 0;
+    int bytes_received = 0;
+    for (ctr = 0; ctr < cmd.dataLen; ctr += bytes_received)
     {
         transmitBytes = MIN(PAGE_SIZE, cmd.dataLen - ctr);
-        if ((bytes_received = splice(conn->fdIn, nullptr, mthpipe[1], nullptr, transmitBytes, SPLICE_F_MOVE)) == -1) {
-            std::cerr << "Error splicing data to hider: " << std::strerror(errno) << std::endl;
-            return SPLICE_ERROR;
+        if ((bytes_received = conn->doRecv(buffer, sizeof(buffer))) < 0) {
+            std::cerr << "Error recv file: " << strerror(errno) << std::endl;
+            return ERROR_RECVIVING_FROM_CONNECTION;
         }
+        if (pipeConn->sendData(bytes_received, buffer) != bytes_received) {
+            std::cerr << "Error writing to hider: " << strerror(errno) << std::endl;
+            return ERROR_WRITING_TO_HIDER;
+        }
+        // if ((bytes_received = splice(conn->fdIn, nullptr, mthpipe[1], nullptr, transmitBytes, SPLICE_F_MOVE)) == -1) {
+        //     std::cerr << "Error splicing data to hider: " << std::strerror(errno) << std::endl;
+        //     return SPLICE_ERROR;
+        // }
         // std::cout << "sent one page" << std::endl;
+        // std::cerr << "hider maneger: finnish upload iter\n";
     }
 
     close(mthpipe[1]);
