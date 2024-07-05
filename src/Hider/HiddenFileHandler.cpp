@@ -8,8 +8,17 @@ std::string HiddenFileHandler::getPath(const std::string fileName) {
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
-    for (const auto& entry : fs::directory_iterator(folderName))
-        std::cout << entry.path() << std::endl;
+    for (const auto& entry : fs::directory_iterator(folderName)){
+        const char* path = entry.path().c_str();
+        write(OUTPUT_PIPE_FD, path, strlen(path));
+    }
+}
+
+HiddenFileHandler::HiddenFileHandler()
+{
+    fs::path folder = fs::current_path();
+    folderName = folder.string();
+    std::cerr << "setted folder name: " << folderName << std::endl;
 }
 
 
@@ -77,13 +86,13 @@ Status HiddenFileHandler::retreiveFile(const std::string& filename) {
     }
     const std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     uint32_t fileSize = buffer.size();
-    if (write(STDOUT_FILENO, &fileSize, sizeof(fileSize)) == -1) {
+    if (write(OUTPUT_PIPE_FD, &fileSize, sizeof(fileSize)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
     }
     file.close();
 
-    if ((write(STDOUT_FILENO, buffer.data(), fileSize)) == -1) {
+    if ((write(OUTPUT_PIPE_FD, buffer.data(), fileSize)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
     }

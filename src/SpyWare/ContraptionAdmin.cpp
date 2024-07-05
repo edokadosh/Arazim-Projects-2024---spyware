@@ -20,7 +20,6 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
     ContParams runParams;
 
     write(STDERR_FILENO, &contMap, sizeof(contMap));
-    std::cerr << std::endl;
 
     conn->recvData(sizeof(runParams), (char*)&runParams);
     std::cerr << "recved contraption parameters" << std::endl;

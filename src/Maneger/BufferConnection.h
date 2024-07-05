@@ -20,6 +20,7 @@ class BufferConnection : public Connection {
 protected:
     uint32_t ctr = 0;
     char* buffer;
+    uint32_t len;
     bool isIn;
 
     int doSend(const void* buf, size_t size) override;
@@ -27,5 +28,5 @@ protected:
 
 
 public:
-    BufferConnection(char* buf, bool isInput);
+    BufferConnection(char* buf, uint32_t length, bool isInput);
 };
