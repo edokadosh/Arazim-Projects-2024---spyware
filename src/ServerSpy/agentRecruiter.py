@@ -14,8 +14,11 @@ class RecruitmentHandler(threading.Thread):
         self.oper_dict = oper_dict
 
     def run(self) -> tuple[str, Agent]:
-        self.agent = Agent(self.conn)
+        self.agent = Agent(self.conn, self.type)
         self.name = self.conn.peer_ip
+        if self.name not in self.oper_dict.keys():
+            self.oper_dict[self.name] = Operation()
+        self.oper_dict[self.name].addAgent()
 
 
 class AgentRecruiter(threading.Thread):

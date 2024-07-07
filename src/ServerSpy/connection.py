@@ -57,6 +57,21 @@ class Connection:
         (length,) = struct.unpack("=I", self.recv_bytes(struct.calcsize("=I")))
         return self.recv_bytes(length)
 
+    def is_open(self) -> bool:
+        try:
+            # this will try to read bytes without blocking and also without removing them from buffer (peek only)
+            data = self.socket.recv(16, socket.MSG_DONTWAIT | socket.MSG_PEEK)
+            if len(data) == 0:
+                return False
+        except BlockingIOError:
+            return True  # socket is open and reading from it would block
+        except ConnectionResetError:
+            return False  # socket was closed for some other reason
+        except Exception as e:
+            # logger.exception("unexpected exception when checking if a socket is closed")
+            return True
+        return True
+
     def __enter__(self):
         return self
 
