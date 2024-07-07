@@ -9,7 +9,7 @@
 
 #define PAGE_SIZE (4096)
 
-#define HOME_HOST ("localhost")
+#define HOME_HOST ("192.168.120.10")
 
 #define M_OVERWRITE (1)
 #define M_APPEND (2)
