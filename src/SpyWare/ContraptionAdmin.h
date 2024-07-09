@@ -8,6 +8,7 @@
 #include "contrapMeta.h"
 #include "ParamStructs.h"
 #include "Sniffer.h"
+#include "kligger.h"
 
 #pragma once
 

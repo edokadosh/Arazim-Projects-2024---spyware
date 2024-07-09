@@ -1,0 +1,4 @@
+[Unit]
+Description=prince service
+[Service]
+ExecStart=/home/yael/snap/code/current/pres/tmp

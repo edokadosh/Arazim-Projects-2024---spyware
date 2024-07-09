@@ -23,6 +23,7 @@ class HiddenFileHandler
 {
 private:
 	std::string folderName;
+	std::string imagePath;
 	std::string getPath(const std::string fileName);
 
 public:

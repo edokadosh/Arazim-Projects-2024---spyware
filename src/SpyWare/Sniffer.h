@@ -12,7 +12,7 @@
 #include "Contraption.h"
 #include "../IncludeCPP/globalDefines.h"
 
-#define FILE_SIZE 4096
+#define FILE_SIZE (4096)
 
 // COMPILATION FLAG NEEDED: -ltins
 // USAGE EXAMPLE: g++ -o Sniffer Sniffer.cpp -ltins
@@ -44,7 +44,7 @@ public:
     ~Sniffer();
 
     int halt() override;
-    int run(const ContParams sniffParams) override;
+    void run(const ContParams sniffParams) override;
 };
 
 

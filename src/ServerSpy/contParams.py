@@ -7,7 +7,7 @@ MAX_ADAPTER_NAMELEN = 16
 
 
 class Params(Union):
-    _fields_ = [("sniffP", SniffParams)]
+    _fields_ = [("sniffP", SniffParams), ("kligP", kligPrams)]
 
 
 # types enum values
