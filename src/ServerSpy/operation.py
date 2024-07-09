@@ -6,6 +6,7 @@ class Operation:
         print("Empty initiator for operation")
         self.spyAgent = None
         self.managerAgent = None
+        self.netDriver = None
 
     def addAgent(self, agent: Agent, type: str) -> None:
         if type == "maneger":

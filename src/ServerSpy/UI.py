@@ -5,11 +5,11 @@ from command import Command
 from responce import Responce
 from funCode import FunCode
 from status import Status
-from contParams import *
 from icecream import ic
 """
 #from agent import Agent
 #from operation import Operation
+from contParams import *
 import click
 
 
@@ -22,110 +22,117 @@ class Agent():
 
 class Operation():
     def __init__(self, s):
-        self.spyAgent = Agent(1 + s)
-        self.managerAgent = Agent(2 + s)
+        self.spyAgent = Agent(s)
+        self.managerAgent = Agent(s)
 
 class Context:
     def __init__(self, operations):
-        self.selected_operation = None
+        self.selected_operation: Operation = None
         self.oper_dict = operations
+        self.cont_ident = 0
 
 
-def call_method(agent: Agent, method: str, *args):
-    if hasattr(agent, method):
+def call_method(obj, method: str, *args):
+    if hasattr(obj, method):
         try:
-            print("DB: Received args:")
-            getattr(agent, method)(*args)
+            getattr(obj, method)(*args)
         except:
             print("OOPSIE: probably wrong arguments")
     else:
         print(f"OOPSIE: Method {method} not found")
 
+def print_methods(obj):
+        attributes = dir(obj)
+        methods = [attr for attr in attributes if callable(getattr(obj, attr)) and not attr.startswith("__")]
+        print("YAY: Available Methods: (q for exit)")
+        print(methods)
 
 class UI:
     def __init__(self, operations: dict[str, Operation]) -> None:
-        print("Initing")
         self.ctx = Context(operations)
-        self.cli = click.Group()
-        self.add_commands()
 
-    def add_commands(self):
-        self.cli.add_command(self.select_contraption)
-        self.cli.add_command(self.list_operation_names)
-        self.cli.add_command(self.list_operations)
-        self.cli.add_command(self.rename_operation)
-        self.cli.add_command(self.spyware)
-        self.cli.add_command(self.manager)
+    def is_op_active(self) -> bool:
+        if not self.ctx.selected_operation:
+            print("OOPSIE: Unselected operation")
+            return False
+        return True
 
-    @click.command
-    @click.argument('name')
-    @click.pass_context
-    def select_contraption(ctx: Context, name: str):
-        if name not in ctx.oper_dict.keys():
+    def select(self, name: str):
+        if name not in self.ctx.oper_dict.keys():
             print("OOPSIE: Contraption not found")
-        ctx.selected_operation = name
-        print(f"Activated {name}")
+        self.ctx.selected_operation = self.ctx.oper_dict[name]
+        print(f"YAY: Selected {name}")
 
-    @click.command
-    @click.argument('method')
-    @click.argument('args', nargs=-1)
-    @click.pass_context
-    def spyware(ctx, method, *args):
-        call_method(ctx.selected_operation.spyAgent, method, *args)
+    def spyware(self, method, *args):
+        if self.is_op_active():
+            call_method(self.ctx.selected_operation.spyAgent, method, *args)
 
-    @click.command
-    @click.argument('method')
-    @click.argument('args', nargs=-1)
-    @click.pass_context
-    def manager(ctx, method, *args):
-        call_method(ctx.selected_operation.managerAgent, method, *args)
+    def manager(self, method, *args):
+        if self.is_op_active():
+            call_method(self.ctx.selected_operation.managerAgent, method, *args)
 
-
-    @click.command
-    @click.pass_context
-    def list_operations(ctx):
-        print("Available operations:")
-        for op_name, oper in ctx.oper_dict.items():
-            print(f"{op_name}\t\t{oper}")
-
-
-    @click.command
-    @click.pass_context
-    def list_operation_names(ctx):
-        print(ctx)
-        print("Available operations:")
-        for op_name in ctx.oper_dict.keys():
+    # list operations
+    def ops(self):
+        print("YAY: Available operations:")
+        for op_name in self.ctx.oper_dict.keys():
+            if (self.ctx.selected_operation == self.ctx.oper_dict[op_name]):
+                print("-> ", end='')
+            else:
+                print('   ', end='')
             print(f"{op_name}")
 
-
-    @click.command
-    @click.argument('old_name')
-    @click.argument('new_name')
-    @click.pass_context
-    def rename_operation(ctx, old_name, new_name):
-        #self.list_operation_names()
-        #old_name = input("Old name: ")
-        if old_name not in ctx.oper_dict.keys():
+    def rename(self, old_name, new_name):
+        if old_name not in self.ctx.oper_dict.keys():
             print("OOPSIE: Operation not found")
             return
-        
-        #new_name = input("New name: ")
-        if new_name in ctx.oper_dict.keys():
+        if new_name in self.ctx.oper_dict.keys():
             print("OOPSIE: new name exists")
             return
-        
-        ctx.oper_dict[new_name] = ctx.oper_dict.pop(old_name)
-    
-    def run(self):
-        self.cli(obj=self.ctx)
+        self.ctx.oper_dict[new_name] = self.ctx.oper_dict.pop(old_name)
+
+    # list agent operations
+    def agentops(self):
+        print_methods(Agent(0))
+
+    def help(self):
+        print_methods(self)
+
+    def bash(self, cmd: str):
+        if not self.is_op_active():
+            return
+        res = self.manager('run_bash', cmd)
+        print(f"DB: {res=}")
+        return res[1]
+
+    def findNet(self):
+        nets = self.bash('ls /sys/class/net')
+        for net in nets:
+            if net != 'lo':
+                self.ctx.selected_operation.netDriver = net
+                return True
+        print("OOPSIE: Could not find non localhost network device")
+        return False
+
+    def sniff(self, time: int):
+        if not self.is_op_active():
+            return
+        net_driver = self.ctx.selected_operation.netDriver
+        if not net_driver:
+            print("MEH: Trying to find out network driver")
+            if not self.findNet():
+                return
+        params = ContParams(SnifferType, Params(SniffParams(time, net_driver.encode())))
+        print(self.ctx.selected_operation.spyAgent.runContraption(params, self.ctx.cont_ident))
+        self.ctx.cont_ident += 1
+
         
 if __name__ == "__main__":
-    operations = {'mat': Operation(0), 'buja': Operation(1)}
+    operations = {'mat': Operation('m'), 'buja': Operation('b')}
     ui = UI(operations)
-    #ui.run()
+    ui.help()
 
-    #value = click.prompt('$', type=click.Choice(list(ui.cli.commands.keys()) + ['exit']))
     value = input('$ ')
-    while value != 'exit':
+    while value != 'q':
         args = value.split()
-        ui.cli.commands[args[0]]('e')
+        call_method(ui, args[0], *args[1:])
+        value = input('$ ')
