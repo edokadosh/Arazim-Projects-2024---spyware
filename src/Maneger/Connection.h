@@ -25,9 +25,9 @@ protected:
     bool needCloseIn;
     bool needCloseOut;
 
-    int doSend(const void* buf, size_t size, int flags);
+    virtual int doSend(const void* buf, size_t size, int flags);
     virtual int doSend(const void* buf, size_t size);
-    int doRecv(void* buf, size_t size, int flags);
+    virtual int doRecv(void* buf, size_t size, int flags);
     virtual int doRecv(void* buf, size_t size);
     bool isSocket;
 

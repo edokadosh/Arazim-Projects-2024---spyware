@@ -1,7 +1,11 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
 #include <unistd.h>
 #include <iostream>
+
 
 int main() {
     // Initialize OpenSSL

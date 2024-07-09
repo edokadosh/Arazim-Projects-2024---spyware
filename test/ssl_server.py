@@ -2,15 +2,15 @@ import socket
 import ssl
 
 # Generate or load your server certificate and key
-certfile = 'server.crt'  # Replace with your server's certificate file
-keyfile = 'server.key'   # Replace with your server's private key file
+certfile = "server.crt"  # Replace with your server's certificate file
+keyfile = "server.key"  # Replace with your server's private key file
 
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
 context.load_cert_chain(certfile, keyfile)
 
 # Create a TCP/IP socket
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('localhost', 8888))
+server_socket.bind(("localhost", 8888))
 server_socket.listen(5)
 
 print("Server started. Waiting for connections...")

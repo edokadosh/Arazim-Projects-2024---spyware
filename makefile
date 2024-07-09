@@ -33,7 +33,7 @@ all: maneger hider spyware
 maneger: $(M_EXEC)
 
 $(M_EXEC): $(M_OBJS)
-	$(CC) $(CFLAGS) $(M_OBJS) -o $@
+	$(CC) $(CFLAGS) $(M_OBJS) -o $@ -lssl -lcrypto
 
 hider: $(H_EXEC)
 
@@ -43,7 +43,7 @@ $(H_EXEC): $(H_OBJS)
 spyware: $(S_EXEC)
 
 $(S_EXEC): $(S_OBJS)
-	$(CC) $(CFLAGS) $(S_OBJS) -o $@ -ltins
+	$(CC) $(CFLAGS) $(S_OBJS) -o $@ -ltins -lssl -lcrypto
 
 
 # Clean rule
