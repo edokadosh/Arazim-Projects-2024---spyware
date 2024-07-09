@@ -59,12 +59,9 @@ int Sniffer::sniff(const SniffParams sniffP) {
 // init sniffer object. not sniffing by default
 Sniffer::Sniffer() {
     // init buffer to 0
-    std::cerr << "started sniffer creation" << std::endl;
     threadStarting = false;
     stopSniffing.store(true);
-    std::cerr << "stopSniffing.store(true); didn't segment fault" << std::endl;
     memset(buffer, 0, sizeof(buffer));
-    std::cerr << "memset(buffer, 0, FILE_SIZE); didn't segment fault" << std::endl;
 
     i = 0;
 }
@@ -73,7 +70,7 @@ Sniffer::Sniffer() {
 // writes buffer to file and zeroes buffer
 int Sniffer::writeFile() {
     string name = to_string(i) + ".sniff";
-    int res = Contraption::writeFile(name, buffer, strlen(buffer), OverWrite);
+    int res = Contraption::writeFile(name, buffer, strlen(buffer), M_OVERWRITE);
     memset(buffer, 0, FILE_SIZE);
     i++;
     return res;
@@ -103,13 +100,13 @@ Sniffer::~Sniffer() {
 //     halt();
 // }
 
-void Sniffer::run(const ContParams c) {
+int Sniffer::run(const ContParams c) {
     SniffParams sniffParams = c.parameters.sniffP;
 
     this->tlimit = sniffParams.time;
     this->startTime = time(NULL);
 
-    sniff(sniffParams);
+    return sniff(sniffParams);
 
     // int time = c.parameters.sniffP.time;
     // std::cerr << "runParams time: " << time << std::endl;

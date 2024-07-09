@@ -15,7 +15,7 @@
 #ifndef HIDDEN_FILE_HANDLER_H
 #define HIDDEN_FILE_HANDLER_H
 
-
+#define OUTPUT_PIPE_FD (6)
 
 namespace fs = std::filesystem;
 
@@ -28,13 +28,7 @@ private:
 
 public:
 
-	HiddenFileHandler() {
-		//fs::path folder = fs::current_path();
-		//folderName = folder.string();
-		folderName = "fs";
-		imagePath = "fs.iso";
-		std::cerr << "setted folder name: " << folderName << std::endl;
-	}
+	HiddenFileHandler(); 
 	
 	void listFiles();
 

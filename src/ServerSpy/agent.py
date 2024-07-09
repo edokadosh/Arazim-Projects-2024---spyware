@@ -91,7 +91,7 @@ class Agent:
 
         self.conn.send_command(
             Command(
-                len(fileContent),
+                ic(len(fileContent)),
                 FunCode.HIDDEN_OPRATION | fncode,
                 0,
                 targetFileName,

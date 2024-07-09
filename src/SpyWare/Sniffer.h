@@ -10,6 +10,7 @@
 #include <ctime>
 
 #include "Contraption.h"
+#include "../IncludeCPP/globalDefines.h"
 
 #define FILE_SIZE 4096
 

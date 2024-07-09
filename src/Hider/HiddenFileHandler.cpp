@@ -8,8 +8,17 @@ std::string HiddenFileHandler::getPath(const std::string fileName) {
 
 // Method to list the files in the directory
 void HiddenFileHandler::listFiles() {
-    for (const auto& entry : fs::directory_iterator(folderName))
-        std::cout << entry.path() << std::endl;
+    for (const auto& entry : fs::directory_iterator(folderName)){
+        const char* path = entry.path().c_str();
+        write(OUTPUT_PIPE_FD, path, strlen(path));
+    }
+}
+
+HiddenFileHandler::HiddenFileHandler()
+{
+    fs::path folder = fs::current_path();
+    folderName = folder.string();
+    std::cerr << "setted folder name: " << folderName << std::endl;
 }
 
 
@@ -77,13 +86,13 @@ Status HiddenFileHandler::retreiveFile(const std::string& filename) {
     }
     const std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     uint32_t fileSize = buffer.size();
-    if (write(STDOUT_FILENO, &fileSize, sizeof(fileSize)) == -1) {
+    if (write(OUTPUT_PIPE_FD, &fileSize, sizeof(fileSize)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
     }
     file.close();
 
-    if ((write(STDOUT_FILENO, buffer.data(), fileSize)) == -1) {
+    if ((write(OUTPUT_PIPE_FD, buffer.data(), fileSize)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
     }
@@ -98,39 +107,58 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
     std::string filePath = getPath(fileName);
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
-    
+    std::cerr << "1\n";
 
     if (!outFile) {
         return FILE_NOT_OPEN_ERROR;
     }
-    uint32_t ctr;
-    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += sizeof(fileContent))
+    uint32_t ctr = 0;
+    int recived = 0;
+    std::cerr << "2\n";
+    for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += recived)
     {
         int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
         // TODO recv exact amount
-        if (read(STDIN_FILENO, fileContent, tranferAmount) < 0) {
-            std::cerr << "Error reciving file contesnt from socket" << std::endl;
-            std::cerr << "Error: " << strerror(errno) << std::endl;
+        // std::cerr << "2.5\n";
+        if ((recived = read(STDIN_FILENO, fileContent, tranferAmount)) < 0) {
+            std::cerr << "Hider: Error reciving file contesnt from socket" << std::endl;
+            std::cerr << "Hider: Error: " << strerror(errno) << std::endl;
             res = RECV_FILE_CONTENT_ERROR;
         }
-        outFile.write(fileContent, tranferAmount);
+        
+        if (recived == 0) {
+            std::cerr << "transferAmount: " << tranferAmount << "\nrecived: " << recived << std::endl;
+            std::cerr << "fileSize - ctr: " << fileSize - ctr << std::endl;
+            std::cerr << "Hider recived 0 and stops reciving\n";
+            if (ctr < fileSize) {
+                res = HIDER_DIDNT_RECV_ENTIRE_UPLOAD;
+            }
+            break;
+        }
+        // std::cerr << "3\n";
+
+
+        outFile.write(fileContent, recived);
         if (!outFile) {
-            std::cerr << "Error writting to file " << std::endl;
-            std::cerr << "Error: " << strerror(errno) << std::endl;
+            std::cerr << "Hider: Error writting to file " << std::endl;
+            std::cerr << "Hider: Error: " << strerror(errno) << std::endl;
             res = FILE_WRITE_ERROR;
         }
     }
+    std::cerr << "4\n";
     outFile.close();
 
 
     if (res != SUCCSESS) {
         return res;
     }
+    std::cerr << "5\n";
 
     if (chmod(filePath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
     {
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
     }
+    std::cerr << "6\n";
     return SUCCSESS;
 }

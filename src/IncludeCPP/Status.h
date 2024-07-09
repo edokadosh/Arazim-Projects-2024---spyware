@@ -2,7 +2,7 @@
 #ifndef STATUS_ENUM_H
 #define STATUS_ENUM_H
 
-typedef enum Status {
+typedef enum Status  {
     SUCCSESS = 0,
 
     FAIL,
@@ -38,6 +38,16 @@ typedef enum Status {
     DID_NOTHING,
 
     INVALID_RUN_PARAMS_TYPE,
+
+    FILENAME_TO_LONG,
+
+    INVALID_WRITE_MODE,
+
+    ERROR_RECVIVING_FROM_CONNECTION,
+
+    ERROR_WRITING_TO_HIDER,
+
+    HIDER_DIDNT_RECV_ENTIRE_UPLOAD,
 
 
 } Status;

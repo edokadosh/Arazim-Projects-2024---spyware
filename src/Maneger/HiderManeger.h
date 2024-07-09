@@ -30,8 +30,12 @@ HIDER_UPLOAD
 #include "../Hider/HiderCodes.h"
 #include "../IncludeCPP/encoding.h"
 #include "../IncludeCPP/globalDefines.h"
+#include "PipeConnection.h"
+#include "BufferConnection.h"
 
 #define DEFAULT_HIDER_PATH ("./matbuja")
+
+
 
 class HiderManeger
 {
@@ -42,10 +46,13 @@ private:
     std::string imagePath;
     std::string mountPath;
 
+    // TODO add mutex
+
     int mthpipe[2]; // pipe from manager -> hider
     bool MtHredirect;
     int htmpipe[2]; // pipe from hider -> manager
     bool HtMredirect;
+    std::unique_ptr<PipeConnection> pipeConn;
 
     Status activateHider(const command& cmd);
 
@@ -80,6 +87,8 @@ public:
     Status hiddenAction(const command& cmd, std::shared_ptr<Connection> conn);
 
     Status hideFile(const std::string filename, std::string identifier);
+
+    Status writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMode);
 };
 
 #endif
