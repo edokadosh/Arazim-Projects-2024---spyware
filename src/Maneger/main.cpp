@@ -20,7 +20,7 @@ void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, Hide
 int initRun(std::shared_ptr<SocketConnection> conn);
 
 int main() {
-    
+    std::cout << "started maneger\n";
     SoftwareManeger swm = SoftwareManeger();
     HiderManeger& hiderManager = HiderManeger::getInstance();
     std::shared_ptr<SocketConnection> conn;

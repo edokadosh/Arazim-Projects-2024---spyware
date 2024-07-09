@@ -12,7 +12,7 @@
 #include "Contraption.h"
 #include "../IncludeCPP/globalDefines.h"
 
-#define FILE_SIZE 4096
+#define FILE_SIZE (4096)
 
 // COMPILATION FLAG NEEDED: -ltins
 // USAGE EXAMPLE: g++ -o Sniffer Sniffer.cpp -ltins

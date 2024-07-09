@@ -8,6 +8,7 @@ typedef uint32_t contIdent_t;
 
 typedef union Params {
     SniffParams sniffP;
+    KligerParams kligerP;
 } Params;
 
 typedef enum ContType : uint32_t {

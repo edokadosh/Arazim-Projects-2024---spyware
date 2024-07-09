@@ -11,11 +11,12 @@
 #include <cstring>
 #include <stdlib.h>
 #include <stdbool.h>
-
-#include <linux/input.h> // Add this line to include the header file that defines "KEY_ESCAPE"
 #include "Contraption.h"
 
-#define FILE_SIZE 4096
+#pragma once
+
+
+#define FILE_SIZE (4096)
 
 // COMPILATION FLAG NEEDED: -ltins
 // USAGE EXAMPLE: g++ -o Sniffer Sniffer.cpp -ltins

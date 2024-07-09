@@ -41,6 +41,9 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
         std::cerr << "map insertion didn't segment fault" << std::endl;
 
         break;
+    case KligerType:
+        cont = std::make_shared<Kligger>();
+        break;
 
         default:
             return INVALID_RUN_PARAMS_TYPE;

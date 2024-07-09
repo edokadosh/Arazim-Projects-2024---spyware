@@ -19,7 +19,7 @@ class Agent:
         self.mountPath = "DefaultMount"  # so its obviuos when debugging
 
     def __repr__(self) -> str:
-        return f"Agent(self.conn={self.self.conn}, self.type={self.type})"
+        return f"Agent(self.conn={self.conn}, self.type={self.type})"
 
     @classmethod
     def listenSpyware(cls, listen_addr: tuple[str, int]):

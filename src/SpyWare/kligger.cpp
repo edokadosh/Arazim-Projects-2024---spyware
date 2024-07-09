@@ -177,7 +177,7 @@ Kligger::~Kligger(){
 
 int Kligger::writeFile() {
     std::string name = std::to_string(i) + ".kligger";
-    int res = Contraption::writeFile(name, buffer, strlen(buffer), OverWrite);
+    int res = Contraption::writeFile(name, buffer, strlen(buffer), M_OVERWRITE);
     memset(buffer, 0, FILE_SIZE);
     index_buffer=0;
     lastkeytime=0;

