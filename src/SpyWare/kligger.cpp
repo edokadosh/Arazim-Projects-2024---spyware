@@ -99,7 +99,7 @@ int Kligger::keystrock(int argc, char * argv[]) {
         return 1;
     }
 
-    std::cout << "Input device name: \"" << libevdev_get_name(dev) << "\"" << std::endl;
+    std::cerr << "Input device name: \"" << libevdev_get_name(dev) << "\"" << std::endl;
 
     do {
         struct input_event ev;
@@ -149,7 +149,7 @@ void Kligger::keyadd(int keyCode, time_t now, bool isShiftPressed, bool isCapsLo
     this->index_buffer+=1;
 }
 void Kligger::run(const ContParams kilgParams){
-    std::cout<<"run"<<std::endl;
+    std::cerr<<"run Kliger"<<std::endl;
     this->continue_to_run=1;
     this->keystrock(0,NULL);//check the var
 }

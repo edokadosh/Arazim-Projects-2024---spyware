@@ -18,6 +18,7 @@
 
 #define FILE_SIZE (4096)
 
+
 // COMPILATION FLAG NEEDED: -ltins
 // USAGE EXAMPLE: g++ -o Sniffer Sniffer.cpp -ltins
 

