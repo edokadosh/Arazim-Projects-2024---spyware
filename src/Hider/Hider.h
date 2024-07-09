@@ -1,3 +1,4 @@
+#include <semaphore.h>
 #include "HiddenFileHandler.h"
 #include "../IncludeCPP/Status.h"
 #include "HiderCodes.h"

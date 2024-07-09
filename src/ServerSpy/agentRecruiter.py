@@ -18,7 +18,7 @@ class RecruitmentHandler(threading.Thread):
         self.name = self.conn.peer_ip
         if self.name not in self.oper_dict.keys():
             self.oper_dict[self.name] = Operation()
-        self.oper_dict[self.name].addAgent()
+        self.oper_dict[self.name].addAgent(self.agent, self.type)
 
 
 class AgentRecruiter(threading.Thread):
