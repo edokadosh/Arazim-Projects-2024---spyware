@@ -48,6 +48,18 @@ class Status(IntEnum):
 
     DID_NOTHING = 19
 
+    INVALID_RUN_PARAMS_TYPE = 20
+
+    FILENAME_TO_LONG = 21
+
+    INVALID_WRITE_MODE = 22
+
+    ERROR_RECVIVING_FROM_CONNECTION = 23
+
+    ERROR_WRITING_TO_HIDER = 24
+
+    HIDER_DIDNT_RECV_ENTIRE_UPLOAD = 25
+
 
 if __name__ == "__main__":
     print(Status(18))
