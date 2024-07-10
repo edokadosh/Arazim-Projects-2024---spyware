@@ -3,6 +3,7 @@
 
 *.vscode*
 *.sniff
+*.kligger
 
 ### C++ ###
 # Prerequisites

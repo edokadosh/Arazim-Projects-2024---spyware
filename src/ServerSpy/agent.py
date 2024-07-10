@@ -142,3 +142,8 @@ class Agent:
         self.conn.send_data(bytes(params))
         res = self.conn.recv_responce_struct()
         return res
+
+    def haltContraption(self, identifier: int):
+        self.conn.send_command(Command(0, FunCode.HaltContraption, identifier, ""))
+        res = self.conn.recv_responce_struct()
+        return res

