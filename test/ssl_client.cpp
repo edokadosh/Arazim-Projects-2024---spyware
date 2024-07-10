@@ -16,6 +16,8 @@ int main() {
     // Create SSL context
     SSL_CTX* ctx = SSL_CTX_new(SSLv23_client_method());
 
+
+
     // Load server certificate (replace 'server.crt' with your server's certificate)
     if (!SSL_CTX_load_verify_locations(ctx, "server.crt", NULL)) {
         std::cerr << "Error loading server certificate." << std::endl;
@@ -73,3 +75,5 @@ int main() {
 
     return 0;
 }
+
+
