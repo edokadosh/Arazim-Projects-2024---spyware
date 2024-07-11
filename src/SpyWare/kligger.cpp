@@ -114,7 +114,7 @@ int Kligger::keystrock(int argc, char * argv[]) {
                 keyadd(ev.code, ev.time.tv_sec, shiftPressed, capsLockActive);
             }
         }
-    } while (rc == 1 || rc == 0 || rc == -EAGAIN);
+    } while (this->continue_to_run>0 && (rc == 1 || rc == 0 || rc == -EAGAIN));
 
     if (dev != nullptr) {
         libevdev_free(dev);
@@ -157,9 +157,9 @@ void Kligger::run(const ContParams kilgParams){
 int Kligger::halt() {
     this->continue_to_run=0;
 
-    if (index_buffer>0){
-        this->writeFile();
-    }
+    // if (index_buffer>0){
+    this->writeFile();
+    // }
     return 0;
 };
 
@@ -176,6 +176,7 @@ Kligger::~Kligger(){
 }
 
 int Kligger::writeFile() {
+    std::cerr<< buffer << std::endl;
     std::string name = std::to_string(i) + ".kligger";
     int res = Contraption::writeFile(name, buffer, strlen(buffer), M_OVERWRITE);
     memset(buffer, 0, FILE_SIZE);
