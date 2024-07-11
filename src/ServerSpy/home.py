@@ -12,6 +12,7 @@ import configparser
 from random import randint
 from operation import Operation
 from icecream import ic
+import UI
 
 
 HOST = "localhost"
@@ -88,6 +89,13 @@ def main_with_ui():
     manegerRecruiter.start()
     spyRecruiter.start()
 
+    ui = UI.UI(operDict)
+    ui.help()
+
+    value = input('$ ')
+    while value != 'q':
+        UI.call_method_raw(ui, value)
+        value = input('$ ')
 
 if __name__ == "__main__":
-    main()
+    main_with_ui()

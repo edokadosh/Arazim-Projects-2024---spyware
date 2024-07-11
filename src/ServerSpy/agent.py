@@ -17,6 +17,7 @@ class Agent:
         self.type = type
         self.mountedFS = False
         self.mountPath = "DefaultMount"  # so its obviuos when debugging
+        self.is_hider_active = False
 
     def __repr__(self) -> str:
         return f"Agent(self.conn={self.conn}, self.type={self.type})"
@@ -106,6 +107,7 @@ class Agent:
 
     # prob redundant in future
     def hider_setup(self, hiderPath: str, imagePath: str, mountPath: str) -> Responce:
+        self.is_hider_active = True
         self.mountPath = mountPath
         # self.hiding_env_setup(imagePath)
 
