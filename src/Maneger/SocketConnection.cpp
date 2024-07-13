@@ -6,6 +6,8 @@ SocketConnection::SocketConnection(int fdInput, int fdOutput, bool needCloseInpu
             isSocket = true;
         }
 
+
+
 int SocketConnection::connectTCP(std::string host, int port, std::shared_ptr<SocketConnection>& conn_ptr)
 {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);

@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <sys/socket.h>
@@ -24,35 +25,8 @@
 #include "../IncludeCPP/globalDefines.h"
 #include "SocketConnection.h"
 
-#pragma once
 
 using namespace std;
-
-class EncSocketConnection : public SocketConnection {
-
-protected:
-    static bool isOpensslLibaryInitiated;
-    unique_ptr<BIO, BIODeleter> bio;
-    unique_ptr<X509, X509Deleter> cert;
-    unique_ptr<SSL_CTX, SSLCtxDeleter> ctx;
-    unique_ptr<SSL, SSLDeleter> ssl;
-
-
-
-    int doSend(const void* buf, size_t size, int flags) override;
-    int doRecv(void* buf, size_t size, int flags) override;
-
-EncSocketConnection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, struct addrinfo addr,
-                        unique_ptr<BIO, BIODeleter> bio_, unique_ptr<X509, X509Deleter> cert_,
-                        unique_ptr<SSL_CTX, SSLCtxDeleter> ctx_, unique_ptr<SSL, SSLDeleter> ssl_);
-    ~EncSocketConnection();
-
-public:
-    static int connectTCP(std::string host, int port, std::shared_ptr<EncSocketConnection>& conn);
-
-
-
-};
 
 struct SSLCtxDeleter {
     void operator()(SSL_CTX* ctx) const {
@@ -78,3 +52,30 @@ struct X509Deleter {
         X509_free(x509);
     }
 };
+
+class EncSocketConnection : public SocketConnection {
+
+protected:
+    unique_ptr<BIO, BIODeleter> bio;
+    unique_ptr<X509, X509Deleter> cert;
+    unique_ptr<SSL_CTX, SSLCtxDeleter> ctx;
+    unique_ptr<SSL, SSLDeleter> ssl;
+
+
+
+    int doSend(const void* buf, size_t size, int flags) override;
+    int doRecv(void* buf, size_t size, int flags) override;
+    static bool isOpensslLibaryInitiated;
+
+public:
+
+    EncSocketConnection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, struct addrinfo addr,
+                        unique_ptr<BIO, BIODeleter> bio_, unique_ptr<X509, X509Deleter> cert_,
+                        unique_ptr<SSL_CTX, SSLCtxDeleter> ctx_, unique_ptr<SSL, SSLDeleter> ssl_);
+
+    static int connectTCP(std::string host, int port, std::shared_ptr<EncSocketConnection>& conn);
+
+
+
+};
+

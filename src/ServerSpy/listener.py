@@ -3,6 +3,7 @@ import sys
 from _thread import *
 import threading
 from connection import Connection
+from encConnection import EncConnection
 from icecream import ic
 
 
@@ -28,9 +29,9 @@ class Listener:
     def stop(self):
         self.socket.close()
 
-    def accept(self) -> Connection:
+    def accept(self) -> EncConnection:
         connSocket, connAddr = self.socket.accept()
-        conn = Connection(connSocket)
+        conn = EncConnection(connSocket)
         print(f"accepted connection {conn}")
         return conn
 

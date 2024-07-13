@@ -1,5 +1,7 @@
 #include "EncSocketConnection.h"
 
+bool EncSocketConnection::isOpensslLibaryInitiated = false;
+
 const char* cert_data = "-----BEGIN CERTIFICATE-----\n"
 "MIIDSzCCAjMCFFJBNqP3Podgjrwj/GSre9SjyVP+MA0GCSqGSIb3DQEBCwUAMGIx\n"
 "CzAJBgNVBAYTAklTMQswCQYDVQQIDAJUVjELMAkGA1UEBwwCVFYxCzAJBgNVBAoM\n"
@@ -23,30 +25,28 @@ const char* cert_data = "-----BEGIN CERTIFICATE-----\n"
 
 
 int EncSocketConnection::doSend(const void* buf, size_t size, int flags) {
-
+    return SSL_write(ssl.get(), buf, size);
 }
 
-int EncSocketConnection::doRecv(void* buf, size_t size, int flags) 
-
-{
-
+int EncSocketConnection::doRecv(void* buf, size_t size, int flags) {
+    return SSL_read(ssl.get(), buf, size);
 }
 
 using namespace std;
 
-EncSocketConnection::EncSocketConnection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, struct addrinfo addr,
-                        unique_ptr<BIO, BIODeleter> bio_, unique_ptr<X509, X509Deleter> cert_,
+EncSocketConnection::EncSocketConnection(int fdInput, int fdOutput, bool needCloseInput, bool needCloseOutput, addrinfo addr, \
+                        unique_ptr<BIO, BIODeleter> bio_, unique_ptr<X509, X509Deleter> cert_, \
                         unique_ptr<SSL_CTX, SSLCtxDeleter> ctx_, unique_ptr<SSL, SSLDeleter> ssl_) 
                         : SocketConnection(fdInput, fdOutput, needCloseInput, needCloseOutput, addr), 
                         bio(move(bio_)), cert(move(cert_)), ctx(move(ctx)), ssl(move(ssl_)) {}
 
 
 int EncSocketConnection::connectTCP(string host, int port, shared_ptr<EncSocketConnection>& conn) {
-    if (!isOpensslLibaryInitiated) {        
+    if (!EncSocketConnection::isOpensslLibaryInitiated) {        
         SSL_load_error_strings();
         SSL_library_init();
         OpenSSL_add_all_algorithms();
-        isOpensslLibaryInitiated = true;
+        EncSocketConnection::isOpensslLibaryInitiated = true;
     }
 
     unique_ptr<BIO, BIODeleter> bio(BIO_new_mem_buf((void*)cert_data, -1));
@@ -101,6 +101,9 @@ int EncSocketConnection::connectTCP(string host, int port, shared_ptr<EncSocketC
         std::cerr << "SSL handshake failed." << std::endl;
         return 1;
     }
+
+    conn = make_shared<EncSocketConnection>(sockfd, sockfd, true, true, *res, move(bio), move(cert), move(ctx), move(ssl));
+    return 0;
 }
 
 

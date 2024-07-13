@@ -22,7 +22,7 @@ class Connection:
     def connect(cls, host, port) -> "Connection":
         conn_socket = socket.socket()
         conn_socket.connect((host, port))
-        return Connection(conn_socket)
+        return cls(conn_socket)
 
     def close(self) -> None:
         self.socket.close()
