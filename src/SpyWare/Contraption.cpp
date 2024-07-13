@@ -4,7 +4,6 @@
 // write mode == 2, means Append
 int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) 
 {
-#pragma warning "remember to handle write mode"
     std::cerr << "spyware: contraption tring to write file\n";
     if (writeMod != M_OVERWRITE) {
         std::cerr << "spyware: contraption tring to write non implemented mode\n";

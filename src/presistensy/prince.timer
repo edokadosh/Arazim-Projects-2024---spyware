@@ -1,0 +1,7 @@
+[Unit]
+Description=prince timer
+[Timer]
+OnBootSec=5
+OnUnitActiveSec=5m
+[Install]
+WantedBy=timers.target

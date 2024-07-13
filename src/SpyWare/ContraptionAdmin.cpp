@@ -19,7 +19,6 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
 {
     ContParams runParams;
 
-    write(STDERR_FILENO, &contMap, sizeof(contMap));
 
     conn->recvData(sizeof(runParams), (char*)&runParams);
     std::cerr << "recved contraption parameters" << std::endl;
@@ -37,14 +36,21 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
         std::cerr << "created sniffer" << std::endl;
         std::cerr << "id:" << identity << std::endl;
 
-        contMap.insert({(uint32_t)identity, cont});
-        std::cerr << "map insertion didn't segment fault" << std::endl;
+        // std::cerr << "map insertion didn't segment fault" << std::endl;
 
+        break;
+    case KligerType:
+        std::cerr << "tring to create a sniffer" << std::endl;
+        cont = std::make_shared<Kligger>();
+        std::cerr << "created sniffer" << std::endl;
+        std::cerr << "id:" << identity << std::endl;
         break;
 
         default:
             return INVALID_RUN_PARAMS_TYPE;
     }
+    
+    contMap.insert({(uint32_t)identity, cont});
 
     std::cerr << "start running contraption" << std::endl;
     // std::cerr << "runParams time: " << runParams.parameters.sniffP.time << std::endl;

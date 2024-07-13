@@ -100,13 +100,13 @@ Sniffer::~Sniffer() {
 //     halt();
 // }
 
-int Sniffer::run(const ContParams c) {
+void Sniffer::run(const ContParams c) {
     SniffParams sniffParams = c.parameters.sniffP;
 
     this->tlimit = sniffParams.time;
     this->startTime = time(NULL);
 
-    return sniff(sniffParams);
+    sniff(sniffParams);
 
     // int time = c.parameters.sniffP.time;
     // std::cerr << "runParams time: " << time << std::endl;

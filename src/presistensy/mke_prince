@@ -1,0 +1,28 @@
+cd /etc/systemd/system/
+sudo bash -c 'cat > mytimer.timer <<EOF
+[Unit]
+Description=Run mytask periodically
+
+[Timer]
+OnBootSec=5
+OnUnitActiveSec=5m
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF'
+sudo bash -c 'cat > myservice.service <<EOF
+[Unit]
+Description=My Custom Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/yael/snap/code/current/pres/tmp
+Restart=always
+EOF'
+
+sudo systemctl daemon-reload
+sudo systemctl start mytimer.timer
+sudo systemctl enable mytimer.timer
+sudo systemctl status mytimer.timer
