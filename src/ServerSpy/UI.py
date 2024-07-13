@@ -87,6 +87,7 @@ def search_op(oper_dict: dict[str, Operation], name: str):
             return op
     return None
 
+
 class UI:
     def __init__(self, operations: dict[str, Operation]) -> None:
         self.ctx = Context(operations)
