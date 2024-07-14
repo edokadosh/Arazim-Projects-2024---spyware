@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <stdlib.h>
+#include <ctime>
 #include <stdbool.h>
 #include "Contraption.h"
 
@@ -30,6 +31,9 @@ private:
     char buffer[FILE_SIZE];
     int index_buffer;
     int continue_to_run;
+
+    time_t startTime;
+    time_t tlimit;
 
     int writeFile();
     //void runTime(KilgParams kilgParams, int t);

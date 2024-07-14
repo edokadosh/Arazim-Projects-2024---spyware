@@ -38,6 +38,7 @@ class Status(IntEnum):
     HIDER_SETUP_ERROR = 14
 
     WAIT_ERROR = 15
+
     SPLICE_ERROR = 16
 
     READ_FROM_HIDER_ERROR = 17
@@ -60,8 +61,6 @@ class Status(IntEnum):
     ERROR_WRITING_TO_HIDER = 26
 
     HIDER_DIDNT_RECV_ENTIRE_UPLOAD = 27
-
-    ERROR_FROM_UNKNOWN_SOURCE = 28
 
 
 if __name__ == "__main__":

