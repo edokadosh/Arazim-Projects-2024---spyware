@@ -29,6 +29,6 @@ public:
 
     static int connectTCP(std::string host, int port, std::shared_ptr<SocketConnection>& conn);
 
-    int flushInput();
+    virtual int flushInput();
 
 };

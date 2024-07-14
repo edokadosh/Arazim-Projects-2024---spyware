@@ -31,6 +31,7 @@ class EncConnection(Connection):
 
     def recv_bytes(self, length: int) -> bytes:
         print("try enc recv_bytes")
+        ic(length)
         return ic(self.socket.read(length))
 
     def send_data(self, data: bytes):

