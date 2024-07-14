@@ -18,7 +18,7 @@
 
 class BufferConnection : public Connection {
 protected:
-    uint32_t ctr = 0;
+    uint32_t ctr;
     char* buffer;
     uint32_t len;
     bool isIn;

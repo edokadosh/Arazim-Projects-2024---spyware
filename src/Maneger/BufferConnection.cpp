@@ -3,7 +3,7 @@
 
 
 BufferConnection::BufferConnection(char* buf, uint32_t length, bool isInput)
-        : Connection(-1, -1, false, false), buffer(buf), len(length), isIn(isInput) {}
+        : Connection(-1, -1, false, false), buffer(buf), len(length), isIn(isInput), ctr(0) {}
 
 int BufferConnection::doSend(const void* buf, size_t size) {
     if (isIn) {

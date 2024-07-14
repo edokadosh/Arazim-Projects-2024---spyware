@@ -142,7 +142,7 @@ int Connection::recvData(uint32_t size, char* buffer, int flags)
     while (recviedTotal < size)
     {
         if ((recvied = doRecv(buffer, size - recviedTotal, flags)) == -1) {
-            std::cerr << "Receive data failed after recving" << recviedTotal << "bytes" << std::endl;
+            std::cerr << "Receive data failed after recving " << recviedTotal << " bytes" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             return -1;
         }
