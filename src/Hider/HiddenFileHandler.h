@@ -30,7 +30,7 @@ public:
 
 	HiddenFileHandler(); 
 	
-	void listFiles();
+	Status listFiles();
 
 	Status runFile(const std::string& filename);
 

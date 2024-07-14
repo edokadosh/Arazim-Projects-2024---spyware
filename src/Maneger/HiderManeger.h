@@ -62,7 +62,7 @@ private:
 
     Status hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn);
 
-    Status hiddenRetrieve(std::shared_ptr<Connection> conn);
+    Status hiddenRetrieveOrList(std::shared_ptr<Connection> conn);
 
     Status hiddenList(std::shared_ptr<Connection> conn);
 

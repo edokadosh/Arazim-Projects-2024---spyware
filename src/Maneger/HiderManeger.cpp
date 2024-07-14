@@ -184,8 +184,8 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
         }
     }
 
-    if (cmd.fncode & HIDDEN_RETRIEVE_FILE){
-        hiddenRetrieve(conn);
+    if (cmd.fncode & (HIDDEN_RETRIEVE_FILE | HIDDEN_LIST)){
+        hiddenRetrieveOrList(conn);
     }
     
 
@@ -230,7 +230,7 @@ Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection
     return SUCCSESS;
 }
 
-Status HiderManeger::hiddenRetrieve(std::shared_ptr<Connection> conn) {
+Status HiderManeger::hiddenRetrieveOrList(std::shared_ptr<Connection> conn) {
     uint32_t fileSize;
     char fileContent[CHUNK_SIZE];
 

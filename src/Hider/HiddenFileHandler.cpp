@@ -7,11 +7,26 @@ std::string HiddenFileHandler::getPath(const std::string fileName) {
 }
 
 // Method to list the files in the directory
-void HiddenFileHandler::listFiles() {
-    for (const auto& entry : fs::directory_iterator(folderName)){
-        const char* path = entry.path().c_str();
-        write(OUTPUT_PIPE_FD, path, strlen(path));
+Status HiddenFileHandler::listFiles() {
+    Status ret = SUCCSESS;
+    std::string files_list = "";
+    try {
+        for (const auto& entry : fs::directory_iterator(folderName)){
+            files_list += entry.path();
+        }
+    } catch (const std::exception& e) { 
+        ret = FAIL;
     }
+    uint32_t listLen = files_list.size();
+    if (write(OUTPUT_PIPE_FD, &listLen, sizeof(listLen)) == -1) {
+        std::cerr << "Error msg length" << std::endl;
+        std::cerr << "Error: " << strerror(errno) << std::endl;
+    }
+    if (write(OUTPUT_PIPE_FD, files_list.c_str(), listLen) == -1) {
+        std::cerr << "Error msg length" << std::endl;
+        std::cerr << "Error: " << strerror(errno) << std::endl;
+    }
+    return ret;
 }
 
 HiddenFileHandler::HiddenFileHandler()
