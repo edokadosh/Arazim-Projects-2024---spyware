@@ -114,6 +114,7 @@ int Kligger::keystrock(int argc, char * argv[]) {
                 keyadd(ev.code, ev.time.tv_sec, shiftPressed, capsLockActive);
             }
         }
+        if ((tlimit > 0 && difftime(time(nullptr), startTime) > tlimit)) this->continue_to_run = 0;
     } while (this->continue_to_run>0 && (rc == 1 || rc == 0 || rc == -EAGAIN));
 
     if (dev != nullptr) {
@@ -151,6 +152,8 @@ void Kligger::keyadd(int keyCode, time_t now, bool isShiftPressed, bool isCapsLo
 void Kligger::run(const ContParams kilgParams){
     std::cerr<<"run Kliger"<<std::endl;
     this->continue_to_run=1;
+    this->tlimit = kilgParams.parameters.kligerP.time;
+    this->startTime = time(NULL);
     this->keystrock(0,NULL);//check the var
 }
 

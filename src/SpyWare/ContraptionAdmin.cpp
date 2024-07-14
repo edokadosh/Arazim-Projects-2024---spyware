@@ -29,6 +29,7 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
     }
     std::cerr << "didn't find cont id in map" << std::endl;
     std::shared_ptr<Contraption> cont;
+    std::cerr << "runParams.type=" << runParams.type << std::endl;
     switch(runParams.type) {
     case SnifferType:
         std::cerr << "tring to create a sniffer" << std::endl;
@@ -40,9 +41,9 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
 
         break;
     case KligerType:
-        std::cerr << "tring to create a sniffer" << std::endl;
+        std::cerr << "tring to create a kligger" << std::endl;
         cont = std::make_shared<Kligger>();
-        std::cerr << "created sniffer" << std::endl;
+        std::cerr << "created kligger" << std::endl;
         std::cerr << "id:" << identity << std::endl;
         break;
 
