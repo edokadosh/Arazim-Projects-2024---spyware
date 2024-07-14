@@ -8,6 +8,7 @@ std::string HiddenFileHandler::getPath(const std::string fileName) {
 
 // Method to list the files in the directory
 Status HiddenFileHandler::listFiles() {
+    std::cerr << "hider: start hidden list\n";
     Status ret = SUCCSESS;
     std::string files_list = "";
     try {
@@ -26,6 +27,7 @@ Status HiddenFileHandler::listFiles() {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
     }
+    std::cerr << "hider: finnish hidden list\n";
     return ret;
 }
 

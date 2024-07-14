@@ -96,15 +96,16 @@ def main_with_ui():
     ui = UI.UI(operDict)
     ui.help()
 
-    print('START CYBER:')
-    value = input('$ ')
-    while value != 'q':
+    print("START CYBER:")
+    value = input("$ ")
+    while value != "q":
         UI.call_method_raw(ui, value)
         selected = ui.ctx.selected_operation
         if selected:
-            value = input(f'<{selected}>$ ')
-        else: 
-            value = input(f'$ ')
+            value = input(f"<{selected}>$ ")
+        else:
+            value = input(f"$ ")
+
 
 if __name__ == "__main__":
     main_with_ui()
