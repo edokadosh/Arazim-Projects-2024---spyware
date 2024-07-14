@@ -44,6 +44,8 @@ def main():
 
     manegerAgent: Agent = op.managerAgent
 
+    print(manegerAgent.run_bash("ls"))
+
     print(
         manegerAgent.write_file(
             "hider",

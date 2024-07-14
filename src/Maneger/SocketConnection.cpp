@@ -6,6 +6,8 @@ SocketConnection::SocketConnection(int fdInput, int fdOutput, bool needCloseInpu
             isSocket = true;
         }
 
+
+
 int SocketConnection::connectTCP(std::string host, int port, std::shared_ptr<SocketConnection>& conn_ptr)
 {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -37,12 +39,39 @@ int SocketConnection::connectTCP(std::string host, int port, std::shared_ptr<Soc
     conn_ptr = std::make_shared<SocketConnection>(sockfd, sockfd, true, true, *res);
     return SUCCSESS;
 }
-int SocketConnection::flushInput() {
-    char buffer[CHUNK_SIZE]; // Adjust buffer size as needed
+// int SocketConnection::flushInput() {
+//     char buffer[CHUNK_SIZE]; // Adjust buffer size as needed
 
-    // Receive and discard data until the socket buffer is empty
-    while (true) {
-        ssize_t bytesReceived = doRecv(buffer, sizeof(buffer), MSG_DONTWAIT);
+    
+//     // Receive and discard data until the socket buffer is empty
+//     while (true) {
+//         ssize_t bytesReceived = recvData(buffer, sizeof(buffer), MSG_DONTWAIT);
+
+//         if (bytesReceived == -1) {
+//             // Handle recv errors
+//             if (errno == EAGAIN || errno == EWOULDBLOCK) {
+//                 // No more data available
+//                 return 0;
+//             } else {
+//                 std::cerr << "error flushing input: " << strerror(errno) << std::endl;
+//                 return -1;
+//             }
+//         } else if (bytesReceived == 0) {
+//             // Connection closed by remote
+//             break;
+//         } else {
+//             // Data received, discard it
+//             // You can log or process the discarded data if needed
+//         }
+//     }
+//     return 0;
+// }
+
+int SocketConnection::flushInput() {
+    
+    char buffer[CHUNK_SIZE]; // Adjust buffer size as needed
+    while (1) {
+        ssize_t bytesReceived = recvData(sizeof(buffer), buffer ,MSG_DONTWAIT);
 
         if (bytesReceived == -1) {
             // Handle recv errors
@@ -62,4 +91,7 @@ int SocketConnection::flushInput() {
         }
     }
     return 0;
+
+    
 }
+

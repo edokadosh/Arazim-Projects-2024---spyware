@@ -208,8 +208,8 @@ Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection
     int bytes_received = 0;
     for (ctr = 0; ctr < cmd.dataLen; ctr += bytes_received)
     {
-        transmitBytes = MIN(PAGE_SIZE, cmd.dataLen - ctr);
-        if ((bytes_received = conn->doRecv(buffer, sizeof(buffer))) < 0) {
+        transmitBytes = MIN(CHUNK_SIZE, cmd.dataLen - ctr);
+        if ((bytes_received = conn->recvData(transmitBytes, buffer)) < 0) {
             std::cerr << "Error recv file: " << strerror(errno) << std::endl;
             return ERROR_RECVIVING_FROM_CONNECTION;
         }
