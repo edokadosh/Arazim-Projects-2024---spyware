@@ -18,6 +18,7 @@ int BufferConnection::doSend(const void* buf, size_t size) {
 
 
 int BufferConnection::doRecv(void* buf, size_t size) {
+    std::cerr << "recv from buffer\n";
     if (!isIn) {
         std::cerr << "cannot recv from output buffer\n";
         return -1;
