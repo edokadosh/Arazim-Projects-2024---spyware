@@ -30,7 +30,7 @@ class EncConnection(Connection):
         return cls(ssl_socket)
 
     def recv_bytes(self, length: int) -> bytes:
-        print("try enc recv_bytes")
+        # print("try enc recv_bytes")
         return self.socket.read(length)
 
     def send_data(self, data: bytes):

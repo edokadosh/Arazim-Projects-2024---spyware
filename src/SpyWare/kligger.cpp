@@ -163,11 +163,9 @@ int Kligger::halt() {
     return 0;
 };
 
-Kligger::Kligger(){
-    this->i=0;
-    this->continue_to_run=0;
-    this->index_buffer=0;
-    this->lastkeytime=0;
+Kligger::Kligger() : i(0),  index_buffer(0), continue_to_run(0), lastkeytime((time_t)0) {
+    // this->buffer
+    memset(buffer, 0, FILE_SIZE);
 }
 
 Kligger::~Kligger(){
