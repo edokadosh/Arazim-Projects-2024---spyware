@@ -22,9 +22,9 @@ uint Hider::manage_files(int argc, char* argv[])
 	std::string stringParam = decodeStr(std::string(argv[2]));
 
 	// TODO better Status handling
-	responce res_upload = {.dataLen = 0, .status = SUCCSESS};
-	responce res_run = {.dataLen = 0, .status = SUCCSESS};
-	responce res_delete = {.dataLen = 0, .status = SUCCSESS};
+	responce res_upload = {.dataLen = 0, .status = DID_NOTHING};
+	responce res_run = {.dataLen = 0, .status = DID_NOTHING};
+	responce res_delete = {.dataLen = 0, .status = DID_NOTHING};
 
 	std::cerr << "starting hidden action" << std::endl;
 	if (fncode & HIDDEN_UPLOAD)
