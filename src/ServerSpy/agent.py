@@ -53,7 +53,7 @@ class Agent:
             fileContent = file.read()
 
         self.conn.send_command(
-            Command(ic(len(fileContent)), FunCode.WRITE_FILE, 0, targetFileName)
+            Command(len(fileContent), FunCode.WRITE_FILE, 0, targetFileName)
         )
         self.conn.send_data(fileContent)
         return self.conn.recv_full_responce()
@@ -91,7 +91,7 @@ class Agent:
 
         self.conn.send_command(
             Command(
-                ic(len(fileContent)),
+                len(fileContent),
                 FunCode.HIDDEN_OPRATION | fncode,
                 0,
                 targetFileName,
