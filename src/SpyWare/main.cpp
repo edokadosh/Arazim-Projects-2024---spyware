@@ -47,7 +47,11 @@ int main() {
             // Handle the exception
             std::cerr << "Spyware: Global Exception caught: " << e.what() << std::endl;
             const std::string err(e.what());
-            conn->sendResponce(ERROR_FROM_UNKNOWN_SOURCE, err);
+            try {
+                conn->sendResponce(ERROR_FROM_UNKNOWN_SOURCE, err);
+            } catch (const std::exception& e) {
+                std::cerr << "Maneger: cannot send responce, something wrong\n";
+            }
         }
         std::cerr << "spyware: compleated loop iter\n";
         try {
