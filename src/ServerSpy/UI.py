@@ -440,6 +440,9 @@ class UI:
         for op in self.ctx.oper_dict.values():
             print(op)
 
+    def gethidden(self, fileName: str):
+        print(self.manager("retrieve_file", fileName))
+
 
 if __name__ == "__main__":
     operations = {"mat": Operation("m"), "buja": Operation("b")}
