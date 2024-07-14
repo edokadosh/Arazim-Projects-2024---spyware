@@ -6,6 +6,7 @@
 
 #include "contrapMeta.h"
 #include "../IncludeCPP/globalDefines.h"
+#include "../Maneger/HiderManeger.h"
 
 #ifndef CONTRAPTION_H
 #define CONTRAPTION_H

