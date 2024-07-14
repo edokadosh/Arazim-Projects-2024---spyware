@@ -40,6 +40,7 @@ int Connection::doSend(const void* buf, size_t size) {
 }
 
 int Connection::doRecv(void* buf, size_t size, int flags) {
+    std::cerr << "Connection DORECV" << std::endl;
     if (isSocket)
     {
         return ::recv(fdOut, buf, size, flags);

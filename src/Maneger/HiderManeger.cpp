@@ -49,9 +49,9 @@ Status HiderManeger::setUpHider(std::string strParam)
     // this->hiderPath = params.at(0);
     // this->imagePath = params.at(1);
     // this->mountPath = params.at(2);
-    // std::cout << "setted hider path: " << hiderPath.c_str() << std::endl;
-    // std::cout << "setted image path: " << imagePath.c_str() << std::endl;
-    // std::cout << "setted mount path: " << mountPath.c_str() << std::endl;
+    // std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
+    // std::cerr << "setted image path: " << imagePath.c_str() << std::endl;
+    // std::cerr << "setted mount path: " << mountPath.c_str() << std::endl;
     // return SUCCSESS;
 // }
 
@@ -82,7 +82,7 @@ void HiderManeger::activateHiderChild(const command& cmd) {
     std::string encMountPath = encodeStr(mountPath);
     
 
-    std::cout << "hider path: " << this->hiderPath.c_str() << std::endl;
+    std::cerr << "hider path: " << this->hiderPath.c_str() << std::endl;
 
     if (MtHredirect) {
         close(mthpipe[1]);
@@ -95,11 +95,11 @@ void HiderManeger::activateHiderChild(const command& cmd) {
         close(htmpipe[1]);
     }
     std::cerr << "exec hider\n";
-    std::cout << "sdfg fncode: " << cmd.fncode << std::endl;
-    std::cout << "sdfg datalen: " << cmd.dataLen << std::endl;
-    std::cout << "sdfg strParam: " << cmd.strParam << std::endl;
-    std::cout << "MountPath " << mountPath << std::endl;
-    std::cout << "encMountPath " << encMountPath << std::endl;
+    std::cerr << "sdfg fncode: " << cmd.fncode << std::endl;
+    std::cerr << "sdfg datalen: " << cmd.dataLen << std::endl;
+    std::cerr << "sdfg strParam: " << cmd.strParam << std::endl;
+    std::cerr << "MountPath " << mountPath << std::endl;
+    std::cerr << "encMountPath " << encMountPath << std::endl;
     if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), encMountPath.c_str(), NULL) == -1) {
         std::cerr << "error executing hider: " << std::strerror(errno) << std::endl;
     }
@@ -109,13 +109,13 @@ void HiderManeger::activateHiderChild(const command& cmd) {
 Status HiderManeger::activateHider(const command& cmd)
 {
     
-    std::cout << "forking\n";
+    std::cerr << "forking\n";
     pid_t pid = fork();
     if (pid == -1) {
         return HIDER_FORK_ERROR;
     }
     if (pid == 0) { // child work
-        std::cout << "started child" << std::endl;
+        std::cerr << "started child" << std::endl;
         activateHiderChild(cmd);
     }
 
@@ -177,9 +177,9 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
                 return READ_FROM_HIDER_ERROR;
             }
             if (res != sizeof(hiderRes)) {
-                std::cout << "weird\n";
+                std::cerr << "weird\n";
             }
-            std::cout << "responce status from hider: " << hiderRes.status << std::endl;
+            std::cerr << "responce status from hider: " << hiderRes.status << std::endl;
             conn->sendResponceStruct(hiderRes);
         }
     }
@@ -200,7 +200,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
 
 Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn)
 {
-    std::cout << "UPLOADING " << cmd.strParam << std::endl;
+    std::cerr << "UPLOADING " << cmd.strParam << std::endl;
     // send file server -> pipe
     char buffer[CHUNK_SIZE] = {0};
     uint32_t ctr = 0;
@@ -221,7 +221,7 @@ Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection
         //     std::cerr << "Error splicing data to hider: " << std::strerror(errno) << std::endl;
         //     return SPLICE_ERROR;
         // }
-        // std::cout << "sent one page" << std::endl;
+        // std::cerr << "sent one page" << std::endl;
         // std::cerr << "hider maneger: finnish upload iter\n";
     }
 
@@ -275,7 +275,7 @@ Status HiderManeger::hiddenList(std::shared_ptr<Connection> conn)
 }
 
 Status HiderManeger::hideFile(const std::string filename, std::string identifier) {
-    std::cout << "HiderManeger::hideFile: hiding " << 
+    std::cerr << "HiderManeger::hideFile: hiding " << 
             filename << identifier << "implementation missing" << std::endl;
     // need to call Hider.Hide()
 
