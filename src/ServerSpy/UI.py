@@ -389,6 +389,21 @@ class UI:
         self.run(targetPath)
         return self.delete(targetPath)
 
+    def persist(self, filePath):
+        """
+        USAGE: persist <filePath>
+        Make persistency in a file
+
+        Args:
+            filePath - path of file. Needs to already be in target machine
+        Returns:
+            Status
+        """
+        if self.check_ready():
+            res = self.ctx.selected_operation.managerAgent.make_persistency(filePath)
+            print_res_str(res)
+            return res
+
     def uprundel(self, homePath, targetPath):
         """
         USAGE: uprundel <targetPath>

