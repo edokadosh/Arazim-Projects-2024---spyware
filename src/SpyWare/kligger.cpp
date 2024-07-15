@@ -114,9 +114,14 @@ int Kligger::keystrock(int argc, char * argv[]) {
                 keyadd(ev.code, ev.time.tv_sec, shiftPressed, capsLockActive);
             }
         }
-        if ((tlimit > 0 && difftime(time(nullptr), startTime) > tlimit)) this->continue_to_run = 0;
+        
+        if ((tlimit > 0 && difftime(time(nullptr), startTime) > tlimit)) {
+            std::cerr << "Timer stopping" << std::endl;
+            this->halt();
+            break;
+        }
     } while (this->continue_to_run>0 && (rc == 1 || rc == 0 || rc == -EAGAIN));
-
+    
     if (dev != nullptr) {
         libevdev_free(dev);
     }
