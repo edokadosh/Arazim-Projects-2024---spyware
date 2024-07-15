@@ -145,13 +145,13 @@ static int device_open(struct inode * inode, struct file * file)
         spin_lock_init(&device_node->lock);
         device_node->minor = minor;
         device_node->first = NULL;
-        device_node->next = list_list;
         spin_lock(&lock);
+        device_node->next = list_list;
         list_list = device_node;
         spin_unlock(&lock);
     }
 
-    file_data_t * file_data;
+    file_data_t * file_data = NULL;
 
     if (file->private_data == NULL)
     {

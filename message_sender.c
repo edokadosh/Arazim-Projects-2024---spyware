@@ -23,6 +23,8 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
+    fprintf(stdout, "start open device\n");
+
     if ((fd = open(argv[1], O_WRONLY)) == -1) {
         fprintf(stderr, "error opening device: %s\n", strerror(errno));
         return EXIT_FAILURE;
