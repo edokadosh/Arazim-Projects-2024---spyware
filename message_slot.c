@@ -238,19 +238,19 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
     if (channel->len == 0) return -EWOULDBLOCK;
     if (channel->len > size) return -ENOSPC;
 
-    if (!(ret = copy_from_user(&off, offset, sizeof(*offset)))) {
+    if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != 0) {
         return -EFAULT;
     }
 
     spin_lock(&channel->lock);
-    if (!(ret = copy_to_user(buffer + off, channel->msg, channel->len))) {
+    if ((ret = copy_to_user(buffer + off, channel->msg, channel->len)) != 0) {
         spin_unlock(&channel->lock);
         return -EFAULT;
     }
     spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
 
-    return ret;
+    return channel->len - ret;
 }
 
 static ssize_t device_write(struct file * file, const char * buffer, size_t size, loff_t * offset)
@@ -265,7 +265,7 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
     if (channel->id == 0) return -EINVAL;
     if (size <= 0 || size > MAX_MSG_SIZE) return -EMSGSIZE;
 
-    if (!(ret = copy_from_user(&off, offset, sizeof(*offset)))) {
+    if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != 0) {
         return -EFAULT;
     }
 
@@ -278,14 +278,16 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
         return -ENOMEM;
     }
     spin_lock(&channel->lock);
-    if ((ret = copy_from_user(channel->msg, buffer + off, size))) {
+    if ((ret = copy_from_user(channel->msg, buffer + off, size)) != 0) {
+        channel->len = size - ret;
         spin_unlock(&channel->lock);
         return -EFAULT;
     }
+    channel->len = size;
     spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
 
-    return ret;
+    return channel->len;
 }
 
 
