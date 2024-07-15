@@ -38,7 +38,10 @@ class Connection:
 
     # TODO add error handeling
     def recv_bytes(self, length: int) -> bytes:
-        return self.socket.recv(length)
+        ans = b""
+        while len(ans) < length:
+            ans += self.socket.recv(length - len(ans))
+        return ans
 
     def recv_responce_struct(self):
         bytes_recived = self.recv_bytes(Responce.sizeof)
