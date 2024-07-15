@@ -117,16 +117,14 @@ static void __exit message_slot_exit(void) {
     }
 
 
-    // device = list_list;
-    // while(device != NULL) {
-    //     next_device = device->next;
-    //     printk(KERN_DEBUG "starting kfree device: %p\n", device);
-    //     kfree(device);
-    //     device = next_device;
-    // }
-    // printk(KERN_DEBUG "starting unregister_chardev\n");
-    // unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
-    // printk(KERN_DEBUG "finnsih unregister_chardev\n");
+    device = list_list;
+    while(device != NULL) {
+        next_device = device->next;
+        printk(KERN_DEBUG "starting kfree device: %p\n", device);
+        kfree(device);
+        device = next_device;
+    }
+
 }
 
 module_init(message_slot_init);
@@ -243,8 +241,8 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
     if (channel->len == 0) return -EWOULDBLOCK;
     if (channel->len > size) return -ENOSPC;
 
-    ret = copy_from_user(&off, offset, sizeof(*offset));
-    if (ret != sizeof(*offset) && ret != 0) {
+    ret = copy_from_user(&off, offset, sizeof(off));
+    if (ret != sizeof(off) && ret != 0) {
         printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
         return -EFAULT;
     }
@@ -279,8 +277,8 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
     if (channel->id == 0) return -EINVAL;
     if (size <= 0 || size > MAX_MSG_SIZE) return -EMSGSIZE;
 
-    ret = copy_from_user(&off, offset, sizeof(*offset));
-    if (ret != sizeof(*offset) && ret != 0) {
+    ret = copy_from_user(&off, offset, sizeof(off));
+    if (ret != sizeof(off) && ret != 0) {
         printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
         return -EFAULT;
     }
@@ -305,6 +303,7 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
         return -EFAULT;
     }
     printk(KERN_DEBUG "copy_fron user return value for msg: %lu\n", ret);
+    printk(KERN_DEBUG "msg: %s\n", channel->msg);
 
     channel->len = size - ret;
     spin_unlock(&channel->lock);
