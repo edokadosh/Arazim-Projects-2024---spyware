@@ -92,6 +92,10 @@ static int __init message_slot_init(void) {
 static void __exit message_slot_exit(void) {
 
     printk(KERN_DEBUG "starting unregistration\n");
+
+    printk(KERN_DEBUG "starting unregister_chardev\n"); // TODO change
+    unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
+    printk(KERN_DEBUG "finnsih unregister_chardev\n");
     
     device_node_t * device = list_list;
     device_node_t * next_device = NULL;
@@ -112,16 +116,17 @@ static void __exit message_slot_exit(void) {
         device = device->next;
     }
 
-    device = list_list;
-    while(device != NULL) {
-        next_device = device->next;
-        printk(KERN_DEBUG "starting kfree device: %p\n", device);
-        kfree(device);
-        device = next_device;
-    }
-    printk(KERN_DEBUG "starting unregister_chardev\n");
-    unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
-    printk(KERN_DEBUG "finnsih unregister_chardev\n");
+
+    // device = list_list;
+    // while(device != NULL) {
+    //     next_device = device->next;
+    //     printk(KERN_DEBUG "starting kfree device: %p\n", device);
+    //     kfree(device);
+    //     device = next_device;
+    // }
+    // printk(KERN_DEBUG "starting unregister_chardev\n");
+    // unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
+    // printk(KERN_DEBUG "finnsih unregister_chardev\n");
 }
 
 module_init(message_slot_init);
