@@ -27,18 +27,22 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "error opening device: %s\n", strerror(errno));
         return EXIT_FAILURE;
     }
+    fprintf(stdout, "open device succsess\n");
+
 
     if (ioctl(fd, MSG_SLOT_CHANNEL, atoi(argv[2])) == -1) {
         fprintf(stderr, "error doing ioctl to device: %s\n", strerror(errno));
         close(fd);
         return EXIT_FAILURE;
     }
+    fprintf(stdout, "ioctl device succsess\n");
 
     if (write(fd, argv[3], len) < 0) {
         fprintf(stderr, "error to writing to device: %s\n", strerror(errno));
         close(fd);
         return EXIT_FAILURE;
     }
+    fprintf(stdout, "write device succsess\n");
 
     close(fd);
 
