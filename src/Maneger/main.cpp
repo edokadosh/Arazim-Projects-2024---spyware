@@ -108,9 +108,7 @@ void loopIter(std::shared_ptr<EncSocketConnection> conn, SoftwareManeger& swm, H
     switch (cmd.fncode)
     {
     case WRITE_FILE:
-        std::cout << "start write_file\n";
         res = swm.fileWrite(conn, cmd.dataLen, strParam);
-        std::cout << "finnish write_file\n";
         break;
 
     case DELETE_FILE:
@@ -138,7 +136,6 @@ void loopIter(std::shared_ptr<EncSocketConnection> conn, SoftwareManeger& swm, H
     
     // TODO change such that there will be response only if we want it to be 
     // conn->flushInput();
-    std::cout << "maneger: input flushed\n";
     std::cout << "Conn: res-" << res << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(res, strRes);
     std::cout << "\n\n";
