@@ -1,7 +1,7 @@
 
 obj-m := message_slot.o
 
-KDIR := /usr/src/linux-headers-5.15.0-113-generic/
+KDIR := /lib/modules/$(shell uname -r)/build 
 PWD := $(shell pwd)
 
 all:
