@@ -251,6 +251,8 @@ Status HiderManeger::hiddenRetrieveOrList(std::shared_ptr<Connection> conn) {
             std::cerr << "error reading from hider pipe" << std::endl;
             return READ_FROM_HIDER_ERROR;
         }
+        std::cerr << "HiderManeger: on retriveOrList file, recived: " << recived << std::endl; 
+
         conn->sendData(recived, fileContent);
     }
     

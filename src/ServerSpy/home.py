@@ -139,7 +139,8 @@ def another_main():
     )
 
     print(manegerAgent.hider_setup(targetHiderPath, image_path, mount_path))
-    print(manegerAgent.retrieve_file('fishTest.txt'))
+    print(manegerAgent.retrieve_file("fishTest.txt"))
+
 
 if __name__ == "__main__":
     # main_with_ui()
