@@ -88,12 +88,16 @@ Status HiddenFileHandler::retreiveFile(const std::string& filename) {
     if (write(OUTPUT_PIPE_FD, &fileSize, sizeof(fileSize)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
+        return HIDER_PIPE_ERROR;
     }
     file.close();
-
-    if ((write(OUTPUT_PIPE_FD, buffer.data(), fileSize)) == -1) {
+    uint32_t ctr = 0;
+    int recived = 0;
+    for (; ctr < fileSize; ctr += recived)
+    if ((recived = write(OUTPUT_PIPE_FD, buffer.data() + ctr, fileSize - ctr)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
+        return HIDER_PIPE_ERROR;
     }
 
     return SUCCSESS;

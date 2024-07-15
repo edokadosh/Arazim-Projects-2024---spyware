@@ -251,7 +251,7 @@ Status HiderManeger::hiddenRetrieve(std::shared_ptr<Connection> conn) {
             std::cerr << "error reading from hider pipe" << std::endl;
             return READ_FROM_HIDER_ERROR;
         }
-        conn->sendData(tranmitBytes, fileContent);
+        conn->sendData(recived, fileContent);
     }
     
     close(htmpipe[0]);
