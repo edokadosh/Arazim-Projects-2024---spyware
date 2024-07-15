@@ -493,7 +493,7 @@ class UI:
         spyTarget = "sentSpyware" + str(randint(1, 1000)) + ".spy"
         self.select(ip)
         self.manager("write_file", hiderHome, hiderTarg)
-        self.setup(hiderTarg, "f", "f")
+        self.setup(hiderTarg, "f.iso", "f.mont")
         self.uprun(spyHome, spyTarget)
         while not self.ctx.selected_operation.spyAgent:
             time.sleep(1)

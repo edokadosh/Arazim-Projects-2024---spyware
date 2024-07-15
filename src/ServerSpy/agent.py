@@ -135,7 +135,7 @@ class Agent:
             mountPath = self.mountPath
 
         self.mountPath = mountPath
-        self.hiding_env_setup(imagePath)
+        self.hiding_env_setup(mountPath, imagePath)
 
         strParam = hiderPath + ";" + imagePath + ";" + mountPath
         self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
