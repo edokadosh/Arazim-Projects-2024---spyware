@@ -58,7 +58,7 @@ int Connection::sendData(uint32_t size, void* buffer, int flags) {
     uint32_t ctr = 0;
     int bytesSent = 0;
     for (; ctr < size; ctr += bytesSent){
-        bytesSent = doSend(buffer + ctr, size - ctr, flags);
+        bytesSent = doSend((char*)buffer + ctr, size - ctr, flags);
         if (bytesSent == -1) {
             std::cerr << "Error sending data" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
