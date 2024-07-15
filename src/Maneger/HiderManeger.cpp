@@ -253,7 +253,9 @@ Status HiderManeger::hiddenRetrieveOrList(std::shared_ptr<Connection> conn) {
         }
         std::cerr << "HiderManeger: on retriveOrList file, recived: " << recived << std::endl; 
 
-        conn->sendData(recived, fileContent);
+        
+        int sent = conn->sendData(recived, fileContent);
+        std::cerr << "HiderManeger: on retriveOrList file, sent: " << sent << std::endl; 
     }
     
     close(htmpipe[0]);
