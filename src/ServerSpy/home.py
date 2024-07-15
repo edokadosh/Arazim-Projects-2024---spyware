@@ -167,4 +167,5 @@ def bug_main():
     # print(spyAgent.retrieve_file("0.sniff"))
 
 if __name__ == "__main__":
-    bug_main()
+    # bug_main()
+    main_with_ui()
