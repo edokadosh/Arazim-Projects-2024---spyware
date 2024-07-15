@@ -25,7 +25,7 @@ class Agent:
     @classmethod
     def listenSpyware(cls, listen_addr: tuple[str, int]):
         host, port = listen_addr
-        with Listener(host, port) as listener:
+        with Listener(host, port) as listener:l;
             conn = listener.accept()
         return Agent(conn, "spy")
 
