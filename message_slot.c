@@ -117,7 +117,7 @@ static void __exit message_slot_exit(void) {
         next_device = device->next;
         printk(KERN_DEBUG "starting kfree device\n");
         kfree(device);
-        next_device = device;
+        device = next_device;
     }
     printk(KERN_DEBUG "starting unregister_chardev\n");
     unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
