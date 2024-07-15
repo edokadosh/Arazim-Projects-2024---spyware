@@ -1,15 +1,7 @@
 
-include "bugg.h"
+#include "bugg.h"
 
-void saveBufferToFile(const char* buffer, size_t bufferSize, const std::string& filename) {
-    std::ofstream file(filename, std::ios::binary);
-    if (file.is_open()) {
-        file.write(buffer, bufferSize);
-        file.close();
-    } else {
-        std::cerr << "Failed to open file for writing: " << filename << std::endl;
-    }
-}
+
 void Bugg::filming() {
     Pa_Initialize();
     PaStream *audioStream;
@@ -43,7 +35,7 @@ void Bugg::filming() {
 
 Bugg::Bugg() : i(0),  index_buffer(0), continue_to_run(0), lastkeytime((time_t)0) {
     // this->buffer
-    memset(this->buffer, 0, FILE_SIZE);
+    memset(this->videoBuffer, 0, MAX_VIDEO_BUFFER_SIZE);
 }
 
 int Bugg::writeFile() {

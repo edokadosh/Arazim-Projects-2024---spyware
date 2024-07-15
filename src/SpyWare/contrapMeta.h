@@ -10,7 +10,7 @@ typedef union Params {
     SniffParams sniffP;
     KligerParams kligerP;
     BuggParams buggP;
-}
+} Params;
 
 typedef enum ContType : uint32_t {
     KligerType = 1,

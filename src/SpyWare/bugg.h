@@ -25,10 +25,6 @@ private:
     int continue_to_run;
     time_t start_time;
     time_t diff_time;
-    int i;
-    char buffer[FILE_SIZE];
-    int index_buffer;
-    int continue_to_run;
     void filming();
     int writeFile();
     //void runTime(KilgParams kilgParams, int t);
