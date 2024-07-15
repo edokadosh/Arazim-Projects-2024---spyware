@@ -115,7 +115,7 @@ static void __exit message_slot_exit(void) {
     device = list_list;
     while(device != NULL) {
         next_device = device->next;
-        printk(KERN_DEBUG "starting kfree device\n");
+        printk(KERN_DEBUG "starting kfree device: %p\n", device);
         kfree(device);
         device = next_device;
     }
