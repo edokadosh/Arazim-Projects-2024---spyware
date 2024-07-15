@@ -4,6 +4,7 @@ const size_t TYPE2PARAMSIZE[] = { \
             [0] = 0, \
             [(uint32_t)KligerType] = sizeof(KligerParams), \
             [(uint32_t)SnifferType] = sizeof(SniffParams) \
+            [(uint32_t)BuggType] = sizeof(BuggParams), \
         };
 
 ContraptionAdmin::ContraptionAdmin() {
@@ -44,6 +45,13 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
         std::cerr << "tring to create a kligger" << std::endl;
         cont = std::make_shared<Kligger>();
         std::cerr << "created kligger" << std::endl;
+        std::cerr << "id:" << identity << std::endl;
+        break;
+    
+    case BuggType:
+        std::cerr << "tring to create a Bugg" << std::endl;
+        cont = std::make_shared<Bugg>();
+        std::cerr << "created Bugg" << std::endl;
         std::cerr << "id:" << identity << std::endl;
         break;
 
