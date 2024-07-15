@@ -68,14 +68,19 @@ class Agent:
                 fileName,
             )
         )
-        file_data = self.conn.recv_file()
+        file_data = ic(self.conn.recv_file())
+        ic(len(file_data))
         res = self.conn.recv_responce_struct()
         return res, file_data
 
-    def hidden_action_without_upload(self, fncode: FunCode, targetPath: str) -> tuple[Responce, str]:
+    def hidden_action_without_upload(
+        self, fncode: FunCode, targetPath: str
+    ) -> tuple[Responce, str]:
         assert FunCode.HIDDEN_UPLOAD not in fncode
 
-        self.conn.send_command(Command(0, FunCode.HIDDEN_OPRATION | fncode, 0, targetPath))
+        self.conn.send_command(
+            Command(0, FunCode.HIDDEN_OPRATION | fncode, 0, targetPath)
+        )
         results = list()
         results.append(self.conn.recv_responce_struct())
         results.append(self.conn.recv_responce_struct())

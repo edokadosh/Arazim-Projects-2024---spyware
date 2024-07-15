@@ -22,10 +22,15 @@ Status HiddenFileHandler::listFiles() {
     if (write(OUTPUT_PIPE_FD, &listLen, sizeof(listLen)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
+        return HIDER_PIPE_ERROR;
     }
-    if (write(OUTPUT_PIPE_FD, files_list.c_str(), listLen) == -1) {
+    uint32_t ctr = 0;
+    int recived = 0;
+    for (; ctr < listLen; ctr += recived)
+    if ((recived = write(OUTPUT_PIPE_FD, files_list.c_str() + ctr, listLen - ctr)) == -1) {
         std::cerr << "Error msg length" << std::endl;
         std::cerr << "Error: " << strerror(errno) << std::endl;
+        return HIDER_PIPE_ERROR;
     }
     std::cerr << "hider: finnish hidden list\n";
     return ret;
