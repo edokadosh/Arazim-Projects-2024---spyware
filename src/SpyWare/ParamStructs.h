@@ -21,4 +21,11 @@ struct KligerParams {
 };
 typedef struct KligerParams KligerParams;
 
+#pragma pack(1)
+struct BuggParams {
+
+    int time;
+};
+typedef struct BuggParams BuggParams;
+
 #endif
