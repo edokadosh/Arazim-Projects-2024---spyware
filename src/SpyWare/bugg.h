@@ -1,9 +1,8 @@
-
-#include <ctime>
 #include <opencv2/opencv.hpp>
 #include <portaudio.h>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 #include "Contraption.h"
 
 #define MAX_AUDIO_BUFFER_SIZE 44100 * 120 // Example: 10 seconds at 44100Hz

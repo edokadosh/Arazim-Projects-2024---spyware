@@ -47,7 +47,7 @@ $(H_EXEC): $(H_OBJS)
 spyware: $(S_EXEC)
 
 $(S_EXEC): $(S_OBJS)
-	$(CC) $(CFLAGS) $(S_OBJS) -o $@ -ltins -lssl -lcrypto -levdev -lxcb
+	$(CC) $(CFLAGS) $(S_OBJS) -o $@ -ltins -lssl -lcrypto -levdev -lxcb -lopencv_core -lopencv_highgui
 
 
 # Clean rule
