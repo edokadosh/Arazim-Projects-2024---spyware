@@ -228,8 +228,8 @@ sentSpyware.spy
 *.log
 
 # our program
-maneger
-hider
-spyware
+# maneger
+# hider
+# spyware
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,python
