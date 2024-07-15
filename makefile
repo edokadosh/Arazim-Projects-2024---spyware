@@ -4,7 +4,7 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -std=c++17 -I/usr/include/libevdev-1.0/
+CFLAGS = -Wall -Wextra -std=c++17 -I/usr/include/libevdev-1.0/ -I/usr/include/opencv4
 
 MDIR = src/Maneger/
 HDIR = src/Hider/
