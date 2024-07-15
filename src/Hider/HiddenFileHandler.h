@@ -39,6 +39,8 @@ public:
 	Status uploadFile(const std::string& filename, uint32_t fileSize);
 
 	Status retreiveFile(const std::string& filename);
+
+	void setFolderName(const std::string& name);
 };
 
 #endif

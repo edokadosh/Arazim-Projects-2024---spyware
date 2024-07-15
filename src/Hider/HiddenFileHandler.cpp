@@ -181,3 +181,7 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
     }
     return SUCCSESS;
 }
+
+void HiddenFileHandler::setFolderName(const std::string& name) {
+    folderName = name;
+}

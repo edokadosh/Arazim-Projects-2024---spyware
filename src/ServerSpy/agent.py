@@ -16,7 +16,7 @@ class Agent:
         self.conn = conn
         self.type = type
         self.mountedFS = False
-        self.mountPath = "DefaultMount"  # so its obviuos when debugging
+        self.mountPath = ""  # so its obviuos when debugging
         self.is_hider_active = False
 
     def __repr__(self) -> str:
@@ -127,13 +127,17 @@ class Agent:
 
     # prob redundant in future
     def hider_setup(
-        self, hiderPath: str, imagePath: str, mountPath: str
+        self, hiderPath: str, imagePath: str='', mountPath: str=''
     ) -> tuple[Responce, str]:
         self.is_hider_active = True
-        self.mountPath = mountPath
-        # self.hiding_env_setup(imagePath)
 
-        strParam = hiderPath  # +  ";" + imagePath + ";" + mountPath
+        if self.mountPath:
+            mountPath = self.mountPath
+
+        self.mountPath = mountPath
+        self.hiding_env_setup(imagePath)
+
+        strParam = hiderPath + ";" + imagePath + ";" + mountPath
         self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
         return self.conn.recv_full_responce()
     
@@ -146,19 +150,24 @@ class Agent:
         self.run_bush("sudo systemctl enable mytimer.timer")
         self.run_bush("sudo systemctl status mytimer.timer")
 
-    def hiding_env_setup(self, imagePath: str):
+    def hiding_env_setup(self, mountPath: str, imagePath: str):
         res = self.run_bash(f"file {imagePath}")
         if "ext4" not in res:
             self.run_bash(f"dd if=/dev/zero of={imagePath} bs=1M count=100")
             self.run_bash(f"sudo losetup /dev/loop0 {imagePath}")
             self.run_bash(f"sudo mkfs.ext4 /dev/loop0")
-        self.mountFS()
+        self.mountFS(mountPath)
 
-    def mountFS(self):
-        self.run_bash(f"sudo mkdir {self.mountPath}")
-        self.run_bash(f"sudo mount /dev/loop0 {self.mountPath}")
+    def mountFS(self, mountPath=''):
+        if not mountPath:
+            return
+        self.mountPath = mountPath
+        self.run_bash(f"sudo mkdir {mountPath}")
+        self.run_bash(f"sudo mount /dev/loop0 {mountPath}")
 
     def unmountFS(self):
+        if not self.mountPath:
+            return
         self.run_bash(f"sudo umount {self.mountPath}")
         self.run_bash(f"rm {self.mountPath}")
         self.run_bash(f"sudo losetup -d /dev/loop0")
