@@ -1,11 +1,63 @@
+#ifndef __KERNEL__
+#define __KERNEL__
+#endif
+
+#ifndef MODULE
+#define MODULE
+#endif
+
+
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/fs.h>
+#include <linux/types.h>
+#include <linux/slab.h>
+#include <linux/ioctl.h>
+#include <linux/list.h>
 #include "message_slot.h"
 
+#define DEVICE_NAME ("message_slot")
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Avner Spira");
 MODULE_DESCRIPTION("message slot device driver");
 
 
+typedef struct channel {
+    spinlock_t lock;
+    uint id;
+    int len;
+    char * msg;
+} channel_t;
+
+typedef struct node_s {
+    struct  channel channel;
+    struct node_s * next;
+} node_t;
+
+typedef struct device_node_s {
+    spinlock_t lock;
+    uint32_t minor;
+    node_t * first;
+    struct device_node_s * next;
+}  device_node_t;
+
+
+typedef struct file_private_data_s {
+    channel_t * current_channel;
+    device_node_t * list_head;
+} file_data_t;
+
+// typedef struct inode_private_data_s {
+//     struct list_head list;
+// } inode_data_t;
+
+
+static int device_open(struct inode * ip, struct file * file);
+static int device_release(struct inode * ip, struct file * file);
+static long device_ioctl(struct file * file, uint ioctl_num, ulong ioctl_param);
+static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_t * offset);
+static ssize_t device_write(struct file * file, const char * buffer, size_t size, loff_t * offset);
 void init_node(node_t *);
 void init_channel(channel_t *);
 node_t * query_list(device_node_t * device, uint32_t id);
@@ -26,26 +78,34 @@ static const struct file_operations fops = {
 
 static int __init message_slot_init(void) {
     
-    if (register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops) == -1)
+    int ret = 0;
+    if ((ret = register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops)) == -1)
     {
-        printk(KERN_ERR "message slot device registration failed\n");
+        printk(KERN_ERR "message slot device registration failed, error: %d\n", ret);
+        return -1;
     }
-
+    
+    printk(KERN_DEFAULT "message slot device registration succsess\n");
     return 0;
 }
 
 static void __exit message_slot_exit(void) {
 
+    printk(KERN_DEBUG "starting unregistration\n");
+    
     device_node_t * device = list_list;
     device_node_t * next_device = NULL;
 
     while(device != NULL) {
         node_t * node = device->first;
+
         while (node != NULL) {
             node_t * next_node = node->next;
             if (node->channel.msg != NULL) {
+                printk(KERN_DEBUG "starting kfree channel.msg\n");
                 kfree(node->channel.msg);
             }
+            printk(KERN_DEBUG "starting kfree node\n");
             kfree(node);
             node = next_node;
         }
@@ -55,10 +115,13 @@ static void __exit message_slot_exit(void) {
     device = list_list;
     while(device != NULL) {
         next_device = device->next;
+        printk(KERN_DEBUG "starting kfree device\n");
         kfree(device);
         next_device = device;
     }
+    printk(KERN_DEBUG "starting unregister_chardev\n");
     unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
+    printk(KERN_DEBUG "finnsih unregister_chardev\n");
 }
 
 module_init(message_slot_init);
@@ -67,6 +130,8 @@ module_exit(message_slot_exit);
 static int device_open(struct inode * inode, struct file * file)
 {
 
+    printk(KERN_DEBUG "starting %s\n", __func__);
+    
     uint minor = iminor(inode);
     device_node_t * device_node = query_list_list(minor);
     if (device_node == NULL) {
@@ -96,21 +161,26 @@ static int device_open(struct inode * inode, struct file * file)
         file_data->list_head = device_node;
         file->private_data = (void *)file_data;
     }
-
+    printk(KERN_DEBUG "finnishing %s\n", __func__);
     return 0;
 }
 
 static int device_release(struct inode * inode, struct file * file)
 {
+    printk(KERN_DEBUG "starting %s\n", __func__);
     if (file->private_data != NULL) {
         *(file_data_t*)(file->private_data) = (file_data_t){0};
+        printk(KERN_DEBUG "kfree file->private_data, unfound node\n");
         kfree(file->private_data);
     }
+    printk(KERN_DEBUG "finnishing %s\n", __func__);
     return 0;
 }
 
 static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
 {
+    printk(KERN_DEBUG "starting %s\n", __func__);
+    
     switch(ioctl_cmd) {
     
     case MSG_SLOT_CHANNEL:
@@ -121,6 +191,7 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
         node_t * query_res = query_list(file_data->list_head, ioctl_param);
         if (query_res != NULL) {
             file_data->current_channel = &query_res->channel;
+            printk(KERN_DEBUG "finnishing %s, channel already existed\n", __func__);
             return 0;
         }
         else {
@@ -133,17 +204,21 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             file_data->list_head->first = new_node;
             spin_unlock(&file_data->list_head->lock);
             file_data->current_channel = &new_node->channel;
+            printk(KERN_DEBUG "finnishing %s, alloced new channel\n", __func__);
+
             return 0;
         }
     default:
         return -EINVAL;
     }
-
+    printk(KERN_DEBUG "finnishing %s\n", __func__);
     return 0;
 }
 
 static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_t * offset)
 {
+    printk(KERN_DEBUG "starting %s\n", __func__);
+    
     ulong ret = 0;
     file_data_t * file_data = (file_data_t *)file->private_data;
     channel_t * channel = file_data->current_channel;
@@ -162,13 +237,16 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
         return -EFAULT;
     }
     spin_unlock(&channel->lock);
+    printk(KERN_DEBUG "finnishing %s\n", __func__);
+
     return ret;
 }
 
 static ssize_t device_write(struct file * file, const char * buffer, size_t size, loff_t * offset)
 {
     
-    // TODO validate and handle offset
+    printk(KERN_DEBUG "starting %s\n", __func__);
+    
     ulong ret = 0;
     file_data_t * file_data = (file_data_t *)file->private_data;
     channel_t * channel = file_data->current_channel;
@@ -194,6 +272,8 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
         return -EFAULT;
     }
     spin_unlock(&channel->lock);
+    printk(KERN_DEBUG "finnishing %s\n", __func__);
+
     return ret;
 }
 
@@ -226,28 +306,35 @@ int alloc_node(node_t * new_node) {
 }  
 
 node_t * query_list(device_node_t * device, uint32_t id) {
+    printk(KERN_DEBUG "start query_list\n");
     spin_lock(&device->lock);
     node_t * node = device->first;
     while (node != NULL) {
         if (node->channel.id == id) {
             spin_unlock(&device->lock);
+            printk(KERN_DEBUG "finnish query_list, found node\n");
             return node;
         }
     }
     spin_unlock(&device->lock);
+    printk(KERN_DEBUG "finnish query_list, unfound node\n");
     return NULL;
 }
 
 
 device_node_t * query_list_list(uint minor) {
+    printk(KERN_DEBUG "start query_list_list\n");
     spin_lock(&lock);
     device_node_t * node = list_list;
     while (node != NULL) {
         if (node->minor == minor) {
             spin_unlock(&lock);
+            printk(KERN_DEBUG "finnish query_list_list, found node\n");
             return node;
         }
     }
     spin_unlock(&lock);
+    printk(KERN_DEBUG "finnish query_list_list, unfound node\n");
+
     return NULL;
 }
