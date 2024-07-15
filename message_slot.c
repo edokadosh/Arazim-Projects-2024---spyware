@@ -62,7 +62,7 @@ void init_node(node_t *);
 void init_channel(channel_t *);
 node_t * query_list(device_node_t * device, uint32_t id);
 device_node_t * query_list_list(uint minor);
-int alloc_node(node_t * new_node);
+int alloc_node(node_t ** new_node);
 
 static device_node_t * list_list = NULL;
 static DEFINE_SPINLOCK(lock);
@@ -198,7 +198,7 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             node_t * new_node = NULL;
             int res;
             printk(KERN_DEBUG "1\n");
-            if ((res = alloc_node(new_node)) != 0) {
+            if ((res = alloc_node(&new_node)) != 0) {
                 printk(KERN_ERR "error alloc node\n");
                 printk(KERN_DEBUG "finnishing %s\n", __func__);
                 return res;
@@ -306,13 +306,13 @@ void init_channel(channel_t * channel) {
 //     kfree(node);
 // }
 
-int alloc_node(node_t * new_node) {
-    if (!(new_node = kmalloc(sizeof(new_node), GFP_KERNEL))) {
+int alloc_node(node_t ** new_node) {
+    if (!(*new_node = kmalloc(sizeof(new_node), GFP_KERNEL))) {
         printk(KERN_ALERT "my_device: Failed to allocate memory\n");
         return -ENOMEM;
     }
-    init_channel(&new_node->channel);
-    new_node->next = NULL;
+    init_channel(&(*new_node)->channel);
+    (*new_node)->next = NULL;
     return 0;
 }  
 
