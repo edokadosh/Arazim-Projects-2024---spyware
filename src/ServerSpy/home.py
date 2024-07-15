@@ -19,7 +19,6 @@ HOST = "localhost"
 PORT_MANEGER = 65432
 PORT_SPYWARE = 65410
 
-
 def main():
     targetHiderPath = "./sentHider.o"
 
@@ -97,14 +96,15 @@ def main_with_ui():
     ui.help()
 
     print("START CYBER:")
-    value = input("$ ")
+    prompt = '🌲' + ' '
+    value = input(prompt)
     while value != "q":
         UI.call_method_raw(ui, value)
         selected = ui.ctx.selected_operation
         if selected:
-            value = input(f"<{selected}>$ ")
+            value = input(f"<{selected}>{prompt}")
         else:
-            value = input(f"$ ")
+            value = input(prompt)
 
 
 def another_main():
@@ -139,9 +139,10 @@ def another_main():
     )
 
     print(manegerAgent.hider_setup(targetHiderPath, image_path, mount_path))
+    print(manegerAgent.list_files()[1].decode())
     print(manegerAgent.retrieve_file("fishTest.txt"))
 
 
 if __name__ == "__main__":
-    # main_with_ui()
-    another_main()
+    main_with_ui()
+    # another_main()

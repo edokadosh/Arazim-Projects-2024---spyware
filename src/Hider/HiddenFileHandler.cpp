@@ -13,7 +13,8 @@ Status HiddenFileHandler::listFiles() {
     std::string files_list = "";
     try {
         for (const auto& entry : fs::directory_iterator(folderName)){
-            files_list += entry.path();
+            files_list += entry.path().filename().string();
+            files_list += "\n";
         }
     } catch (const std::exception& e) { 
         ret = FAIL;
