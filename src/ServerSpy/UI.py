@@ -364,6 +364,34 @@ class UI:
             )
             print(res)
 
+    def rundel(self, targetPath):
+        """
+        USAGE: rundel <targetPath>
+        Run and then delete a hidden file in target machine
+
+        Args:
+            targetPath - path of file. Needs to already be in target machine
+        Returns:
+            Status
+        """
+        self.run(targetPath)
+        return self.delete(targetPath)
+
+    def uprundel(self, homePath, targetPath):
+        """
+        USAGE: uprundel <targetPath>
+        Upload run and then delete a hidden file in target machine
+
+        Args:
+            homePath - path on home machine
+            targetPath - path of file. Needs to already be in target machine
+        Returns:
+            Status
+        """
+        res = self.upload(homePath, targetPath)
+        print(f"DB: uprundel res test {res=}")
+        return self.rundel(targetPath)
+
     def list_hidden(self):
         """
         USAGE:
