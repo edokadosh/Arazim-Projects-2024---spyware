@@ -21,9 +21,7 @@ class Listener:
     def __repr__(self):
         return f"Listener(port={self.port}, host={self.host}, backlog={self.backlog})"
 
-    def _start(self):
-        self.socket.bind(ic(self.host, self.port))
-        self.socket.listen(2)
+
         print(f"Listening on {self.host}:{self.port}")
 
     def stop(self):

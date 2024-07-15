@@ -1,6 +1,30 @@
 
 #include "bugg.h"
 
+static int audioCallback(const void *inputBuffer, void *outputBuffer,
+                         unsigned long framesPerBuffer,
+                         const PaStreamCallbackTimeInfo* timeInfo,
+                         PaStreamCallbackFlags statusFlags,
+                         void *userData) {
+    AudioData *data = (AudioData*)userData;
+    const char *in = (const char*)inputBuffer;
+    size_t bytesToCopy = framesPerBuffer * sizeof(float); // Calculate bytes to copy
+
+    // Ensure there's enough space in the buffer (this check is simplistic and may need to be more complex)
+    if (data->currentPosition + bytesToCopy <= MAX_AUDIO_BUFFER_SIZE) {
+        // Copy the incoming audio data to the buffer at the current position
+        memcpy(data->buffer + data->currentPosition, in, bytesToCopy);
+        // Update the current position
+        data->currentPosition += bytesToCopy;
+    } else {
+        std::cout <<"print"<<std::endl;
+        saveBufferToFile(data->buffer, data->currentPosition, "output_audio1.raw");
+        data->currentPosition=0;
+        memcpy(data->buffer + data->currentPosition, in, bytesToCopy);
+    }
+
+    return paContinue;
+}
 
 void Bugg::filming() {
     Pa_Initialize();
