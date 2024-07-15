@@ -55,11 +55,15 @@ int Connection::doRecv(void* buf, size_t size) {
 
 
 int Connection::sendData(uint32_t size, void* buffer, int flags) {
-    int bytesSent = doSend(buffer, size, flags);
-    if (bytesSent == -1) {
-        std::cerr << "Error sending data" << std::endl;
-        std::cerr << "Error: " << strerror(errno) << std::endl;
-        return bytesSent;
+    uint32_t ctr = 0;
+    int bytesSent = 0;
+    for (; ctr < size; ctr += bytesSent){
+        bytesSent = doSend(buffer + ctr, size - ctr, flags);
+        if (bytesSent == -1) {
+            std::cerr << "Error sending data" << std::endl;
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+            return bytesSent;
+        }
     }
     return bytesSent;
 }

@@ -121,6 +121,7 @@ Status HiddenFileHandler::retreiveFile(const std::string& filename) {
         std::cerr << "Error: " << strerror(errno) << std::endl;
         return HIDER_PIPE_ERROR;
     }
+    std::cerr << "hider: on retrive file, wrote: " << recived << std::endl; 
 
     return SUCCSESS;
 }
