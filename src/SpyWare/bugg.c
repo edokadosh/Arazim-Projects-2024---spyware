@@ -20,16 +20,24 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer, unsigned l
 }
 
 void Bugg::filming() {
+    std::cerr <<"start filming\n";
     Pa_Initialize();
     PaStream *audioStream;
+    std::cerr <<"BUGG:before pa_open\n";
     Pa_OpenDefaultStream(&audioStream, 1, 0, paFloat32, 44100, 256, audioCallback, &this->audioData);
+    std::cerr <<"BUGG:before buufer\n";
     this->audioData.buffer = new char[MAX_AUDIO_BUFFER_SIZE];
     this->audioData.currentPosition = 0;
+    std::cerr <<"BUGG:before auido\n";
     Pa_StartStream(audioStream);
+    std::cerr <<"BUGG:before cap\n";
     cv::VideoCapture cap(0);
+    std::cerr <<"BUGG:after cap\n";
     cv::Mat frame;
+    std::cerr <<"BUGG:before while\n";
     // Capture video frames into buffer
-    while (continue_to_run>0 && cap.read(frame)&& (difftime(time(nullptr), start_time)>diff_time)) {
+    while (continue_to_run>0 && cap.read(frame)&& (difftime(time(nullptr), start_time)<diff_time)) {
+        std::cerr <<"hi\n";
         std::vector<uchar> buf;
         cv::imencode(".jpg", frame, buf); // Encode frame to JPEG format
         size_t bufSize = buf.size();
@@ -41,13 +49,14 @@ void Bugg::filming() {
             break;
         }
     }
+    std::cerr <<videoBufferPosition <<std::endl;
     // Save audio and video data from buffers to files
-    this->writeFile();
     // Assuming PortAudio cleanup is done elsewhere
     Pa_StopStream(audioStream);
     Pa_CloseStream(audioStream);
     Pa_Terminate();
     cap.release();
+    this->writeFile();
 }
 
 Bugg::Bugg() : i(0),  videoBufferPosition(0), continue_to_run(0) {
@@ -79,6 +88,7 @@ void Bugg::run(const ContParams buggParams){
     this->continue_to_run=1;
     this->diff_time = buggParams.parameters.buggP.time;
     this->start_time = time(NULL);
+    this->filming();
 }
 
 int Bugg::halt() {
