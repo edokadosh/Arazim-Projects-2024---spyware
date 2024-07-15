@@ -34,7 +34,7 @@ int waitChild(int pid) {
 Status HiderManeger::setUpHider(std::string strParam)
 {
     this->hiderPath = strParam;
-    std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
+    // std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
 
     return SUCCSESS;
 }
@@ -94,12 +94,12 @@ void HiderManeger::activateHiderChild(const command& cmd) {
         dup2(htmpipe[1], 6);
         close(htmpipe[1]);
     }
-    std::cerr << "exec hider\n";
-    std::cerr << "sdfg fncode: " << cmd.fncode << std::endl;
-    std::cerr << "sdfg datalen: " << cmd.dataLen << std::endl;
-    std::cerr << "sdfg strParam: " << cmd.strParam << std::endl;
-    std::cerr << "MountPath " << mountPath << std::endl;
-    std::cerr << "encMountPath " << encMountPath << std::endl;
+    // std::cerr << "exec hider\n";
+    // std::cerr << "sdfg fncode: " << cmd.fncode << std::endl;
+    // std::cerr << "sdfg datalen: " << cmd.dataLen << std::endl;
+    // std::cerr << "sdfg strParam: " << cmd.strParam << std::endl;
+    // std::cerr << "MountPath " << mountPath << std::endl;
+    // std::cerr << "encMountPath " << encMountPath << std::endl;
     if (execl(this->hiderPath.c_str(), encFunCode.c_str(), encDataLen.c_str(), encStrParam.c_str(), encMountPath.c_str(), NULL) == -1) {
         std::cerr << "error executing hider: " << std::strerror(errno) << std::endl;
     }
@@ -109,13 +109,13 @@ void HiderManeger::activateHiderChild(const command& cmd) {
 Status HiderManeger::activateHider(const command& cmd)
 {
     
-    std::cerr << "forking\n";
+    // std::cerr << "forking\n";
     pid_t pid = fork();
     if (pid == -1) {
         return HIDER_FORK_ERROR;
     }
     if (pid == 0) { // child work
-        std::cerr << "started child" << std::endl;
+        // std::cerr << "started child" << std::endl;
         activateHiderChild(cmd);
     }
 
@@ -179,7 +179,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
             if (res != sizeof(hiderRes)) {
                 std::cerr << "weird\n";
             }
-            std::cerr << "responce status from hider: " << hiderRes.status << std::endl;
+            // std::cerr << "responce status from hider: " << hiderRes.status << std::endl;
             conn->sendResponceStruct(hiderRes);
         }
     }
@@ -200,7 +200,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
 
 Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn)
 {
-    std::cerr << "UPLOADING " << cmd.strParam << std::endl;
+    // std::cerr << "UPLOADING " << cmd.strParam << std::endl;
     // send file server -> pipe
     char buffer[CHUNK_SIZE] = {0};
     uint32_t ctr = 0;

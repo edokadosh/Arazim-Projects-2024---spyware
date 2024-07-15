@@ -5,6 +5,7 @@ from funCode import FunCode
 import tabulate
 from icecream import ic
 from random import randint
+import time
 
 USAGE_EXAMPLE = """-------Try This-------
 $ ops
@@ -393,6 +394,7 @@ class UI:
         self.manager('write_file', hiderHome, hiderTarg)
         self.setup(hiderTarg, 'f', 'f')
         self.uprun(spyHome, spyTarget)
+        time.sleep(3)
         self.setup(hiderTarg, 'f', 'f')
         print('Done. Your turn.')
 

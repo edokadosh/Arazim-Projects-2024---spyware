@@ -6,9 +6,7 @@ BufferConnection::BufferConnection(char* buf, uint32_t length, bool isInput)
         : Connection(-1, -1, false, false), buffer(buf), len(length), isIn(isInput), ctr(0) {}
 
 int BufferConnection::doSend(const void* buf, size_t size, int flags) {
-    std::cerr << "send to buffer" << std::endl;
     if (isIn) {
-        std::cerr << "cannot send to input buffer\n";
         return 0;
     }
     size = MIN(size, len - ctr);
@@ -19,7 +17,6 @@ int BufferConnection::doSend(const void* buf, size_t size, int flags) {
 
 
 int BufferConnection::doRecv(void* buf, size_t size, int flags) {
-    std::cerr << "recv from buffer" << std::endl;
     if (!isIn) {
         std::cerr << "cannot recv from output buffer\n";
         return -1;
