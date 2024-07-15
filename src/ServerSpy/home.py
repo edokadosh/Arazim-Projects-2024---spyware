@@ -142,4 +142,5 @@ def another_main():
     print(manegerAgent.retrieve_file('fishTest.txt'))
 
 if __name__ == "__main__":
-    main_with_ui()
+    # main_with_ui()
+    another_main()

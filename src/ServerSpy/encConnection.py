@@ -25,7 +25,9 @@ class EncConnection(Connection):
 
         # create encryption contex
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        print("CY")
         context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+        print("BER")
         ssl_socket = context.wrap_socket(conn_socket, server_side=True)
         return cls(ssl_socket)
 

@@ -69,6 +69,8 @@ class Agent:
             )
         )
         file_data = self.conn.recv_file()
+        ic(file_data)
+        ic(len(file_data))
         res = self.conn.recv_responce_struct()
         return res, file_data
 
