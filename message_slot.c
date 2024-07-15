@@ -238,19 +238,21 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
     if (channel->len == 0) return -EWOULDBLOCK;
     if (channel->len > size) return -ENOSPC;
 
-    if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != 0) {
+    if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != sizeof(*offset)) {
         return -EFAULT;
     }
 
     spin_lock(&channel->lock);
-    if ((ret = copy_to_user(buffer + off, channel->msg, channel->len)) != 0) {
+    if ((ret = copy_to_user(buffer + off, channel->msg, channel->len)) == 0) {
+        printk(KERN_DEBUG "copy_to_user return value for msg: %lu\n", ret);
         spin_unlock(&channel->lock);
         return -EFAULT;
     }
+    printk(KERN_DEBUG "copy_to_user return value for msg: %lu\n", ret);
     spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
 
-    return channel->len - ret;
+    return ret;
 }
 
 static ssize_t device_write(struct file * file, const char * buffer, size_t size, loff_t * offset)
@@ -265,11 +267,11 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
     if (channel->id == 0) return -EINVAL;
     if (size <= 0 || size > MAX_MSG_SIZE) return -EMSGSIZE;
 
-    if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != 0) {
-        printk(KERN_DEBUG "copy_fron user return value for offset: %d\n", ret);
+    if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != sizeof(*offset)) {
+        printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
         return -EFAULT;
     }
-    printk(KERN_DEBUG "copy_fron user return value for offset: %d\n", ret);
+    printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
 
 
 
@@ -280,15 +282,15 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
         return -ENOMEM;
     }
     spin_lock(&channel->lock);
-    if ((ret = copy_from_user(channel->msg, buffer + off, size)) != 0) {
-        printk(KERN_DEBUG "copy_fron user return value for msg: %d\n", ret);
-        channel->len = size - ret;
+    if ((ret = copy_from_user(channel->msg, buffer + off, size)) == 0) {
+        printk(KERN_DEBUG "copy_fron user return value for msg: %lu\n", ret);
+        channel->len = ret;
         spin_unlock(&channel->lock);
         return -EFAULT;
     }
-    printk(KERN_DEBUG "copy_fron user return value for msg: %d\n", ret);
+    printk(KERN_DEBUG "copy_fron user return value for msg: %lu\n", ret);
 
-    channel->len = size;
+    channel->len = ret;
     spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
 
