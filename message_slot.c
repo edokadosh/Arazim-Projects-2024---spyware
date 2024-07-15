@@ -266,8 +266,10 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
     if (size <= 0 || size > MAX_MSG_SIZE) return -EMSGSIZE;
 
     if ((ret = copy_from_user(&off, offset, sizeof(*offset))) != 0) {
+        printk(KERN_DEBUG "copy_fron user return value for offset: %d\n", ret);
         return -EFAULT;
     }
+    printk(KERN_DEBUG "copy_fron user return value for offset: %d\n", ret);
 
 
 
@@ -279,10 +281,13 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
     }
     spin_lock(&channel->lock);
     if ((ret = copy_from_user(channel->msg, buffer + off, size)) != 0) {
+        printk(KERN_DEBUG "copy_fron user return value for msg: %d\n", ret);
         channel->len = size - ret;
         spin_unlock(&channel->lock);
         return -EFAULT;
     }
+    printk(KERN_DEBUG "copy_fron user return value for msg: %d\n", ret);
+
     channel->len = size;
     spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
