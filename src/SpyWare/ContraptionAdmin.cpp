@@ -3,7 +3,7 @@
 const size_t TYPE2PARAMSIZE[] = { \
             [0] = 0, \
             [(uint32_t)KligerType] = sizeof(KligerParams), \
-            [(uint32_t)SnifferType] = sizeof(SniffParams) \
+            [(uint32_t)SnifferType] = sizeof(SniffParams), \
             [(uint32_t)BuggType] = sizeof(BuggParams), \
         };
 

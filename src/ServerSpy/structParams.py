@@ -21,6 +21,14 @@ class kligPrams(ctypes.Structure):
         ("time", ctypes.c_int),
     ]
 
+class BuggPrams(ctypes.Structure):
+
+    _pack_ = 1
+
+    _fields_ = [
+        ("time", ctypes.c_int),
+    ]
+
 
 if __name__ == "__main__":
     sniffp = SniffParams(5, b"ens33")
