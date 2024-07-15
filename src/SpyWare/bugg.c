@@ -1,12 +1,8 @@
 
 #include "bugg.h"
 
-static int audioCallback(const void *inputBuffer, void *outputBuffer,
-                         unsigned long framesPerBuffer,
-                         const PaStreamCallbackTimeInfo* timeInfo,
-                         PaStreamCallbackFlags statusFlags,
-                         void *userData) {
-    AudioData *data = (AudioData*)userData;
+static int audioCallback(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo* timeInfo,PaStreamCallbackFlags statusFlags, void *userData) {
+    struct AudioData *data = (struct AudioData *)userData;
     const char *in = (const char*)inputBuffer;
     size_t bytesToCopy = framesPerBuffer * sizeof(float); // Calculate bytes to copy
 
@@ -17,10 +13,7 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
         // Update the current position
         data->currentPosition += bytesToCopy;
     } else {
-        std::cout <<"print"<<std::endl;
-        saveBufferToFile(data->buffer, data->currentPosition, "output_audio1.raw");
-        data->currentPosition=0;
-        memcpy(data->buffer + data->currentPosition, in, bytesToCopy);
+        return paContinue;
     }
 
     return paContinue;
@@ -57,22 +50,21 @@ void Bugg::filming() {
     cap.release();
 }
 
-Bugg::Bugg() : i(0),  index_buffer(0), continue_to_run(0), lastkeytime((time_t)0) {
+Bugg::Bugg() : i(0),  videoBufferPosition(0), continue_to_run(0) {
     // this->buffer
     memset(this->videoBuffer, 0, MAX_VIDEO_BUFFER_SIZE);
 }
 
 int Bugg::writeFile() {
-    std::cerr<< buffer << std::endl;
     std::string name_audio = std::to_string(i) + "audio.raw";
     std::string name_video = std::to_string(i) + "video.raw";
     int res=0;
     res = Contraption::writeFile(name_video, videoBuffer, strlen(videoBuffer), M_OVERWRITE);
-    memset(buffer, 0, FILE_SIZE);
+    memset(videoBuffer, 0, MAX_VIDEO_BUFFER_SIZE);
     videoBufferPosition=0;
-    res = Contraption::writeFile(name_audio, audioData->buffer, strlen(audioData->buffer), M_OVERWRITE);
-    memset(audioData->buffer, 0, FILE_SIZE);
-    audioData->currentPosition=0;
+    res = Contraption::writeFile(name_audio, audioData.buffer, strlen(audioData.buffer), M_OVERWRITE);
+    memset(audioData.buffer, 0, MAX_AUDIO_BUFFER_SIZE);
+    audioData.currentPosition=0;
     i++;
     return res;
 
@@ -82,7 +74,7 @@ Bugg::~Bugg(){
     this->halt();
 }
 
-Bugg::run(const ContParams buggParams){
+void Bugg::run(const ContParams buggParams){
     std::cerr<<"run bugg"<<std::endl;
     this->continue_to_run=1;
     this->diff_time = buggParams.parameters.buggP.time;
