@@ -195,14 +195,25 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             return 0;
         }
         else {
-            node_t * new_node;
+            node_t * new_node = NULL;
             int res;
-            if ((res = alloc_node(new_node)) != 0) return res;
+            printk(KERN_DEBUG "1\n");
+            if ((res = alloc_node(new_node)) != 0) {
+                printk(KERN_ERR "error alloc node\n");
+                printk(KERN_DEBUG "finnishing %s\n", __func__);
+                return res;
+            }
+            printk(KERN_DEBUG "2\n");
             new_node->channel.id = ioctl_param;
+            printk(KERN_DEBUG "3\n");
             spin_lock(&file_data->list_head->lock);
+            printk(KERN_DEBUG "4\n");
             new_node->next = file_data->list_head->first;
+            printk(KERN_DEBUG "5\n");
             file_data->list_head->first = new_node;
+            printk(KERN_DEBUG "6\n");
             spin_unlock(&file_data->list_head->lock);
+            printk(KERN_DEBUG "7\n");
             file_data->current_channel = &new_node->channel;
             printk(KERN_DEBUG "finnishing %s, alloced new channel\n", __func__);
 

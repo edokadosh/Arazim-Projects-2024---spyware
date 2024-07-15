@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <string.h>
 #include <errno.h>
 
 #include "message_slot.h"
