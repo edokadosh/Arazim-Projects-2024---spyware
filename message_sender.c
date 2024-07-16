@@ -10,6 +10,7 @@
 
 int main(int argc, char* argv[]) {
 
+    sleep(3);
     int fd = -1;
 
     if (argc != 4) {
