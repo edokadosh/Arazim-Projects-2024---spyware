@@ -49,6 +49,8 @@ typedef enum Status  {
 
     HIDER_DIDNT_RECV_ENTIRE_UPLOAD,
 
+    ERROR_FROM_UNKNOWN_SOURCE,
+
 
 } Status;
 

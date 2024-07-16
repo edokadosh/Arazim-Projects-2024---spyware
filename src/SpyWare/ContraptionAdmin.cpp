@@ -3,16 +3,17 @@
 const size_t TYPE2PARAMSIZE[] = { \
             [0] = 0, \
             [(uint32_t)KligerType] = sizeof(KligerParams), \
-            [(uint32_t)SnifferType] = sizeof(SniffParams) \
+            [(uint32_t)SnifferType] = sizeof(SniffParams), \
+            [(uint32_t)BuggType] = sizeof(BuggParams), \
         };
 
 ContraptionAdmin::ContraptionAdmin() {
-    std::cerr << "start constractor\n";
+    // std::cerr << "start constractor\n";
 }
 
 
 ContraptionAdmin::~ContraptionAdmin() {
-    std::cerr << "contraption admin destractor" << std::endl;
+    // std::cerr << "contraption admin destractor" << std::endl;
 }
 
 Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contIdent_t identity)
@@ -21,28 +22,36 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
 
 
     conn->recvData(sizeof(runParams), (char*)&runParams);
-    std::cerr << "recved contraption parameters" << std::endl;
+    // std::cerr << "recved contraption parameters" << std::endl;
 
     if (contMap.find(identity) != contMap.end())
     {
         return IDENTITY_ALREADY_TAKEN;
     }
-    std::cerr << "didn't find cont id in map" << std::endl;
+    // std::cerr << "didn't find cont id in map" << std::endl;
     std::shared_ptr<Contraption> cont;
+    // std::cerr << "runParams.type=" << runParams.type << std::endl;
     switch(runParams.type) {
     case SnifferType:
-        std::cerr << "tring to create a sniffer" << std::endl;
+        // std::cerr << "tring to create a sniffer" << std::endl;
         cont = std::make_shared<Sniffer>();
         std::cerr << "created sniffer" << std::endl;
-        std::cerr << "id:" << identity << std::endl;
+        // std::cerr << "id:" << identity << std::endl;
 
         // std::cerr << "map insertion didn't segment fault" << std::endl;
 
         break;
     case KligerType:
-        std::cerr << "tring to create a sniffer" << std::endl;
+        // std::cerr << "tring to create a kligger" << std::endl;
         cont = std::make_shared<Kligger>();
-        std::cerr << "created sniffer" << std::endl;
+        std::cerr << "created kligger" << std::endl;
+        // std::cerr << "id:" << identity << std::endl;
+        break;
+    
+    case BuggType:
+        std::cerr << "tring to create a Bugg" << std::endl;
+        cont = std::make_shared<Bugg>();
+        std::cerr << "created Bugg" << std::endl;
         std::cerr << "id:" << identity << std::endl;
         break;
 
@@ -52,7 +61,7 @@ Status ContraptionAdmin::runContraption(std::shared_ptr<Connection> conn, contId
     
     contMap.insert({(uint32_t)identity, cont});
 
-    std::cerr << "start running contraption" << std::endl;
+    // std::cerr << "start running contraption" << std::endl;
     // std::cerr << "runParams time: " << runParams.parameters.sniffP.time << std::endl;
 
     return runContBackgrnd(identity, runParams);

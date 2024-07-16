@@ -27,7 +27,7 @@ class AgentRecruiter(threading.Thread):
         self,
         host: str,
         port: int,
-        oper_dict: list[Agent],
+        oper_dict: dict[str, Operation],
         type: str,  # "maneger" or "spyware"
     ):
         super().__init__()

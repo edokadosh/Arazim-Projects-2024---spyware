@@ -22,13 +22,12 @@ class Connection:
     def connect(cls, host, port) -> "Connection":
         conn_socket = socket.socket()
         conn_socket.connect((host, port))
-        return Connection(conn_socket)
+        return cls(conn_socket)
 
     def close(self) -> None:
         self.socket.close()
 
     def send_command(self, cmd: Command):
-        ic(cmd.funCode)
         self.socket.send(cmd.pack())
 
     def send_data(self, data: bytes):
@@ -39,7 +38,10 @@ class Connection:
 
     # TODO add error handeling
     def recv_bytes(self, length: int) -> bytes:
-        return self.socket.recv(length)
+        ans = b""
+        while len(ans) < length:
+            ans += self.socket.recv(length - len(ans))
+        return ans
 
     def recv_responce_struct(self):
         bytes_recived = self.recv_bytes(Responce.sizeof)

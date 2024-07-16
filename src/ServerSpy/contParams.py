@@ -7,12 +7,13 @@ MAX_ADAPTER_NAMELEN = 16
 
 
 class Params(Union):
-    _fields_ = [("sniffP", SniffParams), ("kligP", kligPrams)]
+    _fields_ = [("sniffP", SniffParams), ("kligP", kligPrams), ("BuggP", BuggPrams)]
 
 
 # types enum values
 KligerType = 1
 SnifferType = 2
+BuggType = 3
 
 
 class ContParams(Structure):

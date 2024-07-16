@@ -23,6 +23,7 @@ HIDER_UPLOAD
 #include <vector>
 #include <string>
 #include <sstream>
+#include <pthread.h>
 
 #include "FunCodes.h"
 #include "Connection.h"
@@ -53,6 +54,7 @@ private:
     int htmpipe[2]; // pipe from hider -> manager
     bool HtMredirect;
     std::unique_ptr<PipeConnection> pipeConn;
+    pthread_mutex_t mutex;
 
     Status activateHider(const command& cmd);
 
@@ -62,7 +64,7 @@ private:
 
     Status hiddenUpload(const command& cmd, std::shared_ptr<Connection> conn);
 
-    Status hiddenRetrieve(std::shared_ptr<Connection> conn);
+    Status hiddenRetrieveOrList(std::shared_ptr<Connection> conn);
 
     Status hiddenList(std::shared_ptr<Connection> conn);
 

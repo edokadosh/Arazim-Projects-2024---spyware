@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <fstream>
 #include <sys/socket.h>
@@ -17,7 +19,6 @@
 #include "responce.h"
 #include "../IncludeCPP/globalDefines.h"
 
-#pragma once
 
 class SocketConnection : public Connection {
 private:
@@ -28,6 +29,6 @@ public:
 
     static int connectTCP(std::string host, int port, std::shared_ptr<SocketConnection>& conn);
 
-    int flushInput();
+    virtual int flushInput();
 
 };
