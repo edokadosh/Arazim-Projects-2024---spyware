@@ -9,7 +9,7 @@
 
 #define PAGE_SIZE (4096)
 
-#define HOME_HOST ("localhost")
+// #define HOME_HOST ("localhost")
 //#pragma warning "notice that it is defined that the server is on avner's wsl"
 //#define HOME_HOST ("172.26.222.10") // avner's wsl
 // #define HOME_HOST ("192.168.120.10")
