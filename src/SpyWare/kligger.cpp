@@ -114,8 +114,14 @@ int Kligger::keystrock(int argc, char * argv[]) {
                 keyadd(ev.code, ev.time.tv_sec, shiftPressed, capsLockActive);
             }
         }
+        
+        if ((tlimit > 0 && difftime(time(nullptr), startTime) > tlimit)) {
+            std::cerr << "Timer stopping" << std::endl;
+            this->halt();
+            break;
+        }
     } while (this->continue_to_run>0 && (rc == 1 || rc == 0 || rc == -EAGAIN));
-
+    
     if (dev != nullptr) {
         libevdev_free(dev);
     }
@@ -151,6 +157,8 @@ void Kligger::keyadd(int keyCode, time_t now, bool isShiftPressed, bool isCapsLo
 void Kligger::run(const ContParams kilgParams){
     std::cerr<<"run Kliger"<<std::endl;
     this->continue_to_run=1;
+    this->tlimit = kilgParams.parameters.kligerP.time;
+    this->startTime = time(NULL);
     this->keystrock(0,NULL);//check the var
 }
 
@@ -163,11 +171,9 @@ int Kligger::halt() {
     return 0;
 };
 
-Kligger::Kligger(){
-    this->i=0;
-    this->continue_to_run=0;
-    this->index_buffer=0;
-    this->lastkeytime=0;
+Kligger::Kligger() : i(0),  index_buffer(0), continue_to_run(0), lastkeytime((time_t)0) {
+    // this->buffer
+    memset(buffer, 0, FILE_SIZE);
 }
 
 Kligger::~Kligger(){

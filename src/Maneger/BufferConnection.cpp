@@ -3,12 +3,11 @@
 
 
 BufferConnection::BufferConnection(char* buf, uint32_t length, bool isInput)
-        : Connection(-1, -1, false, false), buffer(buf), len(length), isIn(isInput) {}
+        : Connection(-1, -1, false, false), buffer(buf), len(length), isIn(isInput), ctr(0) {}
 
-int BufferConnection::doSend(const void* buf, size_t size) {
+int BufferConnection::doSend(const void* buf, size_t size, int flags) {
     if (isIn) {
-        std::cerr << "cannot send to input buffer\n";
-        return -1;
+        return 0;
     }
     size = MIN(size, len - ctr);
     memcpy(&buffer[ctr], buf, size);
@@ -17,7 +16,7 @@ int BufferConnection::doSend(const void* buf, size_t size) {
 }
 
 
-int BufferConnection::doRecv(void* buf, size_t size) {
+int BufferConnection::doRecv(void* buf, size_t size, int flags) {
     if (!isIn) {
         std::cerr << "cannot recv from output buffer\n";
         return -1;

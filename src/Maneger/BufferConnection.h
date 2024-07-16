@@ -18,13 +18,13 @@
 
 class BufferConnection : public Connection {
 protected:
-    uint32_t ctr = 0;
+    uint32_t ctr;
     char* buffer;
     uint32_t len;
     bool isIn;
 
-    int doSend(const void* buf, size_t size) override;
-    int doRecv(void* buf, size_t size) override;
+    int doSend(const void* buf, size_t size, int flags) override;
+    int doRecv(void* buf, size_t size, int flags) override;
 
 
 public:

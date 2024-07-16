@@ -40,6 +40,7 @@ int Connection::doSend(const void* buf, size_t size) {
 }
 
 int Connection::doRecv(void* buf, size_t size, int flags) {
+    std::cerr << "Connection DORECV" << std::endl;
     if (isSocket)
     {
         return ::recv(fdOut, buf, size, flags);
@@ -54,11 +55,15 @@ int Connection::doRecv(void* buf, size_t size) {
 
 
 int Connection::sendData(uint32_t size, void* buffer, int flags) {
-    int bytesSent = doSend(buffer, size, flags);
-    if (bytesSent == -1) {
-        std::cerr << "Error sending data" << std::endl;
-        std::cerr << "Error: " << strerror(errno) << std::endl;
-        return bytesSent;
+    uint32_t ctr = 0;
+    int bytesSent = 0;
+    for (; ctr < size; ctr += bytesSent){
+        bytesSent = doSend((char*)buffer + ctr, size - ctr, flags);
+        if (bytesSent == -1) {
+            std::cerr << "Error sending data" << std::endl;
+            std::cerr << "Error: " << strerror(errno) << std::endl;
+            return bytesSent;
+        }
     }
     return bytesSent;
 }
@@ -142,7 +147,7 @@ int Connection::recvData(uint32_t size, char* buffer, int flags)
     while (recviedTotal < size)
     {
         if ((recvied = doRecv(buffer, size - recviedTotal, flags)) == -1) {
-            std::cerr << "Receive data failed after recving" << recviedTotal << "bytes" << std::endl;
+            std::cerr << "Receive data failed after recving " << recviedTotal << " bytes" << std::endl;
             std::cerr << "Error: " << strerror(errno) << std::endl;
             return -1;
         }

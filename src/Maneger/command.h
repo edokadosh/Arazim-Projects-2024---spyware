@@ -7,7 +7,7 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
-#define STRING_PARAM_LEN (100)
+#define STRING_PARAM_LEN (200)
 
 
 

@@ -5,7 +5,6 @@ Description=Run mytask periodically
 
 [Timer]
 OnBootSec=5
-OnUnitActiveSec=5m
 Persistent=true
 
 [Install]

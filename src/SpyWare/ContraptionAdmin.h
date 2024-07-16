@@ -9,6 +9,7 @@
 #include "ParamStructs.h"
 #include "Sniffer.h"
 #include "kligger.h"
+#include "bugg.h"
 
 #pragma once
 

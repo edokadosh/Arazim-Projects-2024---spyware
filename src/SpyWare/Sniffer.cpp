@@ -36,8 +36,9 @@ int Sniffer::halt() {
 
 // set up the sniffers loop and run
 int Sniffer::sniff(const SniffParams sniffP) {
-    if (!stopSniffing.load()) // if already running no need to run() again
+    if (!stopSniffing.load()) { // if already running no need to run() again
         return 1;
+    }
     std::cerr << "-------- Starting to Sniff --------" << endl;
     stopSniffing.store(false);
 
