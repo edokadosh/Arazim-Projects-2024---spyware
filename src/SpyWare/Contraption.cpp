@@ -10,7 +10,7 @@ int Contraption::writeFile(const std::string& fileName, char buffer[], uint32_t 
         return 1; // not implemented sorry ):
     }
     int bufferLen = strlen(buffer);
-    if (bufferLen == 0) {
+    if (bufferLen == 0 || len == 0) {
         std::cerr << "spyware: contraption not writing because buffer is empty\n";
         return 0;
     }

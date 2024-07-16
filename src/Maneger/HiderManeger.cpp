@@ -6,7 +6,9 @@ HiderManeger::HiderManeger() :  hiderPath(DEFAULT_HIDER_PATH), \
                                 mthpipe{-1, -1}, \
                                 MtHredirect(false), \
                                 htmpipe{-1, -1}, \
-                                HtMredirect(false) {}
+                                HtMredirect(false) {
+                                pthread_mutex_init(&mutex, NULL);
+                                }
 
 
 HiderManeger::~HiderManeger() {
@@ -31,29 +33,29 @@ int waitChild(int pid) {
     return 0;
 }
 
-// Status HiderManeger::setUpHider(std::string strParam)
-// {
-//     this->hiderPath = strParam;
-//     // std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
-
-//     return SUCCSESS;
-// }
-
-
 Status HiderManeger::setUpHider(std::string strParam)
 {
-    std::vector<std::string> params = split(strParam, ';');
-    if (params.size() != 3)
-        return HIDER_SETUP_ERROR;
-
-    this->hiderPath = params.at(0);
-    this->imagePath = params.at(1);
-    this->mountPath = params.at(2);
+    this->hiderPath = strParam;
     std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
-    std::cerr << "setted image path: " << imagePath.c_str() << std::endl;
-    std::cerr << "setted mount path: " << mountPath.c_str() << std::endl;
+
     return SUCCSESS;
 }
+
+
+// Status HiderManeger::setUpHider(std::string strParam)
+// {
+//     std::vector<std::string> params = split(strParam, ';');
+//     if (params.size() != 3)
+//         return HIDER_SETUP_ERROR;
+
+//     this->hiderPath = params.at(0);
+//     this->imagePath = params.at(1);
+//     this->mountPath = params.at(2);
+//     std::cerr << "setted hider path: " << hiderPath.c_str() << std::endl;
+//     std::cerr << "setted image path: " << imagePath.c_str() << std::endl;
+//     std::cerr << "setted mount path: " << mountPath.c_str() << std::endl;
+//     return SUCCSESS;
+// }
 
 Status HiderManeger::writeFile(const std::string& fileName, char buffer[], uint32_t len, uint32_t writeMod) {
     command cmd = { 0 };
@@ -147,8 +149,10 @@ Status HiderManeger::openPipes(int p[])
 // add Status handling
 Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection> conn)
 {
+    pthread_mutex_lock(&mutex);
 
     if (openPipes(mthpipe) != SUCCSESS) {
+        pthread_mutex_unlock(&mutex);
         return HIDER_PIPE_ERROR;
     }
     MtHredirect = true;
@@ -156,6 +160,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
     if (openPipes(htmpipe) != SUCCSESS) {
         close(mthpipe[0]);
         close(mthpipe[1]);
+        pthread_mutex_unlock(&mutex);
         return HIDER_PIPE_ERROR;
     }
     HtMredirect = true;
@@ -174,6 +179,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
             int res = 0;
             if ((res = read(htmpipe[0], &hiderRes, sizeof(hiderRes))) < 0) {
                 std::cerr << "error reading from hider pipe" << std::endl;
+                pthread_mutex_unlock(&mutex);
                 return READ_FROM_HIDER_ERROR;
             }
             if (res != sizeof(hiderRes)) {
@@ -193,6 +199,7 @@ Status HiderManeger::hiddenAction(const command& cmd, std::shared_ptr<Connection
         hiddenList(conn);
     }
 
+    pthread_mutex_unlock(&mutex);
     return res;
 
 }
@@ -215,6 +222,7 @@ Status HiderManeger::hiddenUpload(const command& cmd, std::shared_ptr<Connection
         }
         if (pipeConn->sendData(bytes_received, buffer) != bytes_received) {
             std::cerr << "Error writing to hider: " << strerror(errno) << std::endl;
+            std::cerr << "fd: in | out" << pipeConn->fdIn << pipeConn->fdOut << std::endl;
             return ERROR_WRITING_TO_HIDER;
         }
         // if ((bytes_received = splice(conn->fdIn, nullptr, mthpipe[1], nullptr, transmitBytes, SPLICE_F_MOVE)) == -1) {

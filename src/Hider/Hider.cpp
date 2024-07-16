@@ -14,15 +14,15 @@ uint Hider::manage_files(int argc, char* argv[])
 	// std::cerr << "hider argv[1]: " << argv[1] << std::endl;
 	// std::cerr << "hider argv[2]: " << argv[2] << std::endl;
 
-	if (argc < 4) {
+	if (argc < 3) {
 		return HIDER_NO_ARGUMENTS_ERROR;
 	}
 	uint32_t fncode = decodeInt(std::string(argv[0]));
 	uint32_t uploadLen = decodeInt(std::string(argv[1]));
 	std::string stringParam = decodeStr(std::string(argv[2]));
-	std::string folderName = decodeStr(std::string(argv[3]));
+	// std::string folderName = decodeStr(std::string(argv[3]));
 
-	handel.setFolderName(folderName);
+	// handel.setFolderName(folderName);
 	// TODO better Status handling
 	responce res_upload = {.dataLen = 0, .status = DID_NOTHING};
 	responce res_run = {.dataLen = 0, .status = DID_NOTHING};

@@ -81,10 +81,6 @@ def main():
 
 
 def main_with_ui():
-    targetHiderPath = "./sentHider.o"
-    image_path = "fs.iso"
-    mount_path = "fs"
-
     operDict: dict[str, Operation] = dict()
     # recrutionEvent = threading.Event()
     manegerRecruiter = AgentRecruiter(HOST, PORT_MANEGER, operDict, "maneger")
@@ -93,18 +89,19 @@ def main_with_ui():
     spyRecruiter.start()
 
     ui = UI.UI(operDict)
-    ui.help()
 
-    print("START CYBER:")
+    sleep(1)
+    ui.help()
     prompt = '🌲' + ' '
     value = input(prompt)
     while value != "q":
         UI.call_method_raw(ui, value)
         selected = ui.ctx.selected_operation
         if selected:
-            value = input(f'<{selected}>$ ')
+            value = input(f'<{selected}>{prompt}')
         else: 
-            value = input(f'$ ')
+            value = input(prompt)
+    ui.die()
 
 def bug_main():
     targetHiderPath = "./sentHider.o"

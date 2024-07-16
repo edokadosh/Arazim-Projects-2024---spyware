@@ -41,7 +41,7 @@ HiddenFileHandler::HiddenFileHandler()
 {
     fs::path folder = fs::current_path();
     folderName = folder.string();
-    std::cerr << "setted folder name: " << folderName << std::endl;
+    std::cerr << "setted folder defualt name: " << folderName << std::endl;
 }
 
 
@@ -132,6 +132,7 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
     Status res = SUCCSESS;
     
     std::string filePath = getPath(fileName);
+    std::cerr << "FilePath: " << filePath << std::endl;
     std::ofstream outFile;
     outFile.open(filePath, std::ios::binary | std::ios::out); // open and overwrite file
 
@@ -184,4 +185,5 @@ Status HiddenFileHandler::uploadFile(const std::string& fileName, uint32_t fileS
 
 void HiddenFileHandler::setFolderName(const std::string& name) {
     folderName = name;
+    std::cerr << "setted folder name: " << folderName << std::endl;
 }
