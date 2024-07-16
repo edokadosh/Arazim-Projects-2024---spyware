@@ -26,7 +26,7 @@ MODULE_DESCRIPTION("message slot device driver");
 typedef struct channel {
     uint id;
     int len;
-    char * msg;
+    char msg[128];
 } channel_t;
 
 typedef struct node_s {
@@ -105,7 +105,7 @@ static void __exit message_slot_exit(void) {
             node_t * next_node = node->next;
             if (node->channel.msg != NULL) {
                 printk(KERN_DEBUG "starting kfree channel.msg\n");
-                kfree(node->channel.msg);
+                // kfree(node->channel.msg);
             }
             printk(KERN_DEBUG "starting kfree node\n");
             kfree(node);
@@ -321,12 +321,12 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
 
 
 
-    if (channel->msg != NULL) {
-        kfree(channel->msg);
-    }
-    if (!(channel->msg = kmalloc(size, GFP_KERNEL))) {
-        return -ENOMEM;
-    }
+    // if (channel->msg != NULL) {
+    //     kfree(channel->msg);
+    // }
+    // if (!(channel->msg = kmalloc(size, GFP_KERNEL))) {
+    //     return -ENOMEM;
+    // }
     if ((ret = copy_from_user(channel->msg, buffer + off, size)) != 0) {
         printk(KERN_DEBUG "copy_fron user return value for msg: %lu\n", ret);
         channel->len = size - ret;
@@ -377,6 +377,7 @@ node_t * query_list(device_node_t * device, uint32_t id) {
             printk(KERN_DEBUG "finnish query_list, found node\n");
             return node;
         }
+        node = node->next;
     }
     printk(KERN_DEBUG "finnish query_list, unfound node\n");
     return NULL;
@@ -391,6 +392,7 @@ device_node_t * query_list_list(uint minor) {
             printk(KERN_DEBUG "finnish query_list_list, found node\n");
             return node;
         }
+        node = node->next;
     }
     printk(KERN_DEBUG "finnish query_list_list, unfound node\n");
 
