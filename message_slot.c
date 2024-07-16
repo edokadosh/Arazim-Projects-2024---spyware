@@ -24,7 +24,6 @@ MODULE_DESCRIPTION("message slot device driver");
 
 
 typedef struct channel {
-    spinlock_t lock;
     uint id;
     int len;
     char * msg;
@@ -36,7 +35,6 @@ typedef struct node_s {
 } node_t;
 
 typedef struct device_node_s {
-    spinlock_t lock;
     uint32_t minor;
     node_t * first;
     struct device_node_s * next;
@@ -133,6 +131,7 @@ module_exit(message_slot_exit);
 static int device_open(struct inode * inode, struct file * file)
 {
 
+    spin_lock(&lock);
     printk(KERN_DEBUG "starting %s\n", __func__);
     
     uint minor = iminor(inode);
@@ -140,15 +139,13 @@ static int device_open(struct inode * inode, struct file * file)
     if (device_node == NULL) {
         if (!(device_node = kmalloc(sizeof(device_node), GFP_KERNEL))) {
             printk(KERN_ALERT "my_device: Failed to allocate memory\n");
+            spin_unlock(&lock);
             return -ENOMEM;            
         }
-        spin_lock_init(&device_node->lock);
         device_node->minor = minor;
         device_node->first = NULL;
-        spin_lock(&lock);
         device_node->next = list_list;
         list_list = device_node;
-        spin_unlock(&lock);
     }
 
     file_data_t * file_data = NULL;
@@ -158,6 +155,7 @@ static int device_open(struct inode * inode, struct file * file)
         if (!(file_data = kmalloc(sizeof(file_data_t), GFP_KERNEL)))
         {
             printk(KERN_ALERT "my_device: Failed to allocate memory\n");
+            spin_unlock(&lock);
             return -ENOMEM;
         }
         file_data->current_channel = NULL;
@@ -165,6 +163,7 @@ static int device_open(struct inode * inode, struct file * file)
         file->private_data = (void *)file_data;
     }
     printk(KERN_DEBUG "finnishing %s\n", __func__);
+    spin_unlock(&lock);
     return 0;
 }
 
@@ -182,12 +181,14 @@ static int device_release(struct inode * inode, struct file * file)
 
 static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
 {
+    spin_lock(&lock);
     printk(KERN_DEBUG "starting %s\n", __func__);
     
     switch(ioctl_cmd) {
     
     case MSG_SLOT_CHANNEL:
         if (file->private_data == NULL || ioctl_param == 0) {
+            spin_unlock(&lock);
             return -EINVAL;
         }
         file_data_t * file_data = (file_data_t *)file->private_data;
@@ -195,6 +196,7 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
         if (query_res != NULL) {
             file_data->current_channel = &query_res->channel;
             printk(KERN_DEBUG "finnishing %s, channel already existed\n", __func__);
+            spin_unlock(&lock);
             return 0;
         }
         else {
@@ -204,18 +206,17 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             if ((res = alloc_node(&new_node)) != 0) {
                 printk(KERN_ERR "error alloc node\n");
                 printk(KERN_DEBUG "finnishing %s\n", __func__);
+                spin_unlock(&lock);
                 return res;
             }
             printk(KERN_DEBUG "2\n");
             new_node->channel.id = ioctl_param;
             printk(KERN_DEBUG "3\n");
-            spin_lock(&file_data->list_head->lock);
             printk(KERN_DEBUG "4\n");
             new_node->next = file_data->list_head->first;
             printk(KERN_DEBUG "5\n");
             file_data->list_head->first = new_node;
             printk(KERN_DEBUG "6\n");
-            spin_unlock(&file_data->list_head->lock);
             printk(KERN_DEBUG "7\n");
             file_data->current_channel = &new_node->channel;
             printk(KERN_DEBUG "finnishing %s, alloced new channel\n", __func__);
@@ -223,27 +224,40 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             return 0;
         }
     default:
+        spin_unlock(&lock);
         return -EINVAL;
     }
     printk(KERN_DEBUG "finnishing %s\n", __func__);
+    spin_unlock(&lock);
     return 0;
 }
 
 static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_t * offset)
 {
+    spin_lock(&lock);
     printk(KERN_DEBUG "starting %s\n", __func__);
     
     ulong ret = 0;
     file_data_t * file_data = (file_data_t *)file->private_data;
     channel_t * channel = file_data->current_channel;
     loff_t off = 0;
-    if (channel->id == 0) return -EINVAL;
-    if (channel->len == 0) return -EWOULDBLOCK;
-    if (channel->len > size) return -ENOSPC;
+    if (channel->id == 0) {
+        spin_unlock(&lock);
+        return -EINVAL;
+    }
+    if (channel->len == 0) {
+        spin_unlock(&lock);
+        return -EWOULDBLOCK;
+    }
+    if (channel->len > size) {
+        spin_unlock(&lock);
+        return -ENOSPC;
+    }
 
     ret = copy_from_user(&off, offset, sizeof(off));
     if (ret != sizeof(off) && ret != 0) {
         printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
+        spin_unlock(&lock);
         return -EFAULT;
     }
     if (ret == 0) {
@@ -252,34 +266,40 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
     printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
 
 
-    spin_lock(&channel->lock);
     if ((ret = copy_to_user(buffer + off, channel->msg, channel->len)) != 0) {
         printk(KERN_DEBUG "copy_to_user return value for msg: %lu\n", ret);
-        spin_unlock(&channel->lock);
+        spin_unlock(&lock);
         return -EFAULT;
     }
     printk(KERN_DEBUG "copy_to_user return value for msg: %lu\n", ret);
-    spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
-
+    spin_unlock(&lock);
     return channel->len;
 }
 
 static ssize_t device_write(struct file * file, const char * buffer, size_t size, loff_t * offset)
 {
     
+    spin_lock(&lock);
     printk(KERN_DEBUG "starting %s\n", __func__);
     
     ulong ret = 0;
     file_data_t * file_data = (file_data_t *)file->private_data;
     channel_t * channel = file_data->current_channel;
     loff_t off = 0;
-    if (channel->id == 0) return -EINVAL;
-    if (size <= 0 || size > MAX_MSG_SIZE) return -EMSGSIZE;
+    if (channel->id == 0) {
+        spin_unlock(&lock);
+        return -EINVAL;
+    }
+    if (size <= 0 || size > MAX_MSG_SIZE) {
+        spin_unlock(&lock);
+        return -EMSGSIZE;
+    }
 
     ret = copy_from_user(&off, offset, sizeof(off));
     if (ret != sizeof(off) && ret != 0) {
         printk(KERN_DEBUG "copy_fron user return value for offset: %lu\n", ret);
+        spin_unlock(&lock);
         return -EFAULT;
     }
     if (ret == 0) {
@@ -295,20 +315,18 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
     if (!(channel->msg = kmalloc(size, GFP_KERNEL))) {
         return -ENOMEM;
     }
-    spin_lock(&channel->lock);
     if ((ret = copy_from_user(channel->msg, buffer + off, size)) != 0) {
         printk(KERN_DEBUG "copy_fron user return value for msg: %lu\n", ret);
         channel->len = size - ret;
-        spin_unlock(&channel->lock);
+        spin_unlock(&lock);
         return -EFAULT;
     }
     printk(KERN_DEBUG "copy_fron user return value for msg: %lu\n", ret);
     printk(KERN_DEBUG "msg: %s\n", channel->msg);
 
     channel->len = size - ret;
-    spin_unlock(&channel->lock);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
-
+    spin_unlock(&lock);
     return channel->len;
 }
 
@@ -316,7 +334,6 @@ static ssize_t device_write(struct file * file, const char * buffer, size_t size
 
 void init_channel(channel_t * channel) {
     *channel = (channel_t){.id = 0, .len = 0, .msg = NULL};
-    spin_lock_init(&channel->lock);
 }
 
 // void init_node(node_t * node) {
@@ -342,16 +359,13 @@ int alloc_node(node_t ** new_node) {
 
 node_t * query_list(device_node_t * device, uint32_t id) {
     printk(KERN_DEBUG "start query_list\n");
-    spin_lock(&device->lock);
     node_t * node = device->first;
     while (node != NULL) {
         if (node->channel.id == id) {
-            spin_unlock(&device->lock);
             printk(KERN_DEBUG "finnish query_list, found node\n");
             return node;
         }
     }
-    spin_unlock(&device->lock);
     printk(KERN_DEBUG "finnish query_list, unfound node\n");
     return NULL;
 }
@@ -359,16 +373,13 @@ node_t * query_list(device_node_t * device, uint32_t id) {
 
 device_node_t * query_list_list(uint minor) {
     printk(KERN_DEBUG "start query_list_list\n");
-    spin_lock(&lock);
     device_node_t * node = list_list;
     while (node != NULL) {
         if (node->minor == minor) {
-            spin_unlock(&lock);
             printk(KERN_DEBUG "finnish query_list_list, found node\n");
             return node;
         }
     }
-    spin_unlock(&lock);
     printk(KERN_DEBUG "finnish query_list_list, unfound node\n");
 
     return NULL;
