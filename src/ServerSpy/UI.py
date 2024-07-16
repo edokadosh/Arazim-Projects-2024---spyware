@@ -338,7 +338,7 @@ class UI:
         spy = self.ctx.selected_operation.spyAgent
         if not spy:
             return
-        res = spy.hider_setup(spyBasePath + targetPath, imagePath, mountPath)
+        res = spy.hider_setup(targetPath, imagePath, mountPath)
         print_res_str(res)
         LOG(f"Set Hider/s")
         # LOG(f"Spyware mount set")
