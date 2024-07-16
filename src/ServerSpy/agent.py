@@ -33,7 +33,6 @@ class Agent:
     def run_bash(self, bash: str) -> tuple[Responce, str]:
         self.conn.send_command(Command(len(bash), FunCode.RUN_BASH, 0, bash))
         res = self.conn.recv_full_responce()
-        print(res)
         return res
 
     """
