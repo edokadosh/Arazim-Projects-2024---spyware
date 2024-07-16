@@ -142,11 +142,15 @@ static int device_open(struct inode * inode, struct file * file)
             spin_unlock(&lock);
             return -ENOMEM;            
         }
+        printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
+
         device_node->minor = minor;
         device_node->first = NULL;
         device_node->next = list_list;
+        printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
         list_list = device_node;
     }
+    printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
 
     file_data_t * file_data = NULL;
 
@@ -158,10 +162,13 @@ static int device_open(struct inode * inode, struct file * file)
             spin_unlock(&lock);
             return -ENOMEM;
         }
+        printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
+
         file_data->current_channel = NULL;
         file_data->list_head = device_node;
         file->private_data = (void *)file_data;
     }
+    printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
     printk(KERN_DEBUG "finnishing %s\n", __func__);
     spin_unlock(&lock);
     return 0;
@@ -192,9 +199,12 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             return -EINVAL;
         }
         file_data_t * file_data = (file_data_t *)file->private_data;
+        printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
         node_t * query_res = query_list(file_data->list_head, ioctl_param);
+        printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
         if (query_res != NULL) {
             file_data->current_channel = &query_res->channel;
+            printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
             printk(KERN_DEBUG "finnishing %s, channel already existed\n", __func__);
             spin_unlock(&lock);
             return 0;
@@ -253,6 +263,7 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
         spin_unlock(&lock);
         return -ENOSPC;
     }
+    printk(KERN_DEBUG "in %s, line: %d\n", __func__, __LINE__);
 
     ret = copy_from_user(&off, offset, sizeof(off));
     if (ret != sizeof(off) && ret != 0) {
@@ -260,6 +271,7 @@ static ssize_t device_read(struct file * file, char * buffer, size_t size, loff_
         spin_unlock(&lock);
         return -EFAULT;
     }
+
     if (ret == 0) {
         off = 0;
     }
