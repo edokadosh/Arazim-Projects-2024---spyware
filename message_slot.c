@@ -220,7 +220,7 @@ static long device_ioctl(struct file * file, uint ioctl_cmd, ulong ioctl_param)
             printk(KERN_DEBUG "7\n");
             file_data->current_channel = &new_node->channel;
             printk(KERN_DEBUG "finnishing %s, alloced new channel\n", __func__);
-
+            spin_unlock(&lock);
             return 0;
         }
     default:
